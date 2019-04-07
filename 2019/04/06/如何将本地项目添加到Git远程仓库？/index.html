@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="尚拙">
 <meta property="og:description" content="记录如何将本地现有项目添加到远程Git仓库">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-04-07T02:28:16.288Z">
+<meta property="og:updated_time" content="2019-04-07T02:33:44.403Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何将本地项目添加到Git远程仓库？">
 <meta name="twitter:description" content="记录如何将本地现有项目添加到远程Git仓库">
@@ -318,7 +318,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-04-07T10:28:16+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2019-04-07T10:33:44+08:00">
                 2019-04-07
               </time>
             
@@ -392,12 +392,13 @@
         <p>进入项目根目录，右键选择git bash , 打开git命令行（请先安装Git）</p>
 <p>输入以下git命令</p>
 <h3 id="1、初始化项目"><a href="#1、初始化项目" class="headerlink" title="1、初始化项目"></a>1、初始化项目</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure>
-<h3 id="2、将当前目录下修改的所有代码从工作区添加到暂存区-代表当前目录"><a href="#2、将当前目录下修改的所有代码从工作区添加到暂存区-代表当前目录" class="headerlink" title="2、将当前目录下修改的所有代码从工作区添加到暂存区 . 代表当前目录"></a>2、将当前目录下修改的所有代码从工作区添加到暂存区 . 代表当前目录</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git add .</span><br></pre></td></tr></table></figure>
+<h3 id="2、将当前目录下修改的所有代码从工作区添加到暂存区"><a href="#2、将当前目录下修改的所有代码从工作区添加到暂存区" class="headerlink" title="2、将当前目录下修改的所有代码从工作区添加到暂存区"></a>2、将当前目录下修改的所有代码从工作区添加到暂存区</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git add .</span><br></pre></td></tr></table></figure>
+<p> . 代表当前目录</p>
 <h3 id="3、将缓存区内容添加到本地仓库"><a href="#3、将缓存区内容添加到本地仓库" class="headerlink" title="3、将缓存区内容添加到本地仓库"></a>3、将缓存区内容添加到本地仓库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git commit -m &quot;本次提交内容注释&quot;</span><br></pre></td></tr></table></figure>
 <h3 id="4、添加远程仓库地址并附上密码"><a href="#4、添加远程仓库地址并附上密码" class="headerlink" title="4、添加远程仓库地址并附上密码"></a>4、添加远程仓库地址并附上密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git remote add origin https://username:password@github.com/RaphetS/BaseAndroid.git</span><br></pre></td></tr></table></figure>
-<p>username为远程仓库的用户名，password为远程仓库的密码，本例即为Github的用户名和密码。<br>@后面的地址为远程仓库的地址</p>
+<p>username为远程仓库的用户名，password为远程仓库的密码，本例即为Github的用户名和密码。<br>@后面的地址为远程仓库的地址.</p>
 <h3 id="5、将本地分支的更新推送到远程仓库"><a href="#5、将本地分支的更新推送到远程仓库" class="headerlink" title="5、将本地分支的更新推送到远程仓库"></a>5、将本地分支的更新推送到远程仓库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
-<p>将本地的master分支推送到origin主机，同时指定origin为默认主机，后面就可以不加任何参数使用git push了</p>
+<p>将本地的master分支推送到origin主机，同时指定origin为默认主机，后面就可以不加任何参数使用git push了。</p>
 
       
     </div>
@@ -582,7 +583,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、初始化项目"><span class="nav-text">1、初始化项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、将当前目录下修改的所有代码从工作区添加到暂存区-代表当前目录"><span class="nav-text">2、将当前目录下修改的所有代码从工作区添加到暂存区 . 代表当前目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、将缓存区内容添加到本地仓库"><span class="nav-text">3、将缓存区内容添加到本地仓库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、添加远程仓库地址并附上密码"><span class="nav-text">4、添加远程仓库地址并附上密码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、将本地分支的更新推送到远程仓库"><span class="nav-text">5、将本地分支的更新推送到远程仓库</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、初始化项目"><span class="nav-text">1、初始化项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、将当前目录下修改的所有代码从工作区添加到暂存区"><span class="nav-text">2、将当前目录下修改的所有代码从工作区添加到暂存区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、将缓存区内容添加到本地仓库"><span class="nav-text">3、将缓存区内容添加到本地仓库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、添加远程仓库地址并附上密码"><span class="nav-text">4、添加远程仓库地址并附上密码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、将本地分支的更新推送到远程仓库"><span class="nav-text">5、将本地分支的更新推送到远程仓库</span></a></li></ol></div>
             
 
           </div>
