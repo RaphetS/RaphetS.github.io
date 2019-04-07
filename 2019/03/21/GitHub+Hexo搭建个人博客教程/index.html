@@ -365,17 +365,6 @@
 
           
           
-             <span id="/2019/03/21/GitHub+Hexo搭建个人博客教程/" class="leancloud_visitors" data-flag-title="GitHub+Hexo搭建个人博客教程">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
 
           
 
@@ -417,25 +406,25 @@
 <h3 id="1、hexo简介"><a href="#1、hexo简介" class="headerlink" title="1、hexo简介"></a>1、hexo简介</h3><p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
 <h3 id="2、安装"><a href="#2、安装" class="headerlink" title="2、安装"></a>2、安装</h3><p>在任意一个地方新建一个文件夹，用以存放本地博客文件，比如我的是E:\Blog</p>
 <p>进入该文件夹，右键选择git bash进入git命令行，输入以下命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm install -g hexo</span><br></pre></td></tr></table></figure>
 <h3 id="3、初始化"><a href="#3、初始化" class="headerlink" title="3、初始化"></a>3、初始化</h3><p>继续输入命令进行初始化</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
 <h3 id="5、生成静态文件"><a href="#5、生成静态文件" class="headerlink" title="5、生成静态文件"></a>5、生成静态文件</h3><p>继续输入命令生成静态文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure>
-<h3 id="6、启动服务"><a href="#6、启动服务" class="headerlink" title="6、启动服务"></a>6、启动服务</h3><p>继续输入命令开启本地预览服务<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure>
+<h3 id="6、启动服务"><a href="#6、启动服务" class="headerlink" title="6、启动服务"></a>6、启动服务</h3><p>继续输入命令开启本地预览服务<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure></p>
 <p>此时打开浏览器访问 <a href="http://localhost:4000，即可看到内容，hexo环境到此已经搭建完成" target="_blank" rel="noopener">http://localhost:4000，即可看到内容，hexo环境到此已经搭建完成</a></p>
-<h3 id="7、-hexo常见命令说明"><a href="#7、-hexo常见命令说明" class="headerlink" title="7、 hexo常见命令说明"></a>7、 hexo常见命令说明</h3><h6 id="清除缓存文件-db-json-和已生成的静态文件-public"><a href="#清除缓存文件-db-json-和已生成的静态文件-public" class="headerlink" title="清除缓存文件 (db.json) 和已生成的静态文件 (public)"></a>清除缓存文件 (db.json) 和已生成的静态文件 (public)</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br></pre></td></tr></table></figure>
+<h3 id="7、-hexo常见命令说明"><a href="#7、-hexo常见命令说明" class="headerlink" title="7、 hexo常见命令说明"></a>7、 hexo常见命令说明</h3><h6 id="清除缓存文件-db-json-和已生成的静态文件-public"><a href="#清除缓存文件-db-json-和已生成的静态文件-public" class="headerlink" title="清除缓存文件 (db.json) 和已生成的静态文件 (public)"></a>清除缓存文件 (db.json) 和已生成的静态文件 (public)</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br></pre></td></tr></table></figure>
 <p>在某些情况（尤其是更换主题后），如果发现您对站点的更改无论如何也不生效，您可能需要运行该命令。</p>
-<h6 id="生成静态文件"><a href="#生成静态文件" class="headerlink" title="生成静态文件"></a>生成静态文件</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure>
+<h6 id="生成静态文件"><a href="#生成静态文件" class="headerlink" title="生成静态文件"></a>生成静态文件</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure>
 <p>每次对博客文件或者相关配置进行了修改，需要执行该命令</p>
-<h6 id="启动服务器"><a href="#启动服务器" class="headerlink" title="启动服务器"></a>启动服务器</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure>
+<h6 id="启动服务器"><a href="#启动服务器" class="headerlink" title="启动服务器"></a>启动服务器</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure>
 <p>默认情况下，访问网址为：<a href="http://localhost:4000/。" target="_blank" rel="noopener">http://localhost:4000/。</a><br>可以在本地对修改进行预览。</p>
-<h6 id="部署网站"><a href="#部署网站" class="headerlink" title="部署网站"></a>部署网站</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+<h6 id="部署网站"><a href="#部署网站" class="headerlink" title="部署网站"></a>部署网站</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure>
 <p>将本地博客部署到GitHub上</p>
-<h6 id="新建文章"><a href="#新建文章" class="headerlink" title="新建文章"></a>新建文章</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new &quot;article&quot;</span><br></pre></td></tr></table></figure>
-<h6 id="新建页面"><a href="#新建页面" class="headerlink" title="新建页面"></a>新建页面</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new page &quot;pageName&quot;</span><br></pre></td></tr></table></figure>
+<h6 id="新建文章"><a href="#新建文章" class="headerlink" title="新建文章"></a>新建文章</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo new &quot;article&quot;</span><br></pre></td></tr></table></figure>
+<h6 id="新建页面"><a href="#新建页面" class="headerlink" title="新建页面"></a>新建页面</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;pageName&quot;</span><br></pre></td></tr></table></figure>
 <h1 id="四、将本地博客部署到GitHub"><a href="#四、将本地博客部署到GitHub" class="headerlink" title="四、将本地博客部署到GitHub"></a>四、将本地博客部署到GitHub</h1><h3 id="Github地址配置"><a href="#Github地址配置" class="headerlink" title="Github地址配置"></a>Github地址配置</h3><p>先配置博客根目录下_config.yml文件的deploy部分：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repository: https://username:password@github.com/RaphetS/RaphetS.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repository: https://username:password@github.com/RaphetS/RaphetS.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
 <p>其中username为Github账号的用户名，password为Github账号的密码。</p>
 <p>账号、密码后面的部分为你的仓库地址</p>
 <h3 id="发布博客"><a href="#发布博客" class="headerlink" title="发布博客"></a>发布博客</h3><p>在博客的根目录的git命令行中，执行hexo -d命令，就把本地博客部署到了Github上了。</p>
@@ -445,10 +434,10 @@
 <p>这是官方主题网站，你可以去上面找你自己想要的主题。</p>
 <p>我用的是Next主题，GitHub地址<a href="https://github.com/iissnan/hexo-theme-next" target="_blank" rel="noopener">https://github.com/iissnan/hexo-theme-next</a></p>
 <h6 id="1、下载主题"><a href="#1、下载主题" class="headerlink" title="1、下载主题"></a>1、下载主题</h6><p>在博客根目录打开git命令行，输入以下命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/iissnan/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/iissnan/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
 <p>主题会下载到themes文件夹内</p>
 <h6 id="2、使用主题"><a href="#2、使用主题" class="headerlink" title="2、使用主题"></a>2、使用主题</h6><p>打开博客根目录下_config.yml文件，找到theme配置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">theme: next</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">theme: next</span><br></pre></td></tr></table></figure>
 <p>然后使用hexo g重新生成静态页面，hexo s 打开本地服务，可以去localhost:4000/中查看效果了。</p>
 
       
@@ -579,7 +568,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -601,7 +590,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -821,113 +810,6 @@
 
 
   
-
-  
-  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
-  <script>AV.initialize("gMS2ysidVy5hObnQjnQICL1R-gzGzoHsz", "g80fnsi4mFxJQ4mfo93R5DCR");</script>
-  <script>
-    function showTime(Counter) {
-      var query = new AV.Query(Counter);
-      var entries = [];
-      var $visitors = $(".leancloud_visitors");
-
-      $visitors.each(function () {
-        entries.push( $(this).attr("id").trim() );
-      });
-
-      query.containedIn('url', entries);
-      query.find()
-        .done(function (results) {
-          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
-
-          if (results.length === 0) {
-            $visitors.find(COUNT_CONTAINER_REF).text(0);
-            return;
-          }
-
-          for (var i = 0; i < results.length; i++) {
-            var item = results[i];
-            var url = item.get('url');
-            var time = item.get('time');
-            var element = document.getElementById(url);
-
-            $(element).find(COUNT_CONTAINER_REF).text(time);
-          }
-          for(var i = 0; i < entries.length; i++) {
-            var url = entries[i];
-            var element = document.getElementById(url);
-            var countSpan = $(element).find(COUNT_CONTAINER_REF);
-            if( countSpan.text() == '') {
-              countSpan.text(0);
-            }
-          }
-        })
-        .fail(function (object, error) {
-          console.log("Error: " + error.code + " " + error.message);
-        });
-    }
-
-    function addCount(Counter) {
-      var $visitors = $(".leancloud_visitors");
-      var url = $visitors.attr('id').trim();
-      var title = $visitors.attr('data-flag-title').trim();
-      var query = new AV.Query(Counter);
-
-      query.equalTo("url", url);
-      query.find({
-        success: function(results) {
-          if (results.length > 0) {
-            var counter = results[0];
-            counter.fetchWhenSave(true);
-            counter.increment("time");
-            counter.save(null, {
-              success: function(counter) {
-                var $element = $(document.getElementById(url));
-                $element.find('.leancloud-visitors-count').text(counter.get('time'));
-              },
-              error: function(counter, error) {
-                console.log('Failed to save Visitor num, with error message: ' + error.message);
-              }
-            });
-          } else {
-            var newcounter = new Counter();
-            /* Set ACL */
-            var acl = new AV.ACL();
-            acl.setPublicReadAccess(true);
-            acl.setPublicWriteAccess(true);
-            newcounter.setACL(acl);
-            /* End Set ACL */
-            newcounter.set("title", title);
-            newcounter.set("url", url);
-            newcounter.set("time", 1);
-            newcounter.save(null, {
-              success: function(newcounter) {
-                var $element = $(document.getElementById(url));
-                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
-              },
-              error: function(newcounter, error) {
-                console.log('Failed to create');
-              }
-            });
-          }
-        },
-        error: function(error) {
-          console.log('Error:' + error.code + " " + error.message);
-        }
-      });
-    }
-
-    $(function() {
-      var Counter = AV.Object.extend("Counter");
-      if ($('.leancloud_visitors').length == 1) {
-        addCount(Counter);
-      } else if ($('.post-title-link').length > 1) {
-        showTime(Counter);
-      }
-    });
-  </script>
-
-
 
   
 
