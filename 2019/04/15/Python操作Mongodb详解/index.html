@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="尚拙">
 <meta property="og:description" content="最近使用python爬虫，使用的是mongodb，经常需要通过python代码操作mongodb，记录一下，方便以后查找。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-04-16T06:21:48.832Z">
+<meta property="og:updated_time" content="2019-04-16T06:23:14.503Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python操作Mongodb详解">
 <meta name="twitter:description" content="最近使用python爬虫，使用的是mongodb，经常需要通过python代码操作mongodb，记录一下，方便以后查找。">
@@ -318,7 +318,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-04-16T14:21:48+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2019-04-16T14:23:14+08:00">
                 2019-04-16
               </time>
             
@@ -396,22 +396,22 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pip install pymongo</span><br></pre></td></tr></table></figure>
 <p>3、启动mongodb服务</p>
 <h1 id="连接MongoDB"><a href="#连接MongoDB" class="headerlink" title="连接MongoDB"></a>连接MongoDB</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import pymongo</span><br><span class="line"></span><br><span class="line">conn = pymongo.MongoClient(&apos;localhost&apos;, 27017)</span><br><span class="line"></span><br><span class="line">my_db = conn[&quot;test_db&quot;]</span><br><span class="line"></span><br><span class="line">my_collection = my_db[&quot;test_collection&quot;]</span><br></pre></td></tr></table></figure>
-<h5 id="连接MongoDB-1"><a href="#连接MongoDB-1" class="headerlink" title="连接MongoDB"></a>连接MongoDB</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">conn = pymongo.MongoClient(&apos;localhost&apos;, 27017)</span><br></pre></td></tr></table></figure>
-<h5 id="新建一个数据库，或者使用某个数据库"><a href="#新建一个数据库，或者使用某个数据库" class="headerlink" title="新建一个数据库，或者使用某个数据库"></a>新建一个数据库，或者使用某个数据库</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">my_db = conn[&quot;test_db&quot;]</span><br></pre></td></tr></table></figure>
-<h5 id="新建一个集合，或者使用数据库中的某个集合"><a href="#新建一个集合，或者使用数据库中的某个集合" class="headerlink" title="新建一个集合，或者使用数据库中的某个集合"></a>新建一个集合，或者使用数据库中的某个集合</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">my_collection = my_db[&quot;test_collection&quot;]</span><br></pre></td></tr></table></figure>
-<h1 id="增"><a href="#增" class="headerlink" title="增"></a>增</h1><h5 id="插入一条数据"><a href="#插入一条数据" class="headerlink" title="插入一条数据"></a>插入一条数据</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">data1 = &#123;</span><br><span class="line">          &quot;name&quot;: “zhangsan”,</span><br><span class="line">          &quot;age&quot;: 10,</span><br><span class="line">         &#125;</span><br><span class="line">        </span><br><span class="line">my_collection.insert_one(data)</span><br></pre></td></tr></table></figure>
+<h6 id="连接MongoDB-1"><a href="#连接MongoDB-1" class="headerlink" title="连接MongoDB"></a>连接MongoDB</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">conn = pymongo.MongoClient(&apos;localhost&apos;, 27017)</span><br></pre></td></tr></table></figure>
+<h6 id="新建一个数据库，或者使用某个数据库"><a href="#新建一个数据库，或者使用某个数据库" class="headerlink" title="新建一个数据库，或者使用某个数据库"></a>新建一个数据库，或者使用某个数据库</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">my_db = conn[&quot;test_db&quot;]</span><br></pre></td></tr></table></figure>
+<h6 id="新建一个集合，或者使用数据库中的某个集合"><a href="#新建一个集合，或者使用数据库中的某个集合" class="headerlink" title="新建一个集合，或者使用数据库中的某个集合"></a>新建一个集合，或者使用数据库中的某个集合</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">my_collection = my_db[&quot;test_collection&quot;]</span><br></pre></td></tr></table></figure>
+<h1 id="增"><a href="#增" class="headerlink" title="增"></a>增</h1><h6 id="插入一条数据"><a href="#插入一条数据" class="headerlink" title="插入一条数据"></a>插入一条数据</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">data1 = &#123;</span><br><span class="line">          &quot;name&quot;: “zhangsan”,</span><br><span class="line">          &quot;age&quot;: 10,</span><br><span class="line">         &#125;</span><br><span class="line">        </span><br><span class="line">my_collection.insert_one(data)</span><br></pre></td></tr></table></figure>
 <p>插入的数据必须是字典格式  </p>
-<h5 id="插入多条数据"><a href="#插入多条数据" class="headerlink" title="插入多条数据"></a>插入多条数据</h5>  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">data1 = &#123;</span><br><span class="line">          &quot;name&quot;: “zhangsan”,</span><br><span class="line">          &quot;age&quot;: 10,</span><br><span class="line">         &#125;</span><br><span class="line">          </span><br><span class="line">data2 = &#123;</span><br><span class="line">          &quot;name&quot;:  “lisi”,</span><br><span class="line">          &quot;age&quot;: 24,</span><br><span class="line">         &#125;      </span><br><span class="line">          </span><br><span class="line">my_collection.insert_many([data1,date2])</span><br></pre></td></tr></table></figure>
-<h1 id="查"><a href="#查" class="headerlink" title="查"></a>查</h1><h5 id="查询所有数据"><a href="#查询所有数据" class="headerlink" title="查询所有数据"></a>查询所有数据</h5><p> 例子：查询my_collection集合所有数据</p>
+<h6 id="插入多条数据"><a href="#插入多条数据" class="headerlink" title="插入多条数据"></a>插入多条数据</h6>  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">data1 = &#123;</span><br><span class="line">          &quot;name&quot;: “zhangsan”,</span><br><span class="line">          &quot;age&quot;: 10,</span><br><span class="line">         &#125;</span><br><span class="line">          </span><br><span class="line">data2 = &#123;</span><br><span class="line">          &quot;name&quot;:  “lisi”,</span><br><span class="line">          &quot;age&quot;: 24,</span><br><span class="line">         &#125;      </span><br><span class="line">          </span><br><span class="line">my_collection.insert_many([data1,date2])</span><br></pre></td></tr></table></figure>
+<h1 id="查"><a href="#查" class="headerlink" title="查"></a>查</h1><h6 id="查询所有数据"><a href="#查询所有数据" class="headerlink" title="查询所有数据"></a>查询所有数据</h6><p> 例子：查询my_collection集合所有数据</p>
  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">result = my_collection.find()</span><br></pre></td></tr></table></figure>
 <p> 查询结果为字典集合</p>
-<h5 id="查询一条数据"><a href="#查询一条数据" class="headerlink" title="查询一条数据"></a>查询一条数据</h5><p>例子：查询my_collection集合中“name”为”zhangsan”的第一条数据</p>
+<h6 id="查询一条数据"><a href="#查询一条数据" class="headerlink" title="查询一条数据"></a>查询一条数据</h6><p>例子：查询my_collection集合中“name”为”zhangsan”的第一条数据</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">result = my_collection.find_one(&#123;&apos;name&apos;: ‘zhangsan’&#125;)</span><br></pre></td></tr></table></figure>
 <p>查询结果为字典对象</p>
-<h5 id="查询多条数据"><a href="#查询多条数据" class="headerlink" title="查询多条数据"></a>查询多条数据</h5><p>例子：查询my_collection集合中“age”为10的所有数据</p>
+<h6 id="查询多条数据"><a href="#查询多条数据" class="headerlink" title="查询多条数据"></a>查询多条数据</h6><p>例子：查询my_collection集合中“age”为10的所有数据</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">result = my_collection.find(&#123;&apos;age&apos;:10&#125;)</span><br></pre></td></tr></table></figure>
 <p> 查询结果为字典集合</p>
-<h5 id="条件查询"><a href="#条件查询" class="headerlink" title="条件查询"></a>条件查询</h5><table>
+<h6 id="条件查询"><a href="#条件查询" class="headerlink" title="条件查询"></a>条件查询</h6><table>
 <thead>
 <tr>
 <th style="text-align:center">符号</th>
@@ -449,7 +449,7 @@
 </table>
 <p>例子：查询my_collection集合中“age”大于10的所有数据</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">result = my_collection.find(&#123;&apos;age&apos;: &#123;&apos;$gt&apos;: 10&#125;&#125;)</span><br></pre></td></tr></table></figure>
-<h5 id="使用正则表达式查询"><a href="#使用正则表达式查询" class="headerlink" title="使用正则表达式查询"></a>使用正则表达式查询</h5><p>例子：查询my_collection集合中“name”中第一个字母为“z”的所有数据</p>
+<h6 id="使用正则表达式查询"><a href="#使用正则表达式查询" class="headerlink" title="使用正则表达式查询"></a>使用正则表达式查询</h6><p>例子：查询my_collection集合中“name”中第一个字母为“z”的所有数据</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">myquery = &#123; &quot;name&quot;: &#123; &quot;$regex&quot;: &quot;^z&quot; &#125; &#125;</span><br><span class="line">result = my_collection.find(myquery)</span><br></pre></td></tr></table></figure>
 <p> 查询结果为字典集合</p>
 
@@ -638,7 +638,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#准备工作"><span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#连接MongoDB"><span class="nav-text">连接MongoDB</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#连接MongoDB-1"><span class="nav-text">连接MongoDB</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#新建一个数据库，或者使用某个数据库"><span class="nav-text">新建一个数据库，或者使用某个数据库</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#新建一个集合，或者使用数据库中的某个集合"><span class="nav-text">新建一个集合，或者使用数据库中的某个集合</span></a></li></ol></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#增"><span class="nav-text">增</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#插入一条数据"><span class="nav-text">插入一条数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#插入多条数据"><span class="nav-text">插入多条数据</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查"><span class="nav-text">查</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#查询所有数据"><span class="nav-text">查询所有数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#查询一条数据"><span class="nav-text">查询一条数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#查询多条数据"><span class="nav-text">查询多条数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#条件查询"><span class="nav-text">条件查询</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用正则表达式查询"><span class="nav-text">使用正则表达式查询</span></a></li></ol></li></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#准备工作"><span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#连接MongoDB"><span class="nav-text">连接MongoDB</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#连接MongoDB-1"><span class="nav-text">连接MongoDB</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#新建一个数据库，或者使用某个数据库"><span class="nav-text">新建一个数据库，或者使用某个数据库</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#新建一个集合，或者使用数据库中的某个集合"><span class="nav-text">新建一个集合，或者使用数据库中的某个集合</span></a></li></ol></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#增"><span class="nav-text">增</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#插入一条数据"><span class="nav-text">插入一条数据</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#插入多条数据"><span class="nav-text">插入多条数据</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查"><span class="nav-text">查</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#查询所有数据"><span class="nav-text">查询所有数据</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#查询一条数据"><span class="nav-text">查询一条数据</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#查询多条数据"><span class="nav-text">查询多条数据</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#条件查询"><span class="nav-text">条件查询</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#使用正则表达式查询"><span class="nav-text">使用正则表达式查询</span></a></li></ol></li></div>
             
 
           </div>
