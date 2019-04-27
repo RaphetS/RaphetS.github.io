@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo,">
+  <meta name="keywords" content="git,">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="记录一下本网站的搭建过程">
-<meta name="keywords" content="Hexo">
+<meta name="description" content="记录如何将本地现有项目添加到远程Git仓库">
+<meta name="keywords" content="git">
 <meta property="og:type" content="article">
-<meta property="og:title" content="GitHub+Hexo搭建个人博客教程">
-<meta property="og:url" content="http://yoursite.com/2019/03/21/GitHub+Hexo搭建个人博客教程/index.html">
+<meta property="og:title" content="如何将本地项目添加到Git远程仓库？">
+<meta property="og:url" content="http://yoursite.com/archives/60074.html">
 <meta property="og:site_name" content="尚拙">
-<meta property="og:description" content="记录一下本网站的搭建过程">
+<meta property="og:description" content="记录如何将本地现有项目添加到远程Git仓库">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-03-27T08:23:01.324Z">
+<meta property="og:updated_time" content="2019-04-27T07:06:17.109Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="GitHub+Hexo搭建个人博客教程">
-<meta name="twitter:description" content="记录一下本网站的搭建过程">
+<meta name="twitter:title" content="如何将本地项目添加到Git远程仓库？">
+<meta name="twitter:description" content="记录如何将本地现有项目添加到远程Git仓库">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/03/21/GitHub+Hexo搭建个人博客教程/">
+  <link rel="canonical" href="http://yoursite.com/archives/60074.html">
 
 
 
 
 
-  <title>GitHub+Hexo搭建个人博客教程 | 尚拙</title>
+  <title>如何将本地项目添加到Git远程仓库？ | 尚拙</title>
   
 
 
@@ -273,7 +273,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/21/GitHub+Hexo搭建个人博客教程/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/archives/60074.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="阮烁">
@@ -290,7 +290,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">GitHub+Hexo搭建个人博客教程</h1>
+          <h1 class="post-title" itemprop="name headline">如何将本地项目添加到Git远程仓库？</h1>
         
 
         <div class="post-meta">
@@ -302,8 +302,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-21T18:34:41+08:00">
-                2019-03-21
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-06T18:07:37+08:00">
+                2019-04-06
               </time>
             
 
@@ -318,8 +318,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-03-27T16:23:01+08:00">
-                2019-03-27
+              <time title="更新于" itemprop="dateModified" datetime="2019-04-27T15:06:17+08:00">
+                2019-04-27
               </time>
             
           </span>
@@ -361,6 +361,16 @@
 
           
             
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/archives/60074.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/archives/60074.html" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
           
 
           
@@ -372,7 +382,7 @@
 
           
               <div class="post-description">
-                  记录一下本网站的搭建过程
+                  记录如何将本地现有项目添加到远程Git仓库
               </div>
           
 
@@ -389,56 +399,16 @@
       
 
       
-        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>本教程只针对win10系统，写的比较精简，方便自己以后查看，适合有一定技术基础的人阅读。</p>
-<p>本博客基于Hexo+GitHub搭建，也可以使用码云Gitee，原理是一样的。</p>
-<p>搭建博客过程其实比较简单，主要是后期主题优化修改比较花时间。</p>
-<h1 id="二、准备工作"><a href="#二、准备工作" class="headerlink" title="二、准备工作"></a>二、准备工作</h1><p>系统环境：win10系统</p>
-<p>1、安装Git</p>
-<p>官网<a href="https://git-scm.com/" target="_blank" rel="noopener">https://git-scm.com/</a></p>
-<p>2、安装node.js</p>
-<p>官网<a href="https://nodejs.org/en/" target="_blank" rel="noopener">https://nodejs.org/en/</a></p>
-<p>3、注册一个GitHub账号</p>
-<p>官网<a href="https://github.com/" target="_blank" rel="noopener">https://github.com/</a></p>
-<p>登录Github，新建一个仓库，命名为username.github.io，其中username为你的Github用户名。</p>
-<p>例如我新建的仓库为raphets.github.io，那么后面我们就可以通过<a href="https://raphets.github.io/访问我们的博客。" target="_blank" rel="noopener">https://raphets.github.io/访问我们的博客。</a></p>
-<p>注意，username必须是你的用户名</p>
-<h1 id="三、Hexo环境搭建"><a href="#三、Hexo环境搭建" class="headerlink" title="三、Hexo环境搭建"></a>三、Hexo环境搭建</h1><p>官方文档：<a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="noopener">https://hexo.io/zh-cn/docs/</a></p>
-<h3 id="1、hexo简介"><a href="#1、hexo简介" class="headerlink" title="1、hexo简介"></a>1、hexo简介</h3><p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
-<h3 id="2、安装"><a href="#2、安装" class="headerlink" title="2、安装"></a>2、安装</h3><p>在任意一个地方新建一个文件夹，用以存放本地博客文件，比如我的是E:\Blog</p>
-<p>进入该文件夹，右键选择git bash进入git命令行，输入以下命令</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm install -g hexo</span><br></pre></td></tr></table></figure>
-<h3 id="3、初始化"><a href="#3、初始化" class="headerlink" title="3、初始化"></a>3、初始化</h3><p>继续输入命令进行初始化</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
-<h3 id="5、生成静态文件"><a href="#5、生成静态文件" class="headerlink" title="5、生成静态文件"></a>5、生成静态文件</h3><p>继续输入命令生成静态文件</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure>
-<h3 id="6、启动服务"><a href="#6、启动服务" class="headerlink" title="6、启动服务"></a>6、启动服务</h3><p>继续输入命令开启本地预览服务<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure></p>
-<p>此时打开浏览器访问 <a href="http://localhost:4000，即可看到内容，hexo环境到此已经搭建完成" target="_blank" rel="noopener">http://localhost:4000，即可看到内容，hexo环境到此已经搭建完成</a></p>
-<h3 id="7、-hexo常见命令说明"><a href="#7、-hexo常见命令说明" class="headerlink" title="7、 hexo常见命令说明"></a>7、 hexo常见命令说明</h3><h6 id="清除缓存文件-db-json-和已生成的静态文件-public"><a href="#清除缓存文件-db-json-和已生成的静态文件-public" class="headerlink" title="清除缓存文件 (db.json) 和已生成的静态文件 (public)"></a>清除缓存文件 (db.json) 和已生成的静态文件 (public)</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br></pre></td></tr></table></figure>
-<p>在某些情况（尤其是更换主题后），如果发现您对站点的更改无论如何也不生效，您可能需要运行该命令。</p>
-<h6 id="生成静态文件"><a href="#生成静态文件" class="headerlink" title="生成静态文件"></a>生成静态文件</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure>
-<p>每次对博客文件或者相关配置进行了修改，需要执行该命令</p>
-<h6 id="启动服务器"><a href="#启动服务器" class="headerlink" title="启动服务器"></a>启动服务器</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure>
-<p>默认情况下，访问网址为：<a href="http://localhost:4000/。" target="_blank" rel="noopener">http://localhost:4000/。</a><br>可以在本地对修改进行预览。</p>
-<h6 id="部署网站"><a href="#部署网站" class="headerlink" title="部署网站"></a>部署网站</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure>
-<p>将本地博客部署到GitHub上</p>
-<h6 id="新建文章"><a href="#新建文章" class="headerlink" title="新建文章"></a>新建文章</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo new &quot;article&quot;</span><br></pre></td></tr></table></figure>
-<h6 id="新建页面"><a href="#新建页面" class="headerlink" title="新建页面"></a>新建页面</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;pageName&quot;</span><br></pre></td></tr></table></figure>
-<h1 id="四、将本地博客部署到GitHub"><a href="#四、将本地博客部署到GitHub" class="headerlink" title="四、将本地博客部署到GitHub"></a>四、将本地博客部署到GitHub</h1><h3 id="Github地址配置"><a href="#Github地址配置" class="headerlink" title="Github地址配置"></a>Github地址配置</h3><p>先配置博客根目录下_config.yml文件的deploy部分：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repository: https://username:password@github.com/RaphetS/RaphetS.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
-<p>其中username为Github账号的用户名，password为Github账号的密码。</p>
-<p>账号、密码后面的部分为你的仓库地址</p>
-<h3 id="发布博客"><a href="#发布博客" class="headerlink" title="发布博客"></a>发布博客</h3><p>在博客的根目录的git命令行中，执行hexo -d命令，就把本地博客部署到了Github上了。</p>
-<p>过一段时间，访问<a href="https://username.github.io就能访问你的博客了，username为你的Github用户名" target="_blank" rel="noopener">https://username.github.io就能访问你的博客了，username为你的Github用户名</a></p>
-<h1 id="五、博客美化"><a href="#五、博客美化" class="headerlink" title="五、博客美化"></a>五、博客美化</h1><p>hexo 默认的主题比较丑，为了能够更好的装B，我们需要把博客美化一下，显得有逼格一些。</p>
-<h3 id="更换主题"><a href="#更换主题" class="headerlink" title="更换主题"></a>更换主题</h3><p><a href="https://hexo.io/themes/" target="_blank" rel="noopener">https://hexo.io/themes/</a></p>
-<p>这是官方主题网站，你可以去上面找你自己想要的主题。</p>
-<p>我用的是Next主题，GitHub地址<a href="https://github.com/iissnan/hexo-theme-next" target="_blank" rel="noopener">https://github.com/iissnan/hexo-theme-next</a></p>
-<h6 id="1、下载主题"><a href="#1、下载主题" class="headerlink" title="1、下载主题"></a>1、下载主题</h6><p>在博客根目录打开git命令行，输入以下命令</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/iissnan/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
-<p>主题会下载到themes文件夹内</p>
-<h6 id="2、使用主题"><a href="#2、使用主题" class="headerlink" title="2、使用主题"></a>2、使用主题</h6><p>打开博客根目录下_config.yml文件，找到theme配置</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">theme: next</span><br></pre></td></tr></table></figure>
-<p>然后使用hexo g重新生成静态页面，hexo s 打开本地服务，可以去localhost:4000/中查看效果了。</p>
+        <p>进入项目根目录，右键选择git bash , 打开git命令行（请先安装Git）</p>
+<p>输入以下git命令</p>
+<h3 id="1、初始化项目"><a href="#1、初始化项目" class="headerlink" title="1、初始化项目"></a>1、初始化项目</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure>
+<h3 id="2、将当前目录下修改的所有代码从工作区添加到暂存区"><a href="#2、将当前目录下修改的所有代码从工作区添加到暂存区" class="headerlink" title="2、将当前目录下修改的所有代码从工作区添加到暂存区"></a>2、将当前目录下修改的所有代码从工作区添加到暂存区</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git add .</span><br></pre></td></tr></table></figure>
+<p> . 代表当前目录</p>
+<h3 id="3、将缓存区内容添加到本地仓库"><a href="#3、将缓存区内容添加到本地仓库" class="headerlink" title="3、将缓存区内容添加到本地仓库"></a>3、将缓存区内容添加到本地仓库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git commit -m &quot;本次提交内容注释&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="4、添加远程仓库地址并附上密码"><a href="#4、添加远程仓库地址并附上密码" class="headerlink" title="4、添加远程仓库地址并附上密码"></a>4、添加远程仓库地址并附上密码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git remote add origin https://username:password@github.com/RaphetS/BaseAndroid.git</span><br></pre></td></tr></table></figure>
+<p>username为远程仓库的用户名，password为远程仓库的密码，本例即为Github的用户名和密码。<br>@后面的地址为远程仓库的地址.</p>
+<h3 id="5、将本地分支的更新推送到远程仓库"><a href="#5、将本地分支的更新推送到远程仓库" class="headerlink" title="5、将本地分支的更新推送到远程仓库"></a>5、将本地分支的更新推送到远程仓库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
+<p>将本地的master分支推送到origin主机，同时指定origin为默认主机，后面就可以不加任何参数使用git push了。</p>
 
       
     </div>
@@ -456,7 +426,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+            <a href="/tags/git/" rel="tag"># git</a>
           
         </div>
       
@@ -469,14 +439,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/archives/17527.html" rel="next" title="Python爬虫模拟登录的3种方法">
+                <i class="fa fa-chevron-left"></i> Python爬虫模拟登录的3种方法
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/03/22/Python爬虫模拟登录的3种思路/" rel="prev" title="Python爬虫模拟登录的3种方法">
-                Python爬虫模拟登录的3种方法 <i class="fa fa-chevron-right"></i>
+              <a href="/archives/49500.html" rel="prev" title="Python操作Mongodb详解">
+                Python操作Mongodb详解 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -519,6 +493,14 @@
           
 
   
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
 
 
 
@@ -623,7 +605,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、前言"><span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、准备工作"><span class="nav-text">二、准备工作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、Hexo环境搭建"><span class="nav-text">三、Hexo环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、hexo简介"><span class="nav-text">1、hexo简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、安装"><span class="nav-text">2、安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、初始化"><span class="nav-text">3、初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、生成静态文件"><span class="nav-text">5、生成静态文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6、启动服务"><span class="nav-text">6、启动服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7、-hexo常见命令说明"><span class="nav-text">7、 hexo常见命令说明</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#清除缓存文件-db-json-和已生成的静态文件-public"><span class="nav-text">清除缓存文件 (db.json) 和已生成的静态文件 (public)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#生成静态文件"><span class="nav-text">生成静态文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#启动服务器"><span class="nav-text">启动服务器</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#部署网站"><span class="nav-text">部署网站</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#新建文章"><span class="nav-text">新建文章</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#新建页面"><span class="nav-text">新建页面</span></a></li></ol></li></ol></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#四、将本地博客部署到GitHub"><span class="nav-text">四、将本地博客部署到GitHub</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Github地址配置"><span class="nav-text">Github地址配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发布博客"><span class="nav-text">发布博客</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、博客美化"><span class="nav-text">五、博客美化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#更换主题"><span class="nav-text">更换主题</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1、下载主题"><span class="nav-text">1、下载主题</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2、使用主题"><span class="nav-text">2、使用主题</span></a></li></ol></li></ol></li></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、初始化项目"><span class="nav-text">1、初始化项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、将当前目录下修改的所有代码从工作区添加到暂存区"><span class="nav-text">2、将当前目录下修改的所有代码从工作区添加到暂存区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、将缓存区内容添加到本地仓库"><span class="nav-text">3、将缓存区内容添加到本地仓库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、添加远程仓库地址并附上密码"><span class="nav-text">4、添加远程仓库地址并附上密码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、将本地分支的更新推送到远程仓库"><span class="nav-text">5、将本地分支的更新推送到远程仓库</span></a></li></ol></div>
             
 
           </div>
@@ -796,6 +778,43 @@
 
 
 
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'RaphetS',
+            repo: 'RaphetS.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '6b473ec87510b43657f491b237987f5044d2d427',
+            
+                client_id: 'ee62f38c2a95302edc73'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
 
 
 
