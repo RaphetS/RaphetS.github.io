@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="尚拙">
 <meta property="og:description" content="最近爬虫的时候，有些网站需要登录才能爬，记录一下python模拟登录的几种方法。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-04-27T07:06:17.107Z">
+<meta property="og:updated_time" content="2019-04-27T07:49:32.176Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python爬虫模拟登录的3种方法">
 <meta name="twitter:description" content="最近爬虫的时候，有些网站需要登录才能爬，记录一下python模拟登录的几种方法。">
@@ -318,7 +318,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-04-27T15:06:17+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2019-04-27T15:49:32+08:00">
                 2019-04-27
               </time>
             
@@ -381,10 +381,6 @@
           
 
           
-              <div class="post-description">
-                  最近爬虫的时候，有些网站需要登录才能爬，记录一下python模拟登录的几种方法。
-              </div>
-          
 
         </div>
       </header>
@@ -399,7 +395,9 @@
       
 
       
-        <h1 id="方法一-：通过接口实现登录"><a href="#方法一-：通过接口实现登录" class="headerlink" title="方法一 ：通过接口实现登录"></a>方法一 ：通过接口实现登录</h1><p>1、在web浏览器上打开登录页面，开启浏览器的开发者模式，在浏览器上登录，然后在开发者模式里面分析登录之后请求的地址，找到登录接口，以及请求参数。</p>
+        <p>最近爬虫的时候，有些网站需要登录才能爬，记录一下python模拟登录的几种方法。</p>
+<a id="more"></a>
+<h1 id="方法一-：通过接口实现登录"><a href="#方法一-：通过接口实现登录" class="headerlink" title="方法一 ：通过接口实现登录"></a>方法一 ：通过接口实现登录</h1><p>1、在web浏览器上打开登录页面，开启浏览器的开发者模式，在浏览器上登录，然后在开发者模式里面分析登录之后请求的地址，找到登录接口，以及请求参数。</p>
 <p>2、使用python的requests框架，请求登录接口，并保存返回的cookie，从而实现登录。</p>
 <p><strong>缺点 : 有的网站，登录需要传token，以及其他加密的参数，这种情况处理起来有点复杂</strong></p>
 <h1 id="方法二-：使用已知的cookie直接访问"><a href="#方法二-：使用已知的cookie直接访问" class="headerlink" title="方法二 ：使用已知的cookie直接访问"></a>方法二 ：使用已知的cookie直接访问</h1><p>1、直接在网页端登录，然后打开浏览器的开发者模式，直接在登录之后的网络请求头中，找到cookie，复制出来。</p>
@@ -788,6 +786,11 @@
     
 <!-- END LOCAL -->
 
+    
+      <style>
+        a.gitment-editor-footer-tip { display: none; }
+        .gitment-container.gitment-footer-container { display: none; }
+      </style>
     
 
     
