@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/avatar.jpg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="序列化，将对象的状态信息转换为可以存储或传输的形式的过程。 在序列化期间，对象将其当前状态写入到临时或持久性存储区。以后，可以通过从存储区中读取或反序列化对象的状态，重新创建该对象。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android序列化">
+<meta property="og:url" content="http://yoursite.com/archives/aa588849.html">
+<meta property="og:site_name" content="尚拙">
+<meta property="og:description" content="序列化，将对象的状态信息转换为可以存储或传输的形式的过程。 在序列化期间，对象将其当前状态写入到临时或持久性存储区。以后，可以通过从存储区中读取或反序列化对象的状态，重新创建该对象。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-04-29T07:15:09.135Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android序列化">
+<meta name="twitter:description" content="序列化，将对象的状态信息转换为可以存储或传输的形式的过程。 在序列化期间，对象将其当前状态写入到临时或持久性存储区。以后，可以通过从存储区中读取或反序列化对象的状态，重新创建该对象。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/archives/aa588849.html">
+
+
+
+
+
+  <title>Android序列化 | 尚拙</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">尚拙</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">万事起于忽微，量变引起质变</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tool">
+          <a href="/tool/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-wrench"></i> <br>
+            
+            工具
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/archives/aa588849.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="阮烁">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="尚拙">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android序列化</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-29T09:52:35+08:00">
+                2019-04-29
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-04-29T15:15:09+08:00">
+                2019-04-29
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文章/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文章</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文章/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/archives/aa588849.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/archives/aa588849.html" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>序列化，将对象的状态信息转换为可以存储或传输的形式的过程。</p>
+<p>在序列化期间，对象将其当前状态写入到临时或持久性存储区。以后，可以通过从存储区中读取或反序列化对象的状态，重新创建该对象。</p>
+<a id="more"></a>
+<h1 id="一、概念"><a href="#一、概念" class="headerlink" title="一、概念"></a>一、概念</h1><p>Java序列化是指把Java对象转换为字节序列的过程；</p>
+<p>而Java反序列化是指把字节序列恢复为Java对象的过程。</p>
+<h1 id="二、用途"><a href="#二、用途" class="headerlink" title="二、用途"></a>二、用途</h1><p>1、实现了数据的持久化，通过序列化可以把数据永久地保存到硬盘上（通常存放在文件里）</p>
+<p>2、通过序列化对象在网络中传递对象。</p>
+<p>3、通过序列化对象在进程间传递对象。</p>
+<h1 id="三、Serializable接口实现序列化"><a href="#三、Serializable接口实现序列化" class="headerlink" title="三、Serializable接口实现序列化"></a>三、Serializable接口实现序列化</h1><p>Serializable的作用是为了保存对象的属性到本地文件、数据库、网络流、rmi以方便数据传输，当然这种传输可以是程序内的也可以是两个程序间的。</p>
+<p>对于Serializable，类只需要实现Serializable接口，并提供一个序列化版本id(serialVersionUID)即可。</p>
+<h4 id="Ⅰ、Android-Studio自动生成SerizlVersionUID"><a href="#Ⅰ、Android-Studio自动生成SerizlVersionUID" class="headerlink" title="Ⅰ、Android Studio自动生成SerizlVersionUID:"></a>Ⅰ、Android Studio自动生成SerizlVersionUID:</h4><p>1、File -&gt; Settings… -&gt; Editor -&gt; Inspections -&gt; Serialization issues -&gt; Serializable class without ‘serialVersionUID‘（选中）</p>
+<p>2、进入实现了Serializable中的类，选中类名，Alt+Enter弹出提示，然后直接导入完成.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">package org.raphets.democollection;</span><br><span class="line">import java.io.Serializable;</span><br><span class="line"></span><br><span class="line">public class Dog implements Serializable&#123;</span><br><span class="line">    private static final long serialVersionUID = -2457171891775313955L;</span><br><span class="line">    private String name;</span><br><span class="line">    private int age;</span><br><span class="line">    public Dog(String name, int age) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">    public String getName() &#123;</span><br><span class="line">        return name;</span><br><span class="line">    &#125;</span><br><span class="line">    public void setName(String name) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    public int getAge() &#123;</span><br><span class="line">        return age;</span><br><span class="line">    &#125;</span><br><span class="line">    public void setAge(int age) &#123;</span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Ⅱ、利用Serializable保存对象到本地"><a href="#Ⅱ、利用Serializable保存对象到本地" class="headerlink" title="Ⅱ、利用Serializable保存对象到本地"></a>Ⅱ、利用Serializable保存对象到本地</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">package org.raphets.democollection;</span><br><span class="line"></span><br><span class="line">import android.os.Environment;</span><br><span class="line">import android.support.v7.app.AppCompatActivity;</span><br><span class="line">import android.os.Bundle;</span><br><span class="line">import android.util.Log;</span><br><span class="line">import java.io.File;</span><br><span class="line">import java.io.FileInputStream;</span><br><span class="line">import java.io.FileNotFoundException;</span><br><span class="line">import java.io.FileOutputStream;</span><br><span class="line">import java.io.IOException;</span><br><span class="line">import java.io.ObjectInputStream;</span><br><span class="line">import java.io.ObjectOutputStream;</span><br><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.Collections;</span><br><span class="line">import java.util.LinkedList;</span><br><span class="line">import java.util.List;</span><br><span class="line"></span><br><span class="line">public class MainActivity extends AppCompatActivity &#123;</span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        storageSerializableData();</span><br><span class="line">        getSerializableData();</span><br><span class="line">    &#125;</span><br><span class="line">    /**</span><br><span class="line">     * 存储Serializable数据到本地</span><br><span class="line">     */</span><br><span class="line">    private void storageSerializableData() &#123;</span><br><span class="line">        List&lt;Dog&gt; mDogs = new ArrayList&lt;&gt;();</span><br><span class="line">        Dog dog1 = new Dog(&quot;a&quot;, 3);</span><br><span class="line">        Dog dog2 = new Dog(&quot;b&quot;, 4);</span><br><span class="line">        Dog dog3 = new Dog(&quot;c&quot;, 2);</span><br><span class="line">        mDogs.add(dog1);</span><br><span class="line">        mDogs.add(dog2);</span><br><span class="line">        mDogs.add(dog3);</span><br><span class="line">        FileOutputStream fos = null;</span><br><span class="line">        ObjectOutputStream oos = null;</span><br><span class="line">        try &#123;</span><br><span class="line">            File file = new File(Environment.getExternalStorageDirectory().toString()</span><br><span class="line">                    + &quot;/&quot; + &quot;dogs.dat&quot;);</span><br><span class="line">            if (!file.exists()) &#123;</span><br><span class="line">                file.createNewFile();</span><br><span class="line">            &#125;</span><br><span class="line">            fos = new FileOutputStream(file.toString());</span><br><span class="line">            oos = new ObjectOutputStream(fos);</span><br><span class="line">            oos.writeObject(mDogs);</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            Log.i(&quot;TAG&quot;,e.toString());</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                if (oos != null)</span><br><span class="line">                    oos.close();</span><br><span class="line">                if (fos != null)</span><br><span class="line">                    fos.close();</span><br><span class="line">            &#125; catch (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    /**</span><br><span class="line">     * 读取本地的Seriablizable数据</span><br><span class="line">     */</span><br><span class="line">    private void getSerializableData() &#123;</span><br><span class="line">        FileInputStream fis=null;</span><br><span class="line">        ObjectInputStream ois=null;</span><br><span class="line">        File file = new File(Environment.getExternalStorageDirectory().toString()</span><br><span class="line">                + &quot;/&quot; + &quot;dogs.dat&quot;);</span><br><span class="line">        if (file.exists())&#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                fis=new FileInputStream(file.toString());</span><br><span class="line">                ois=new ObjectInputStream(fis);</span><br><span class="line">               List&lt;Dog&gt; mDogs= (List&lt;Dog&gt;) ois.readObject();</span><br><span class="line">                for (Dog dog:mDogs)&#123;</span><br><span class="line">                    Log.i(&quot;Dog&quot;,dog.getName());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; catch (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="四、Parcelable接口实现序列化"><a href="#四、Parcelable接口实现序列化" class="headerlink" title="四、Parcelable接口实现序列化"></a>四、Parcelable接口实现序列化</h1><p>Android的Parcelable的设计初衷是因为Serializable效率过慢，为了在程序内不同组件间以及不同Android程序间(AIDL)高效的传输数据而设计，这些数据仅在内存中存在，Parcelable是通过IBinder通信的消息的载体。</p>
+<p>实现Parcelable接口主要可以分为一下几步： </p>
+<p>1）implements Parcelable。 </p>
+<p>2）重写writeToParcel方法，将你的对象序列化为一个Parcel对象，即：将类的数据写入外部提供的Parcel中，打包需要传递的数据到Parcel容器保存，以便从Parcel容器获取数据。 </p>
+<p>3）重写describeContents方法，内容接口描述，默认返回0即可。 </p>
+<p>4）实例化静态内部对象CREATOR实现接口Parcelable.Creator 。<br>注意:若将Parcel看成是一个流，则先通过writeToParcel把对象写到流里面，再通过createFromParcel从流里读取对象，因此类实现的写入顺序和读出顺序必须一致。 </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">package org.raphets.democollection;</span><br><span class="line">import android.os.Parcel;</span><br><span class="line">import android.os.Parcelable;</span><br><span class="line"></span><br><span class="line">public class Dog implements Parcelable&#123;</span><br><span class="line">    private String name;</span><br><span class="line">    private int age;</span><br><span class="line"></span><br><span class="line">    protected Dog(Parcel in) &#123;</span><br><span class="line">        name = in.readString();</span><br><span class="line">        age = in.readInt();</span><br><span class="line">    &#125;</span><br><span class="line">    public Dog(String name, int age) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">    public String getName() &#123;</span><br><span class="line">        return name;</span><br><span class="line">    &#125;</span><br><span class="line">    public void setName(String name) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    public int getAge() &#123;</span><br><span class="line">        return age;</span><br><span class="line">    &#125;</span><br><span class="line">    public void setAge(int age) &#123;</span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">    public static final Creator&lt;Dog&gt; CREATOR = new Creator&lt;Dog&gt;() &#123;</span><br><span class="line">        @Override</span><br><span class="line">        public Dog createFromParcel(Parcel in) &#123;</span><br><span class="line">            return new Dog(in);</span><br><span class="line">        &#125;</span><br><span class="line">        @Override</span><br><span class="line">        public Dog[] newArray(int size) &#123;</span><br><span class="line">            return new Dog[size];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    @Override</span><br><span class="line">    public int describeContents() &#123;</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    public void writeToParcel(Parcel parcel, int i) &#123;</span><br><span class="line">        parcel.writeString(name);</span><br><span class="line">        parcel.writeInt(age);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="五、Parcelable和Serializable的区别："><a href="#五、Parcelable和Serializable的区别：" class="headerlink" title="五、Parcelable和Serializable的区别："></a>五、Parcelable和Serializable的区别：</h1><p>1、在使用内存的时候Parcelable比Serializable的性能高。</p>
+<p>2、Serializable在序列化的时候会产生大量的临时变量，从而引起频繁的GC（内存回收）。</p>
+<p>3、Parcelable不能使用在将对象存储在磁盘上这种情况，因为在外界的变化下Parcelable不能很好的保证数据的持续性。</p>
+<p>4、在读写数据的时候,Parcelable是在内存中直接进行读写,而Serializable是通过使用IO流的形式将数据读写入在硬盘上</p>
+<p>5、Parcelable是以Ibinder作为信息载体的.在内存上的开销比较小,因此在内存之间进行数据传递的时候,Android推荐使用Parcelable</p>
+<h1 id="六、如何选择"><a href="#六、如何选择" class="headerlink" title="六、如何选择"></a>六、如何选择</h1><p>Parcelable的性能比Serializable好，在内存开销方面较小，所以在内存间数据传输时推荐使用Parcelable，如activity间传输数据。</p>
+<p>而Serializable可将数据持久化方便保存，所以在需要保存或网络传输数据时选择Serializable。</p>
+<p>Android不同版本Parcelable可能不同，所以在序列化到存储设备或者网络传输方面还是尽量选择Serializable接口。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/archives/49500.html" rel="next" title="Python操作Mongodb详解">
+                <i class="fa fa-chevron-left"></i> Python操作Mongodb详解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  <div>
+      
+          <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">
+              -------------本文结束,感谢您的阅读-------------
+        </div>
+    
+</div>
+
+      
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="阮烁">
+            
+              <p class="site-author-name" itemprop="name">阮烁</p>
+              <p class="site-description motion-element" itemprop="description">万事起于忽微，量变引起质变</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="298" height="52" src="//music.163.com/outchain/player?type=2&id=529267746&auto=1&height=32"></iframe>
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概念"><span class="nav-text">一、概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、用途"><span class="nav-text">二、用途</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、Serializable接口实现序列化"><span class="nav-text">三、Serializable接口实现序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Ⅰ、Android-Studio自动生成SerizlVersionUID"><span class="nav-text">Ⅰ、Android Studio自动生成SerizlVersionUID:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Ⅱ、利用Serializable保存对象到本地"><span class="nav-text">Ⅱ、利用Serializable保存对象到本地</span></a></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#四、Parcelable接口实现序列化"><span class="nav-text">四、Parcelable接口实现序列化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、Parcelable和Serializable的区别："><span class="nav-text">五、Parcelable和Serializable的区别：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、如何选择"><span class="nav-text">六、如何选择</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阮烁</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+      <style>
+        a.gitment-editor-footer-tip { display: none; }
+        .gitment-container.gitment-footer-container { display: none; }
+      </style>
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'RaphetS',
+            repo: 'RaphetS.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '6b473ec87510b43657f491b237987f5044d2d427',
+            
+                client_id: 'ee62f38c2a95302edc73'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/shizuku.model.json"},"display":{"position":"left","width":120,"height":250},"mobile":{"show":false},"log":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/click_love.js"></script>
