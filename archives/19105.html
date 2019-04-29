@@ -90,7 +90,7 @@
 <meta name="keywords" content="Hexo">
 <meta property="og:type" content="article">
 <meta property="og:title" content="GitHub+Hexo搭建个人博客教程">
-<meta property="og:url" content="http://yoursite.com/archives/19105.html">
+<meta property="og:url" content="https://raphets.github.io/archives/19105.html">
 <meta property="og:site_name" content="尚拙">
 <meta property="og:description" content="记录一下本网站的搭建过程">
 <meta property="og:locale" content="zh-Hans">
@@ -127,7 +127,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/archives/19105.html">
+  <link rel="canonical" href="https://raphets.github.io/archives/19105.html">
 
 
 
@@ -168,7 +168,7 @@
       </a>
     </div>
       
-        <p class="site-subtitle">万事起于忽微，量变引起质变</p>
+        <h1 class="site-subtitle" itemprop="description">万事起于忽微，量变引起质变</h1>
       
   </div>
 
@@ -280,7 +280,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/archives/19105.html">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/19105.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="阮烁">
@@ -297,7 +297,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">GitHub+Hexo搭建个人博客教程</h1>
+          <h2 class="post-title" itemprop="name headline">GitHub+Hexo搭建个人博客教程</h2>
         
 
         <div class="post-meta">
@@ -415,7 +415,7 @@
 <p>3、注册一个GitHub账号</p>
 <p>官网<a href="https://github.com/" target="_blank" rel="noopener">https://github.com/</a></p>
 <p>登录Github，新建一个仓库，命名为username.github.io，其中username为你的Github用户名。</p>
-<p>例如我新建的仓库为raphets.github.io，那么后面我们就可以通过<a href="https://raphets.github.io/访问我们的博客。" target="_blank" rel="noopener">https://raphets.github.io/访问我们的博客。</a></p>
+<p>例如我新建的仓库为raphets.github.io，那么后面我们就可以通过<a href="https://raphets.github.io/访问我们的博客。">https://raphets.github.io/访问我们的博客。</a></p>
 <p>注意，username必须是你的用户名</p>
 <h1 id="三、Hexo环境搭建"><a href="#三、Hexo环境搭建" class="headerlink" title="三、Hexo环境搭建"></a>三、Hexo环境搭建</h1><p>官方文档：<a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="noopener">https://hexo.io/zh-cn/docs/</a></p>
 <h3 id="1、hexo简介"><a href="#1、hexo简介" class="headerlink" title="1、hexo简介"></a>1、hexo简介</h3><p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
@@ -457,7 +457,7 @@
 <h1 id="六、添加gitment评论系统"><a href="#六、添加gitment评论系统" class="headerlink" title="六、添加gitment评论系统"></a>六、添加gitment评论系统</h1><p>Gitment 是作者实现的一款基于 GitHub Issues 的评论系统。<br>支持在前端直接引入，不需要任何后端代码。<br>可以在页面进行登录、查看、评论、点赞等操作，同时有完整的 Markdown / GFM 和代码高亮支持。<br>尤为适合各种基于 GitHub Pages 的静态博客或项目页面。</p>
 <h3 id="1、安装Gitment"><a href="#1、安装Gitment" class="headerlink" title="1、安装Gitment"></a>1、安装Gitment</h3><p>在你的blog根目录打开git命令行，输入以下命令<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm i --save gitment</span><br></pre></td></tr></table></figure></p>
 <h3 id="2、注册-OAuth-Application"><a href="#2、注册-OAuth-Application" class="headerlink" title="2、注册 OAuth Application"></a>2、注册 OAuth Application</h3><p>首先去<a href="https://github.com/settings/applications/new" target="_blank" rel="noopener">OAuth Application</a>来注册一个新的 OAuth Application。</p>
-<p>其中Authorization callback URL必须填写博客的地址，比如我的就是<a href="https://raphets.github.io/，其他的随便填。" target="_blank" rel="noopener">https://raphets.github.io/，其他的随便填。</a></p>
+<p>其中Authorization callback URL必须填写博客的地址，比如我的就是<a href="https://raphets.github.io/，其他的随便填。">https://raphets.github.io/，其他的随便填。</a></p>
 <p>注册之后会得到 client ID 和一个 client secret，后面会用到。</p>
 <h3 id="3、Gitment配置"><a href="#3、Gitment配置" class="headerlink" title="3、Gitment配置"></a>3、Gitment配置</h3><p>打开theme的_config.yml文件，我的文件目录是themes/next/_config.yml，中间的next就是当前使用的theme的文件夹。</p>
 <p>最新版本next主题默认已经集成了Gitment的，我们找到themes/next/_config.yml文件中Gitment配置，进行如下修改</p>
@@ -612,7 +612,7 @@
               <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="阮烁">
             
               <p class="site-author-name" itemprop="name">阮烁</p>
-              <p class="site-description motion-element" itemprop="description">万事起于忽微，量变引起质变</p>
+              <p class="site-description motion-element" itemprop="description"></p>
           </div>
 
           <nav class="site-state motion-element">
@@ -910,6 +910,21 @@
   
 
   
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
 
   
   
