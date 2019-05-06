@@ -77,7 +77,7 @@
 
 
 
-  <meta name="keywords" content="python,">
+  <meta name="keywords" content="Android,">
 
 
 
@@ -88,18 +88,18 @@
 
 
 
-<meta name="description" content="最近爬虫的时候，有些网站需要登录才能爬，记录一下python模拟登录的几种方法。">
-<meta name="keywords" content="python">
+<meta name="description" content="Android开发过程中，经常要对小数点位数各种处理，这里总结一下。">
+<meta name="keywords" content="Android">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Python爬虫模拟登录的3种方法">
-<meta property="og:url" content="https://raphets.github.io/archives/17527.html">
+<meta property="og:title" content="Java小数点位数保留的方法总结">
+<meta property="og:url" content="https://raphets.github.io/archives/5478cd25.html">
 <meta property="og:site_name" content="尚拙">
-<meta property="og:description" content="最近爬虫的时候，有些网站需要登录才能爬，记录一下python模拟登录的几种方法。">
+<meta property="og:description" content="Android开发过程中，经常要对小数点位数各种处理，这里总结一下。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-04-27T07:49:32.176Z">
+<meta property="og:updated_time" content="2019-05-06T09:21:51.973Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Python爬虫模拟登录的3种方法">
-<meta name="twitter:description" content="最近爬虫的时候，有些网站需要登录才能爬，记录一下python模拟登录的几种方法。">
+<meta name="twitter:title" content="Java小数点位数保留的方法总结">
+<meta name="twitter:description" content="Android开发过程中，经常要对小数点位数各种处理，这里总结一下。">
 
 
 
@@ -129,13 +129,13 @@
 
 
 
-  <link rel="canonical" href="https://raphets.github.io/archives/17527.html">
+  <link rel="canonical" href="https://raphets.github.io/archives/5478cd25.html">
 
 
 
 
 
-  <title>Python爬虫模拟登录的3种方法 | 尚拙</title>
+  <title>Java小数点位数保留的方法总结 | 尚拙</title>
   
 
 
@@ -282,7 +282,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/17527.html">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/5478cd25.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="阮烁">
@@ -299,7 +299,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">Python爬虫模拟登录的3种方法</h2>
+          <h2 class="post-title" itemprop="name headline">Java小数点位数保留的方法总结</h2>
         
 
         <div class="post-meta">
@@ -311,8 +311,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-22T15:40:41+08:00">
-                2019-03-22
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-06T17:10:46+08:00">
+                2019-05-06
               </time>
             
 
@@ -327,8 +327,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-04-27T15:49:32+08:00">
-                2019-04-27
+              <time title="更新于" itemprop="dateModified" datetime="2019-05-06T17:21:51+08:00">
+                2019-05-06
               </time>
             
           </span>
@@ -357,8 +357,8 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/技术文章/python/" itemprop="url" rel="index">
-                    <span itemprop="name">python</span>
+                  <a href="/categories/技术文章/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
                   </a>
                 </span>
 
@@ -375,8 +375,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/archives/17527.html#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count gitment-comments-count" data-xid="/archives/17527.html" itemprop="commentsCount"></span>
+                <a href="/archives/5478cd25.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/archives/5478cd25.html" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -404,19 +404,42 @@
       
 
       
-        <p>最近爬虫的时候，有些网站需要登录才能爬，记录一下python模拟登录的几种方法。</p>
+        <p>Android开发过程中，经常要对小数点位数各种处理，这里总结一下。</p>
 <a id="more"></a>
-<h1 id="方法一-：通过接口实现登录"><a href="#方法一-：通过接口实现登录" class="headerlink" title="方法一 ：通过接口实现登录"></a>方法一 ：通过接口实现登录</h1><p>1、在web浏览器上打开登录页面，开启浏览器的开发者模式，在浏览器上登录，然后在开发者模式里面分析登录之后请求的地址，找到登录接口，以及请求参数。</p>
-<p>2、使用python的requests框架，请求登录接口，并保存返回的cookie，从而实现登录。</p>
-<p><strong>缺点 : 有的网站，登录需要传token，以及其他加密的参数，这种情况处理起来有点复杂</strong></p>
-<h1 id="方法二-：使用已知的cookie直接访问"><a href="#方法二-：使用已知的cookie直接访问" class="headerlink" title="方法二 ：使用已知的cookie直接访问"></a>方法二 ：使用已知的cookie直接访问</h1><p>1、直接在网页端登录，然后打开浏览器的开发者模式，直接在登录之后的网络请求头中，找到cookie，复制出来。</p>
-<p>2、python爬虫的时候，直接将复制出来的cookie放到请求头header中，请求的时候就不用登录了。</p>
-<p><strong>缺点 : cookie是有有效期的，不适合长期使用的场景。</strong></p>
-<h1 id="方法三-：使用selenium库和PhantomJS无界面浏览器模拟登录"><a href="#方法三-：使用selenium库和PhantomJS无界面浏览器模拟登录" class="headerlink" title="方法三 ：使用selenium库和PhantomJS无界面浏览器模拟登录"></a>方法三 ：使用selenium库和PhantomJS无界面浏览器模拟登录</h1><p>1、使用selenuim的api取出登录页面的账号、密码输入框元素</p>
-<p>2、给账号、密码元素赋值</p>
-<p>3、使用selenuim的api取出登录按钮元素，模拟点击事件，完成登录。</p>
-<p><strong>缺点 : 有的网站登录需要验证码，这个时候就需要集成图片识别框架，进行验证码识别</strong></p>
-
+<h1 id="方法一：使用DecimalFormat类"><a href="#方法一：使用DecimalFormat类" class="headerlink" title="方法一：使用DecimalFormat类"></a>方法一：使用DecimalFormat类</h1><p>举个例子，假如我们需要保留两位小数，我们可以这样写</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">DecimalFormat df = new DecimalFormat(&quot;0.00&quot;);</span><br></pre></td></tr></table></figure>
+<p>测试如下：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">double d = 0.200;</span><br><span class="line">DecimalFormat df = new DecimalFormat(&quot;0.00&quot;);</span><br><span class="line">System.out.println(df.format(d));</span><br></pre></td></tr></table></figure></p>
+<p>输出结果为：</p>
+<p>0.20</p>
+<p>若double d=0.000；输出结果为0.00；</p>
+<p>若double d=0；输出结果为0.00；</p>
+<p>若double d=41.2345；输出结果为41.23；</p>
+<p>经测试，不管double d的值为多少，最后结果都是正常的两位小数。</p>
+<p>同理若是保留一位小数，使用如下代码</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">DecimalFormat df = new DecimalFormat(&quot;0.0&quot;);</span><br></pre></td></tr></table></figure>
+<h4 id="总结：若是这种写法DecimalFormat-df-new-DecimalFormat-“0-00”-，不管传入的任何值，均保留两位小数"><a href="#总结：若是这种写法DecimalFormat-df-new-DecimalFormat-“0-00”-，不管传入的任何值，均保留两位小数" class="headerlink" title="总结：若是这种写法DecimalFormat df = new DecimalFormat(“0.00”)，不管传入的任何值，均保留两位小数"></a>总结：若是这种写法DecimalFormat df = new DecimalFormat(“0.00”)，不管传入的任何值，均保留两位小数</h4><p>还有一种写法是这样：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">double d = 41.123;</span><br><span class="line">DecimalFormat df = new DecimalFormat(&quot;#.##&quot;);</span><br><span class="line">System.out.println(df.format(d));</span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<p>41.12</p>
+<p>若double d=2.00，输出结果为2；</p>
+<p>若double d=41.001，输出结果为41；</p>
+<p>若double d=41.010，输出结果为41.01；</p>
+<p>若double d=0，输出结果为0；</p>
+<p>若double d=0.200，输出结果为0.2；</p>
+<h4 id="总结：若是这种写法DecimalFormat-df-new-DecimalFormat-“-”-，则保留小数点后面不为0的两位小数，这种写法不能保证保留2为小数，但能保证最后一位数不为0；"><a href="#总结：若是这种写法DecimalFormat-df-new-DecimalFormat-“-”-，则保留小数点后面不为0的两位小数，这种写法不能保证保留2为小数，但能保证最后一位数不为0；" class="headerlink" title="总结：若是这种写法DecimalFormat df = new DecimalFormat(“#.##”)，则保留小数点后面不为0的两位小数，这种写法不能保证保留2为小数，但能保证最后一位数不为0；"></a>总结：若是这种写法DecimalFormat df = new DecimalFormat(“#.##”)，则保留小数点后面不为0的两位小数，这种写法不能保证保留2为小数，但能保证最后一位数不为0；</h4><h1 id="方法二：使用String-format-方法"><a href="#方法二：使用String-format-方法" class="headerlink" title="方法二：使用String.format()方法"></a>方法二：使用String.format()方法</h1><p>测试：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">double d = 0.6544;</span><br><span class="line">String s=String.format(&quot;%.2f&quot;,d);</span><br><span class="line">System.out.println(s);</span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<p>0.65</p>
+<p>若double d=0.6566，输出结果为0.66；</p>
+<p>若double d=0，输出结果为0.00;</p>
+<h6 id="注释：其中String-s-String-format-“-2f”-d-表示小数点后任意两位小数，其中2为表示两位小数，若需要三位小数，把2改为3即可，其他同理。"><a href="#注释：其中String-s-String-format-“-2f”-d-表示小数点后任意两位小数，其中2为表示两位小数，若需要三位小数，把2改为3即可，其他同理。" class="headerlink" title="注释：其中String s=String.format(“%.2f”,d)表示小数点后任意两位小数，其中2为表示两位小数，若需要三位小数，把2改为3即可，其他同理。"></a>注释：其中String s=String.format(“%.2f”,d)表示小数点后任意两位小数，其中2为表示两位小数，若需要三位小数，把2改为3即可，其他同理。</h6><h4 id="总结：这种方法不管传入的值是多少，均保留两位小数，并且符合四舍五入的规则。"><a href="#总结：这种方法不管传入的值是多少，均保留两位小数，并且符合四舍五入的规则。" class="headerlink" title="总结：这种方法不管传入的值是多少，均保留两位小数，并且符合四舍五入的规则。"></a>总结：这种方法不管传入的值是多少，均保留两位小数，并且符合四舍五入的规则。</h4><h1 id="方法三：使用BigDecimal类"><a href="#方法三：使用BigDecimal类" class="headerlink" title="方法三：使用BigDecimal类"></a>方法三：使用BigDecimal类</h1><p>测试：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">double d = 1.000;</span><br><span class="line">BigDecimal bd=new BigDecimal(d);</span><br><span class="line">double d1=bd.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();</span><br><span class="line">System.out.println(d1);</span><br></pre></td></tr></table></figure>
+<p>输入结果:1.0</p>
+<p>若double d=0，输出结果为0.0；</p>
+<p>若double d=1.999，输出结果为2.0；</p>
+<p>若double d=1.89，输出结果为1.89；</p>
+<h4 id="总结：使用这种写法若小数点后均为零，则保留一位小数，并且有四舍五入的规则。"><a href="#总结：使用这种写法若小数点后均为零，则保留一位小数，并且有四舍五入的规则。" class="headerlink" title="总结：使用这种写法若小数点后均为零，则保留一位小数，并且有四舍五入的规则。"></a>总结：使用这种写法若小数点后均为零，则保留一位小数，并且有四舍五入的规则。</h4><h1 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h1><p>以下为Java测试类</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import java.math.BigDecimal;</span><br><span class="line">import java.text.DecimalFormat;</span><br><span class="line"></span><br><span class="line">public class Test &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        double d = 1.19;</span><br><span class="line">        System.out.println(formatDecimal4(d));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static String formatDecimal1(double d) &#123;</span><br><span class="line">        DecimalFormat df = new DecimalFormat(&quot;0.00&quot;);</span><br><span class="line">        return df.format(d);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static String formatDecimal2(double d) &#123;</span><br><span class="line">        DecimalFormat df = new DecimalFormat(&quot;#.##&quot;);</span><br><span class="line">        return df.format(d);</span><br><span class="line">    &#125;</span><br><span class="line">    public static String formatDecimal3(double d)&#123;</span><br><span class="line">        return String.format(&quot;%.2f&quot;,d);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static double formatDecimal4(double d)&#123;</span><br><span class="line">        BigDecimal bd=new BigDecimal(d);</span><br><span class="line">        double d1=bd.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();</span><br><span class="line">        return d1;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
     </div>
     
@@ -433,7 +456,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/python/" rel="tag"># python</a>
+            <a href="/tags/Android/" rel="tag"># Android</a>
           
         </div>
       
@@ -446,8 +469,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/archives/19105.html" rel="next" title="GitHub+Hexo搭建个人博客教程">
-                <i class="fa fa-chevron-left"></i> GitHub+Hexo搭建个人博客教程
+              <a href="/archives/b9e67ec1.html" rel="next" title="HTTP协议详解">
+                <i class="fa fa-chevron-left"></i> HTTP协议详解
               </a>
             
           </div>
@@ -455,10 +478,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/archives/60074.html" rel="prev" title="如何将本地项目添加到Git远程仓库？">
-                如何将本地项目添加到Git远程仓库？ <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -612,7 +631,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#方法一-：通过接口实现登录"><span class="nav-text">方法一 ：通过接口实现登录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方法二-：使用已知的cookie直接访问"><span class="nav-text">方法二 ：使用已知的cookie直接访问</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方法三-：使用selenium库和PhantomJS无界面浏览器模拟登录"><span class="nav-text">方法三 ：使用selenium库和PhantomJS无界面浏览器模拟登录</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#方法一：使用DecimalFormat类"><span class="nav-text">方法一：使用DecimalFormat类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#总结：若是这种写法DecimalFormat-df-new-DecimalFormat-“0-00”-，不管传入的任何值，均保留两位小数"><span class="nav-text">总结：若是这种写法DecimalFormat df = new DecimalFormat(“0.00”)，不管传入的任何值，均保留两位小数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结：若是这种写法DecimalFormat-df-new-DecimalFormat-“-”-，则保留小数点后面不为0的两位小数，这种写法不能保证保留2为小数，但能保证最后一位数不为0；"><span class="nav-text">总结：若是这种写法DecimalFormat df = new DecimalFormat(“#.##”)，则保留小数点后面不为0的两位小数，这种写法不能保证保留2为小数，但能保证最后一位数不为0；</span></a></li></ol></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#方法二：使用String-format-方法"><span class="nav-text">方法二：使用String.format()方法</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#注释：其中String-s-String-format-“-2f”-d-表示小数点后任意两位小数，其中2为表示两位小数，若需要三位小数，把2改为3即可，其他同理。"><span class="nav-text">注释：其中String s=String.format(“%.2f”,d)表示小数点后任意两位小数，其中2为表示两位小数，若需要三位小数，把2改为3即可，其他同理。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结：这种方法不管传入的值是多少，均保留两位小数，并且符合四舍五入的规则。"><span class="nav-text">总结：这种方法不管传入的值是多少，均保留两位小数，并且符合四舍五入的规则。</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方法三：使用BigDecimal类"><span class="nav-text">方法三：使用BigDecimal类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#总结：使用这种写法若小数点后均为零，则保留一位小数，并且有四舍五入的规则。"><span class="nav-text">总结：使用这种写法若小数点后均为零，则保留一位小数，并且有四舍五入的规则。</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#源码"><span class="nav-text">源码</span></a></li></div>
             
 
           </div>
