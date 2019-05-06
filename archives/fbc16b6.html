@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="e17JgYodlUDHg-j8Vqtu8RtnIVl1owOGMSNEGbEDJgU">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/avatar.jpg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Collections,Comparator,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="有时候需要对列表数据进行排序，这里总结一下常用方法。">
+<meta name="keywords" content="Collections,Comparator">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java集合排序总结">
+<meta property="og:url" content="https://raphets.github.io/archives/fbc16b6.html">
+<meta property="og:site_name" content="尚拙">
+<meta property="og:description" content="有时候需要对列表数据进行排序，这里总结一下常用方法。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-05-06T10:01:12.869Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java集合排序总结">
+<meta name="twitter:description" content="有时候需要对列表数据进行排序，这里总结一下常用方法。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://raphets.github.io/archives/fbc16b6.html">
+
+
+
+
+
+  <title>Java集合排序总结 | 尚拙</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">尚拙</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">一个分享技术、学习成长的个人博客网站</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tool">
+          <a href="/tool/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-wrench"></i> <br>
+            
+            工具
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/fbc16b6.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="阮烁">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="尚拙">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Java集合排序总结</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-06T17:55:16+08:00">
+                2019-05-06
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-05-06T18:01:12+08:00">
+                2019-05-06
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文章/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文章</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文章/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/archives/fbc16b6.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/archives/fbc16b6.html" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>有时候需要对列表数据进行排序，这里总结一下常用方法。</p>
+<a id="more"></a>
+<p>Java API提供了两种方法来排序：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">java.util.Collections.sort(java.util.List)</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">java.util.Collections.sort(java.util.List, java.util.Comparator)</span><br></pre></td></tr></table></figure>
+<h1 id="一、Collections-sort（List-list）"><a href="#一、Collections-sort（List-list）" class="headerlink" title="一、Collections.sort（List list）"></a>一、Collections.sort（List list）</h1><p>使用此API排序，要求javabean实现Comparable接口</p>
+<h6 id="Dog类："><a href="#Dog类：" class="headerlink" title="Dog类："></a>Dog类：</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class Dog implements Comparable&lt;Dog&gt; &#123;</span><br><span class="line">	private String name;</span><br><span class="line">	private int age;</span><br><span class="line"></span><br><span class="line">	public Dog(String name, int age) &#123;</span><br><span class="line">		this.name = name;</span><br><span class="line">		this.age = age;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getName() &#123;</span><br><span class="line">		return name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setName(String name) &#123;</span><br><span class="line">		this.name = name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public int getAge() &#123;</span><br><span class="line">		return age;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setAge(int age) &#123;</span><br><span class="line">		this.age = age;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	/**</span><br><span class="line">	 * 如果比较的是字符串，则使用String.CompareTo(String s)方法</span><br><span class="line">	 */</span><br><span class="line"></span><br><span class="line">	// @Override</span><br><span class="line">	// public int compareTo(Dog dog) &#123;</span><br><span class="line">	// return this.getName().compareTo(dog.getName());</span><br><span class="line">	// &#125;</span><br><span class="line"></span><br><span class="line">	/**</span><br><span class="line">	 * 比较int型和char型</span><br><span class="line">	 */</span><br><span class="line">	@Override</span><br><span class="line">	public int compareTo(Dog dog) &#123;</span><br><span class="line">		return this.age - dog.age;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="测试类："><a href="#测试类：" class="headerlink" title="测试类："></a>测试类：</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.Collections;</span><br><span class="line">import java.util.List;</span><br><span class="line"></span><br><span class="line">public class Test &#123;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">		List&lt;Dog&gt; mDogs = new ArrayList&lt;&gt;();</span><br><span class="line">		Dog dog1 = new Dog(&quot;eog4&quot;, 4);</span><br><span class="line">		Dog dog2 = new Dog(&quot;dog5&quot;, 5);</span><br><span class="line">		Dog dog3 = new Dog(&quot;bog2&quot;, 2);</span><br><span class="line">		Dog dog4 = new Dog(&quot;cog3&quot;, 3);</span><br><span class="line">		Dog dog5 = new Dog(&quot;aog1&quot;, 1);</span><br><span class="line"></span><br><span class="line">		mDogs.add(dog1);</span><br><span class="line">		mDogs.add(dog2);</span><br><span class="line">		mDogs.add(dog3);</span><br><span class="line">		mDogs.add(dog4);</span><br><span class="line">		mDogs.add(dog5);</span><br><span class="line"></span><br><span class="line">		System.out.println(&quot;排序之前：&quot;);</span><br><span class="line">		for (Dog dog : mDogs) &#123;</span><br><span class="line">			System.out.println(dog.getName());</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		// 排序</span><br><span class="line">		Collections.sort(mDogs);</span><br><span class="line"></span><br><span class="line">		System.out.println(&quot;排序之后：&quot;);</span><br><span class="line">		for (Dog dog : mDogs) &#123;</span><br><span class="line">			System.out.println(dog.getName());</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="测试结果："><a href="#测试结果：" class="headerlink" title="测试结果："></a>测试结果：</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">排序之前：</span><br><span class="line">eog4</span><br><span class="line">dog5</span><br><span class="line">bog2</span><br><span class="line">cog3</span><br><span class="line">aog1</span><br><span class="line">排序之后：</span><br><span class="line">aog1</span><br><span class="line">bog2</span><br><span class="line">cog3</span><br><span class="line">eog4</span><br><span class="line">dog5</span><br></pre></td></tr></table></figure>
+<p>#二、Collections.sort（List list，Comparator<t> comparator）<br>使用此API实现排序，需要实例化Comparator对象，重写compare(Object o1,Object o2）方法</t></p>
+<h6 id="Dog类：-1"><a href="#Dog类：-1" class="headerlink" title="Dog类："></a>Dog类：</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class Dog  &#123;</span><br><span class="line">	private String name;</span><br><span class="line">	private int age;</span><br><span class="line"></span><br><span class="line">	public Dog(String name, int age) &#123;</span><br><span class="line">		this.name = name;</span><br><span class="line">		this.age = age;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getName() &#123;</span><br><span class="line">		return name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setName(String name) &#123;</span><br><span class="line">		this.name = name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public int getAge() &#123;</span><br><span class="line">		return age;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setAge(int age) &#123;</span><br><span class="line">		this.age = age;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="Test测试类："><a href="#Test测试类：" class="headerlink" title="Test测试类："></a>Test测试类：</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.Collections;</span><br><span class="line">import java.util.Comparator;</span><br><span class="line">import java.util.List;</span><br><span class="line"></span><br><span class="line">public class Test &#123;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">		List&lt;Dog&gt; mDogs = new ArrayList&lt;&gt;();</span><br><span class="line">		Dog dog1 = new Dog(&quot;eog4&quot;, 4);</span><br><span class="line">		Dog dog2 = new Dog(&quot;dog5&quot;, 5);</span><br><span class="line">		Dog dog3 = new Dog(&quot;bog2&quot;, 2);</span><br><span class="line">		Dog dog4 = new Dog(&quot;cog3&quot;, 3);</span><br><span class="line">		Dog dog5 = new Dog(&quot;aog1&quot;, 1);</span><br><span class="line"></span><br><span class="line">		mDogs.add(dog1);</span><br><span class="line">		mDogs.add(dog2);</span><br><span class="line">		mDogs.add(dog3);</span><br><span class="line">		mDogs.add(dog4);</span><br><span class="line">		mDogs.add(dog5);</span><br><span class="line"></span><br><span class="line">		Comparator&lt;Dog&gt; comparator = new Comparator&lt;Dog&gt;() &#123;</span><br><span class="line">			@Override</span><br><span class="line">			public int compare(Dog o1, Dog o2) &#123;</span><br><span class="line">				return o2.getAge() - o1.getAge();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;;</span><br><span class="line"></span><br><span class="line">		System.out.println(&quot;排序之前：&quot;);</span><br><span class="line">		for (Dog dog : mDogs) &#123;</span><br><span class="line">			System.out.println(dog.getName());</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		// 排序</span><br><span class="line">		Collections.sort(mDogs,comparator);</span><br><span class="line"></span><br><span class="line">		System.out.println(&quot;排序之后：&quot;);</span><br><span class="line">		for (Dog dog : mDogs) &#123;</span><br><span class="line">			System.out.println(dog.getName());</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="测试结果：-1"><a href="#测试结果：-1" class="headerlink" title="测试结果："></a>测试结果：</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">排序之前：</span><br><span class="line">eog4</span><br><span class="line">dog5</span><br><span class="line">bog2</span><br><span class="line">cog3</span><br><span class="line">aog1</span><br><span class="line">排序之后：</span><br><span class="line">dog5</span><br><span class="line">eog4</span><br><span class="line">cog3</span><br><span class="line">bog2</span><br><span class="line">aog1</span><br></pre></td></tr></table></figure>
+<h4 id="如果对String属性排序，使用String-CompareTo-String-s-方法进行排序"><a href="#如果对String属性排序，使用String-CompareTo-String-s-方法进行排序" class="headerlink" title="如果对String属性排序，使用String.CompareTo(String s)方法进行排序"></a>如果对String属性排序，使用String.CompareTo(String s)方法进行排序</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">@Override</span><br><span class="line">	public int compareTo(Dog o) &#123;</span><br><span class="line">		return this.name.compareTo(o.getName());</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="三、对数组进行排序"><a href="#三、对数组进行排序" class="headerlink" title="三、对数组进行排序"></a>三、对数组进行排序</h1><p>如果数组或集合元素是String类型，则可以利用Java API实现的Comparator<string>对象String.CASE_INSENSITIVE_ORDER为容器元素排序。</string></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.Arrays;</span><br><span class="line">import java.util.Collections;</span><br><span class="line">import java.util.Comparator;</span><br><span class="line">import java.util.List;</span><br><span class="line"></span><br><span class="line">public class Test &#123;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">		String[] array=new String[]&#123;&quot;c&quot;,&quot;b&quot;,&quot;d&quot;,&quot;a&quot;,&quot;e&quot;&#125;;</span><br><span class="line">		List&lt;String&gt; list=Arrays.asList(array);</span><br><span class="line">		</span><br><span class="line">		System.out.println(&quot;排序之前：&quot;);</span><br><span class="line">		for (String string : list) &#123;</span><br><span class="line">			System.out.println(string);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		Collections.sort(list,String.CASE_INSENSITIVE_ORDER);</span><br><span class="line">		</span><br><span class="line">		System.out.println(&quot;排序之后：&quot;);</span><br><span class="line">		for (String string : list) &#123;</span><br><span class="line">			System.out.println(string);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		Collections.sort(list,Collections.reverseOrder());</span><br><span class="line">		System.out.println(&quot;反序：&quot;);</span><br><span class="line">		for (String string : list) &#123;</span><br><span class="line">			System.out.println(string);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="测试结果：-2"><a href="#测试结果：-2" class="headerlink" title="测试结果："></a>测试结果：</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">排序之前：</span><br><span class="line">c</span><br><span class="line">b</span><br><span class="line">d</span><br><span class="line">a</span><br><span class="line">e</span><br><span class="line">排序之后：</span><br><span class="line">a</span><br><span class="line">b</span><br><span class="line">c</span><br><span class="line">d</span><br><span class="line">e</span><br><span class="line">反序：</span><br><span class="line">e</span><br><span class="line">d</span><br><span class="line">c</span><br><span class="line">b</span><br><span class="line">a</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Collections/" rel="tag"># Collections</a>
+          
+            <a href="/tags/Comparator/" rel="tag"># Comparator</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/archives/5478cd25.html" rel="next" title="Java小数点位数保留的方法总结">
+                <i class="fa fa-chevron-left"></i> Java小数点位数保留的方法总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  <div>
+      
+          <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">
+              -------------本文结束,感谢您的阅读-------------
+        </div>
+    
+</div>
+
+      
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="阮烁">
+            
+              <p class="site-author-name" itemprop="name">阮烁</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="298" height="52" src="//music.163.com/outchain/player?type=2&id=529267746&auto=1&height=32"></iframe>
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、Collections-sort（List-list）"><span class="nav-text">一、Collections.sort（List list）</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Dog类："><span class="nav-text">Dog类：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#测试类："><span class="nav-text">测试类：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#测试结果："><span class="nav-text">测试结果：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Dog类：-1"><span class="nav-text">Dog类：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Test测试类："><span class="nav-text">Test测试类：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#测试结果：-1"><span class="nav-text">测试结果：</span></a></li></ol></li></ol><li class="nav-item nav-level-4"><a class="nav-link" href="#如果对String属性排序，使用String-CompareTo-String-s-方法进行排序"><span class="nav-text">如果对String属性排序，使用String.CompareTo(String s)方法进行排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、对数组进行排序"><span class="nav-text">三、对数组进行排序</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#测试结果：-2"><span class="nav-text">测试结果：</span></a></li></ol></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阮烁</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+      <style>
+        a.gitment-editor-footer-tip { display: none; }
+        .gitment-container.gitment-footer-container { display: none; }
+      </style>
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'RaphetS',
+            repo: 'RaphetS.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '6b473ec87510b43657f491b237987f5044d2d427',
+            
+                client_id: 'ee62f38c2a95302edc73'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/shizuku.model.json"},"display":{"position":"left","width":120,"height":250},"mobile":{"show":false},"log":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/click_love.js"></script>
