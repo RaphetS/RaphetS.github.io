@@ -77,7 +77,7 @@
 
 
 
-  <meta name="keywords" content="Picasso,内存优化,">
+  <meta name="keywords" content="学习,">
 
 
 
@@ -88,18 +88,18 @@
 
 
 
-<meta name="description" content="目前主要的图片加载框架有Picasso、Glide、Fresco等，本文以Picasso为例，总结一些图片加载的内存优化问题。">
-<meta name="keywords" content="Picasso,内存优化">
+<meta name="description" content="此书虽然名为《学习之道》，但是主要讲的是作者学习象棋、学习太极的历程，并没有讲具体的学习的方法。">
+<meta name="keywords" content="学习">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Picasso加载图片之内存优化">
-<meta property="og:url" content="https://raphets.github.io/archives/5dd816c0.html">
+<meta property="og:title" content="『学习之道』读书笔记">
+<meta property="og:url" content="https://raphets.github.io/archives/bb162381.html">
 <meta property="og:site_name" content="尚拙">
-<meta property="og:description" content="目前主要的图片加载框架有Picasso、Glide、Fresco等，本文以Picasso为例，总结一些图片加载的内存优化问题。">
+<meta property="og:description" content="此书虽然名为《学习之道》，但是主要讲的是作者学习象棋、学习太极的历程，并没有讲具体的学习的方法。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-05-09T03:33:09.176Z">
+<meta property="og:updated_time" content="2019-05-13T01:08:53.510Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Picasso加载图片之内存优化">
-<meta name="twitter:description" content="目前主要的图片加载框架有Picasso、Glide、Fresco等，本文以Picasso为例，总结一些图片加载的内存优化问题。">
+<meta name="twitter:title" content="『学习之道』读书笔记">
+<meta name="twitter:description" content="此书虽然名为《学习之道》，但是主要讲的是作者学习象棋、学习太极的历程，并没有讲具体的学习的方法。">
 
 
 
@@ -129,13 +129,13 @@
 
 
 
-  <link rel="canonical" href="https://raphets.github.io/archives/5dd816c0.html">
+  <link rel="canonical" href="https://raphets.github.io/archives/bb162381.html">
 
 
 
 
 
-  <title>Picasso加载图片之内存优化 | 尚拙</title>
+  <title>『学习之道』读书笔记 | 尚拙</title>
   
 
 
@@ -282,7 +282,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/5dd816c0.html">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/bb162381.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="阮烁">
@@ -299,7 +299,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">Picasso加载图片之内存优化</h2>
+          <h2 class="post-title" itemprop="name headline">『学习之道』读书笔记</h2>
         
 
         <div class="post-meta">
@@ -311,8 +311,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-09T10:52:56+08:00">
-                2019-05-09
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-12T22:03:28+08:00">
+                2019-05-12
               </time>
             
 
@@ -327,8 +327,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-05-09T11:33:09+08:00">
-                2019-05-09
+              <time title="更新于" itemprop="dateModified" datetime="2019-05-13T09:08:53+08:00">
+                2019-05-13
               </time>
             
           </span>
@@ -346,19 +346,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/技术文章/" itemprop="url" rel="index">
-                    <span itemprop="name">技术文章</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/技术文章/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
+                  <a href="/categories/读书笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">读书笔记</span>
                   </a>
                 </span>
 
@@ -375,8 +364,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/archives/5dd816c0.html#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count gitment-comments-count" data-xid="/archives/5dd816c0.html" itemprop="commentsCount"></span>
+                <a href="/archives/bb162381.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/archives/bb162381.html" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -404,26 +393,27 @@
       
 
       
-        <p>目前主要的图片加载框架有Picasso、Glide、Fresco等，本文以Picasso为例，总结一些图片加载的内存优化问题。</p>
+        <p>此书虽然名为《学习之道》，但是主要讲的是作者学习象棋、学习太极的历程，并没有讲具体的学习的方法。</p>
 <a id="more"></a>
-<h1 id="1、裁减图片"><a href="#1、裁减图片" class="headerlink" title="1、裁减图片"></a>1、裁减图片</h1><p>在列表页尽量使用裁剪后的图片，在查看大图模式下才加载完整的图片。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Picasso.with(mContext)</span><br><span class="line">.load(url)</span><br><span class="line">.resize(dp2px(250),dp2px(250))</span><br><span class="line">.centerCrop()</span><br><span class="line">.into(imageView);</span><br></pre></td></tr></table></figure>
-<h1 id="2、加载大图不使用memory-cache"><a href="#2、加载大图不使用memory-cache" class="headerlink" title="2、加载大图不使用memory cache"></a>2、加载大图不使用memory cache</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Picasso.with(mContext)</span><br><span class="line">.load(mURL)</span><br><span class="line">.memoryPolicy(NO_CACHE, NO_STORE)</span><br><span class="line">.into(imageView);</span><br></pre></td></tr></table></figure>
-<h1 id="3、重写ImageView加速内存回收"><a href="#3、重写ImageView加速内存回收" class="headerlink" title="3、重写ImageView加速内存回收"></a>3、重写ImageView加速内存回收</h1><p>重写ImageView的onDetachedFromWindow方法，在它从屏幕中消失时回调，去掉drawable引用，能加快内存的回收。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class RecyclerImageView extends ImageView</span><br><span class="line">&#123; </span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    @Override    </span><br><span class="line">    protected void onDetachedFromWindow() &#123;</span><br><span class="line">        super.onDetachedFromWindow();</span><br><span class="line">        setImageDrawable(null);   </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="4、新进程中查看大图"><a href="#4、新进程中查看大图" class="headerlink" title="4、新进程中查看大图"></a>4、新进程中查看大图</h1><p>列表页的内存已经非常稳定，但是查看大图时，大图往往占用了20+m内存，加上现有进程中的内存，非常容易oom，在新进程中打开Activity成为比较取巧的避免oom的方式。只要在AndroidManifest.xml中定义Activity时加入process属性，即可在新进程中打开此Activity。由此，picasso也将在新进程中创建基于新ApplicationContext的单例。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;activity android:name=&quot;.DetailActivity&quot; android:process=&quot;:picture&quot;/&gt;</span><br></pre></td></tr></table></figure>
-<h1 id="5、列表滑动优化"><a href="#5、列表滑动优化" class="headerlink" title="5、列表滑动优化"></a>5、列表滑动优化</h1><p>picasso可以对多个加载请求设置相同的tag：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Object tag = new Object();</span><br><span class="line"></span><br><span class="line">Picasso.with( imageView.getContext() )</span><br><span class="line">.load(url)</span><br><span class="line">.resize(dp2px(250),dp2px(250))</span><br><span class="line">.centerCrop()</span><br><span class="line">.tag(tag)</span><br><span class="line">.into(imageView);</span><br></pre></td></tr></table></figure>
-<p>在RecyclerView滑动时监听，处理不同的表现：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()&#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void onScrollStateChanged(RecyclerView recyclerView, int newState)</span><br><span class="line">    &#123;</span><br><span class="line">        if (newState == RecyclerView.SCROLL_STATE_IDLE)</span><br><span class="line">        &#123;</span><br><span class="line">            Picasso.with(context).resumeTag(tag);</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            Picasso.with(context).pauseTag(tag);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<h1 id="6、降低图片质量"><a href="#6、降低图片质量" class="headerlink" title="6、降低图片质量"></a>6、降低图片质量</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Picasso.with( imageView.getContext() )</span><br><span class="line">.load(url)</span><br><span class="line">.config(Bitmap.Config.RGB_565)</span><br><span class="line">.into(imageView);</span><br></pre></td></tr></table></figure>
-<p>默认情况下，Android使用ARGB_8888</p>
-<p>Android中有四种，分别是：</p>
-<p>ALPHA_8：每个像素占用1byte内存</p>
-<p>ARGB_4444:每个像素占用2byte内存</p>
-<p>ARGB_8888:每个像素占用4byte内存</p>
-<p>RGB_565:每个像素占用2byte内存</p>
+<p>书的作者是乔希·维茨金。</p>
+<p>他少年时曾8次在全国想起冠军赛中夺魁，13岁即获得“象棋大师”头衔。</p>
+<p>在纵横西方棋坛10年后，改行研习太极拳，并连续21次荣获全美太极冠军及世界冠军，成为“太极拳王”。</p>
+<p>此书主要讲的是作者学习象棋、学习太极拳的历程，并没有讲多少学习的方法。</p>
+<p>但是正如书名《学习之道》一样，透过作者的经历，能看到作者学习的道，而非术。</p>
+<p>整本书读下来，学习之道的核心在于两个字：专注。</p>
+<h1 id="专注"><a href="#专注" class="headerlink" title="专注"></a>专注</h1><p>不管是学习象棋还是学习太极，他之所以能去的如此的成绩，核心在于他总能保持专注。完全融入某项活动，挖掘自己思维的潜能。</p>
+<h1 id="追求卓越的关键在于，要坚持充满活力、长期的学习过程，不再满足于原地踏步、平平庸庸。"><a href="#追求卓越的关键在于，要坚持充满活力、长期的学习过程，不再满足于原地踏步、平平庸庸。" class="headerlink" title="追求卓越的关键在于，要坚持充满活力、长期的学习过程，不再满足于原地踏步、平平庸庸。"></a>追求卓越的关键在于，要坚持充满活力、长期的学习过程，不再满足于原地踏步、平平庸庸。</h1><h1 id="作者以学习象棋为例，总结了一下他的学习方法。"><a href="#作者以学习象棋为例，总结了一下他的学习方法。" class="headerlink" title="作者以学习象棋为例，总结了一下他的学习方法。"></a>作者以学习象棋为例，总结了一下他的学习方法。</h1><p>象棋学习者必须先要专心学习基础知识，然后有望获取高级技能。<br>他会学习残局、中局、开局的种种原则。<br>刚开始他会考虑一两个关键性主题，但慢慢地，直觉会觉得把更多的原理结合起来，融入自己的潜意识中。<br>最终，这种基础已深深扎根，无须去特意思考，但潜意识里却会这么去做。这个过程会循环往复，并不断吸收深层次的习得。</p>
+<h1 id="学习从热情出发"><a href="#学习从热情出发" class="headerlink" title="学习从热情出发"></a>学习从热情出发</h1><p>天才不是与生俱来的，是建立在热爱、激情、寻找适合自己的学习方法的基础上的。</p>
+<p>追求卓越的关键在于，要坚持充满活力、长期的学习过程，不在满足于原地踏步、平平庸庸。</p>
+<h1 id="先学会输，才有机会赢"><a href="#先学会输，才有机会赢" class="headerlink" title="先学会输，才有机会赢"></a>先学会输，才有机会赢</h1><p>失败的经验比胜利更有价值。</p>
+<p>学习过程总有挫折，每个人都应该找到让自己疗伤充电、重新出发的方式。</p>
+<p>每次从创伤中痊愈或从一场败站中走出来时，都要让自己比之前更好。</p>
+<h1 id="让我们攀上高峰的不是奇招，而是熟能生巧的基本功"><a href="#让我们攀上高峰的不是奇招，而是熟能生巧的基本功" class="headerlink" title="让我们攀上高峰的不是奇招，而是熟能生巧的基本功"></a>让我们攀上高峰的不是奇招，而是熟能生巧的基本功</h1><p>在学习过程中，深度基于广度，质胜于量。所有的绝妙创意或“神来之笔”，莫不是以扎实的技术位根基的。</p>
+<h1 id="专注当下，使生活更丰富精彩"><a href="#专注当下，使生活更丰富精彩" class="headerlink" title="专注当下，使生活更丰富精彩"></a>专注当下，使生活更丰富精彩</h1><p>大多数人都曾在危急关头，体会到“极度专注”的经验。学会专注，不仅有助于学习和表现，也能提升感受力，发现日常生活云藏得色彩和乐趣。</p>
+<h1 id="学习是一场心智马拉松"><a href="#学习是一场心智马拉松" class="headerlink" title="学习是一场心智马拉松"></a>学习是一场心智马拉松</h1><p>障碍并不是障碍，而是有待客服的挑战，使要将弱点华为强项以激励成长的过程，在各种竞争性或专业领域达到表现的巅峰。</p>
+<h1 id="学而不思则罔"><a href="#学而不思则罔" class="headerlink" title="学而不思则罔"></a>学而不思则罔</h1><p>作者即便使学习太极这种运动，也能保持思考，思考如何做的更好，如何打赢对手。</p>
+<p>思考可以让我们学习的更有效率，方向更加正确。</p>
+<p>不管是学习什么，一定要多思考、总结。</p>
 
       
     </div>
@@ -441,9 +431,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Picasso/" rel="tag"># Picasso</a>
-          
-            <a href="/tags/内存优化/" rel="tag"># 内存优化</a>
+            <a href="/tags/学习/" rel="tag"># 学习</a>
           
         </div>
       
@@ -456,8 +444,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/archives/fbc16b6.html" rel="next" title="Java集合排序总结">
-                <i class="fa fa-chevron-left"></i> Java集合排序总结
+              <a href="/archives/5dd816c0.html" rel="next" title="Picasso加载图片之内存优化">
+                <i class="fa fa-chevron-left"></i> Picasso加载图片之内存优化
               </a>
             
           </div>
@@ -465,10 +453,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/archives/bb162381.html" rel="prev" title="『学习之道』读书笔记">
-                『学习之道』读书笔记 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -622,7 +606,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1、裁减图片"><span class="nav-text">1、裁减图片</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2、加载大图不使用memory-cache"><span class="nav-text">2、加载大图不使用memory cache</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3、重写ImageView加速内存回收"><span class="nav-text">3、重写ImageView加速内存回收</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4、新进程中查看大图"><span class="nav-text">4、新进程中查看大图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5、列表滑动优化"><span class="nav-text">5、列表滑动优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6、降低图片质量"><span class="nav-text">6、降低图片质量</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#专注"><span class="nav-text">专注</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#追求卓越的关键在于，要坚持充满活力、长期的学习过程，不再满足于原地踏步、平平庸庸。"><span class="nav-text">追求卓越的关键在于，要坚持充满活力、长期的学习过程，不再满足于原地踏步、平平庸庸。</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#作者以学习象棋为例，总结了一下他的学习方法。"><span class="nav-text">作者以学习象棋为例，总结了一下他的学习方法。</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#学习从热情出发"><span class="nav-text">学习从热情出发</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#先学会输，才有机会赢"><span class="nav-text">先学会输，才有机会赢</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#让我们攀上高峰的不是奇招，而是熟能生巧的基本功"><span class="nav-text">让我们攀上高峰的不是奇招，而是熟能生巧的基本功</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#专注当下，使生活更丰富精彩"><span class="nav-text">专注当下，使生活更丰富精彩</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#学习是一场心智马拉松"><span class="nav-text">学习是一场心智马拉松</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#学而不思则罔"><span class="nav-text">学而不思则罔</span></a></li></ol></div>
             
 
           </div>
