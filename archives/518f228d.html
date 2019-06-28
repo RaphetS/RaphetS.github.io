@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="尚拙">
 <meta property="og:description" content="Android面试题总结。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-06-05T10:25:45.835Z">
+<meta property="og:updated_time" content="2019-06-12T03:27:33.541Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 面试题整理">
 <meta name="twitter:description" content="Android面试题总结。">
@@ -327,8 +327,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-06-05T18:25:45+08:00">
-                2019-06-05
+              <time title="更新于" itemprop="dateModified" datetime="2019-06-12T11:27:33+08:00">
+                2019-06-12
               </time>
             
           </span>
@@ -415,6 +415,12 @@
 <h3 id="singleTask"><a href="#singleTask" class="headerlink" title="singleTask"></a>singleTask</h3><p>设置了singleTask启动模式的activity在启动时，如果位于activity栈中，就会复用该activity，这样的话，在该实例之上的所有activity都依次进行出栈操作，即执行对应的onDestroy()方法，直到当前要启动的activity位于栈顶。</p>
 <h3 id="singleInstance"><a href="#singleInstance" class="headerlink" title="singleInstance"></a>singleInstance</h3><p>如果使用singleInstance启动模式的activity在启动的时候会复用已经存在的activity实例。</p>
 <p>不管这个activity的实例是位于哪一个应用当中，都会共享已经启动的activity的实例对象。使用了singlestance的启动模式的activity会单独的开启一个共享栈，这个栈中只存在当前的activity实例对象。</p>
+<h1 id="onRestart的调用场景"><a href="#onRestart的调用场景" class="headerlink" title="onRestart的调用场景"></a>onRestart的调用场景</h1><p>1、点击home键后，再切换回来</p>
+<p>2、跳转到其他Activity，再点击返回按钮</p>
+<p>3、从本应用切换到其他应用，再切换回来</p>
+<h1 id="Activity跳转生命周期"><a href="#Activity跳转生命周期" class="headerlink" title="Activity跳转生命周期"></a>Activity跳转生命周期</h1><p>1、启动 A：onCreate() ——&gt; onStart() ——&gt; onResume()</p>
+<p>2、A 跳转到 B，[A]onPause() ——&gt; [B]onCreate() ——&gt; [B]onStart() ——&gt; [B]onResume() ——&gt; [A]onStop()</p>
+<p>3、B 返回 A，[B]onPause() ——&gt; [A]onRestart() ——&gt; [A]onStart() ——&gt; [A]onResume() ——&gt; [B]onStop() ——&gt; [B]onDestroy()</p>
 
       
     </div>
@@ -454,6 +460,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/archives/cc128e34.html" rel="prev" title="Android 8.0 崩溃问题记录 —— Only fullscreen opaque activities can request orientation">
+                Android 8.0 崩溃问题记录 —— Only fullscreen opaque activities can request orientation <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -552,7 +562,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -607,7 +617,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Activity-启动模式详解"><span class="nav-text">Activity 启动模式详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#standard"><span class="nav-text">standard</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#singleTop"><span class="nav-text">singleTop</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#singleTask"><span class="nav-text">singleTask</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#singleInstance"><span class="nav-text">singleInstance</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Activity-启动模式详解"><span class="nav-text">Activity 启动模式详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#standard"><span class="nav-text">standard</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#singleTop"><span class="nav-text">singleTop</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#singleTask"><span class="nav-text">singleTask</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#singleInstance"><span class="nav-text">singleInstance</span></a></li></ol></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#onRestart的调用场景"><span class="nav-text">onRestart的调用场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Activity跳转生命周期"><span class="nav-text">Activity跳转生命周期</span></a></li></div>
             
 
           </div>
