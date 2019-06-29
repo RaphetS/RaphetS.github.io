@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="e17JgYodlUDHg-j8Vqtu8RtnIVl1owOGMSNEGbEDJgU">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/avatar.jpg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="PDF,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近有个需求，在 App 内查看使用第三方签名的电子协议，电子协议为 PDF 文件。 上网查了一下，要实现 App 内在线查看 PDF，主要思路都是先把 PDF 文件下载下来，再通过 GitHub 第三方的库，打开 PDF 文件。">
+<meta name="keywords" content="PDF">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 实现应用内在线查看 PDF 文件">
+<meta property="og:url" content="https://raphets.github.io/archives/c134fe48.html">
+<meta property="og:site_name" content="尚拙">
+<meta property="og:description" content="最近有个需求，在 App 内查看使用第三方签名的电子协议，电子协议为 PDF 文件。 上网查了一下，要实现 App 内在线查看 PDF，主要思路都是先把 PDF 文件下载下来，再通过 GitHub 第三方的库，打开 PDF 文件。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-06-29T07:37:41.630Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 实现应用内在线查看 PDF 文件">
+<meta name="twitter:description" content="最近有个需求，在 App 内查看使用第三方签名的电子协议，电子协议为 PDF 文件。 上网查了一下，要实现 App 内在线查看 PDF，主要思路都是先把 PDF 文件下载下来，再通过 GitHub 第三方的库，打开 PDF 文件。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://raphets.github.io/archives/c134fe48.html">
+
+
+
+
+
+  <title>Android 实现应用内在线查看 PDF 文件 | 尚拙</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">尚拙</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">一个分享技术、学习成长的个人博客网站</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tool">
+          <a href="/tool/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-wrench"></i> <br>
+            
+            工具
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/c134fe48.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="阮烁">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="尚拙">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Android 实现应用内在线查看 PDF 文件</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-28T18:01:14+08:00">
+                2019-06-28
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-06-29T15:37:41+08:00">
+                2019-06-29
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文章/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文章</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文章/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/archives/c134fe48.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/archives/c134fe48.html" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近有个需求，在 App 内查看使用第三方签名的电子协议，电子协议为 PDF 文件。</p>
+<p>上网查了一下，要实现 App 内在线查看 PDF，主要思路都是先把 PDF 文件下载下来，再通过 GitHub 第三方的库，打开 PDF 文件。</p>
+<a id="more"></a>
+<h2 id="常用的第三库："><a href="#常用的第三库：" class="headerlink" title="常用的第三库："></a>常用的第三库：</h2><h5 id="PdfViewPager"><a href="#PdfViewPager" class="headerlink" title="PdfViewPager"></a>PdfViewPager</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://github.com/voghDev/PdfViewPager</span><br></pre></td></tr></table></figure>
+<h5 id="AndroidPdfViewer"><a href="#AndroidPdfViewer" class="headerlink" title="AndroidPdfViewer"></a>AndroidPdfViewer</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://github.com/barteksc/AndroidPdfViewer</span><br></pre></td></tr></table></figure>
+<h5 id="android-pdfview"><a href="#android-pdfview" class="headerlink" title="android-pdfview"></a>android-pdfview</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://github.com/JoanZapata/android-pdfview</span><br></pre></td></tr></table></figure>
+<h5 id="腾讯浏览服务"><a href="#腾讯浏览服务" class="headerlink" title="腾讯浏览服务"></a>腾讯浏览服务</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://tes.qq.com/tbs/guide.html</span><br></pre></td></tr></table></figure>
+<p>这里我选择了使用腾讯浏览服务的　SDK　查看　PDF　文件。</p>
+<p>主要步骤如下：</p>
+<h1 id="一、下载腾讯浏览服务-SDK-并集成到应用"><a href="#一、下载腾讯浏览服务-SDK-并集成到应用" class="headerlink" title="一、下载腾讯浏览服务 SDK 并集成到应用"></a>一、下载腾讯浏览服务 SDK 并集成到应用</h1><p>腾讯浏览服务官网　<a href="https://tes.qq.com/tbs/guide.html" target="_blank" rel="noopener">https://tes.qq.com/tbs/guide.html</a></p>
+<p>sdk中主要包含一个jar包和一个.so文件，将jar包和.so文件导入到lib目录</p>
+<h1 id="二、NDK-设置"><a href="#二、NDK-设置" class="headerlink" title="二、NDK 设置"></a>二、NDK 设置</h1><p>打开对应 module 中的 build.gradle 文件,</p>
+<p>在文件的 android{} 中的 defaultConfig{} 里，</p>
+<p>添加如下配置: ndk{abiFilters “armeabi”}</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        ndk &#123;</span><br><span class="line">            abiFilters &quot;armeabi-v7a&quot;, &quot;armeabi&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">     sourceSets &#123;</span><br><span class="line">            main &#123;</span><br><span class="line">                jniLibs.srcDirs = [&apos;libs&apos;]</span><br><span class="line">            &#125;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="三、AndroidManifest-xml-里加入权限声明"><a href="#三、AndroidManifest-xml-里加入权限声明" class="headerlink" title="三、AndroidManifest.xml 里加入权限声明"></a>三、AndroidManifest.xml 里加入权限声明</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot; /&gt;</span><br><span class="line"></span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.ACCESS_NETWORK_STATE&quot; /&gt;</span><br><span class="line"></span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.ACCESS_WIFI_STATE&quot; /&gt;</span><br><span class="line"></span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.INTERNET&quot; /&gt;</span><br><span class="line"></span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.READ_PHONE_STATE&quot; /&gt;</span><br></pre></td></tr></table></figure>
+<h1 id="四、初始化-X５-内核"><a href="#四、初始化-X５-内核" class="headerlink" title="四、初始化 X５ 内核"></a>四、初始化 X５ 内核</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">// 设置是否在没有WiFi的情况下下载内核   </span><br><span class="line">//QbSdk.setDownloadWithoutWifi(true);</span><br><span class="line">//初始化X5内核</span><br><span class="line">QbSdk.initX5Environment(this, new QbSdk.PreInitCallback() &#123;</span><br><span class="line">           @Override</span><br><span class="line">           public void onCoreInitFinished() &#123;</span><br><span class="line">           &#125;</span><br><span class="line">           @Override</span><br><span class="line">           public void onViewInitFinished(boolean b) &#123;</span><br><span class="line">              //x5內核初始化完成的回调，为true表示x5内核加载成功，否则表示x5内核加载失败，会自动切换到系统内核。</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;);</span><br></pre></td></tr></table></figure>
+<h1 id="五、将-PDF-文件下载到本地，然后使用-SDK-里面的-TbsReaderView-打开-PDF-文件。"><a href="#五、将-PDF-文件下载到本地，然后使用-SDK-里面的-TbsReaderView-打开-PDF-文件。" class="headerlink" title="五、将 PDF 文件下载到本地，然后使用 SDK 里面的 TbsReaderView 打开 PDF 文件。"></a>五、将 PDF 文件下载到本地，然后使用 SDK 里面的 TbsReaderView 打开 PDF 文件。</h1><p>下载文件的方法，项目中是使用的 Retfrofit 和 Okhttp，并且进行了的封装，并不通用。所以下载文件的方法请自行编写。</p>
+<h3 id="1、xml-布局页面"><a href="#1、xml-布局页面" class="headerlink" title="1、xml 布局页面"></a>1、xml 布局页面</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;android.support.v7.widget.LinearLayoutCompat</span><br><span class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;</span><br><span class="line">    xmlns:tools=&quot;http://schemas.android.com/tools&quot;</span><br><span class="line">     android:id=&quot;@+id/ll_root&quot;</span><br><span class="line">    android:layout_width=&quot;match_parent&quot;</span><br><span class="line">    android:layout_height=&quot;match_parent&quot;</span><br><span class="line">    android:orientation=&quot;vertical&quot;</span><br><span class="line">    tools:context=&quot;.ui.activity.ReadPdfAgreementActivity&quot;&gt;</span><br><span class="line">    &lt;/android.support.v7.widget.LinearLayoutCompat&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="2、Activity-核心代码"><a href="#2、Activity-核心代码" class="headerlink" title="2、Activity 核心代码"></a>2、Activity 核心代码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class ReadPdfAgreementActivity extends BaseAbstractActivity &#123;</span><br><span class="line"></span><br><span class="line">    @BindView(R.id.ll_root)</span><br><span class="line">    LinearLayoutCompat mLlRoot;</span><br><span class="line">    private String TAG = &quot;ReadPdfAgreementActivity&quot;;</span><br><span class="line">    private TbsReaderView mTbsReaderView </span><br><span class="line">    private String url;</span><br><span class="line">    </span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate() &#123;</span><br><span class="line">        ButterKnife.bind(this);</span><br><span class="line">        setContentView(R.layout.activity_read_pdf_agreement);</span><br><span class="line">        url = getIntent().getStringExtra(Constants.AGREEMENT_URL);</span><br><span class="line">        mTbsReaderView = new TbsReaderView(this, new TbsReaderView.ReaderCallback() &#123;</span><br><span class="line">                    @Override</span><br><span class="line">                    public void onCallBackAction(Integer integer, Object o, Object o1) &#123;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">        mLlRoot.addView(mTbsReaderView, new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));</span><br><span class="line">        downLoadPDF();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void downLoadPDF() &#123;</span><br><span class="line"></span><br><span class="line">        RxRestClient.builder()</span><br><span class="line">                .url(url)</span><br><span class="line">                .build()</span><br><span class="line">                .download()</span><br><span class="line">                .subscribeOn(Schedulers.io())</span><br><span class="line">                .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">                .subscribe(new Observer&lt;ResponseBody&gt;() &#123;</span><br><span class="line">                    @Override</span><br><span class="line">                    public void onSubscribe(Disposable d) &#123;</span><br><span class="line"></span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    @Override</span><br><span class="line">                    public void onNext(ResponseBody responseBody) &#123;</span><br><span class="line">                        ShowSuccessView();</span><br><span class="line">                        InputStream is = null;</span><br><span class="line">                        byte[] buf = new byte[2048];</span><br><span class="line">                        int len = 0;</span><br><span class="line">                        FileOutputStream fos = null;</span><br><span class="line">                        try &#123;</span><br><span class="line">                            is = responseBody.byteStream();</span><br><span class="line">                            long total = responseBody.contentLength();</span><br><span class="line">                            File fileDir = getAgreementCacheDir();</span><br><span class="line">                            if (!fileDir.exists()) &#123;</span><br><span class="line">                                fileDir.mkdirs();</span><br><span class="line">                            &#125;</span><br><span class="line">                             File fileN = getCacheFile(url);</span><br><span class="line">                             if (!fileN.exists()) &#123;</span><br><span class="line">                                boolean mkdir = fileN.createNewFile();</span><br><span class="line">                            &#125;else &#123;</span><br><span class="line">                                fileN.delete();</span><br><span class="line">                            &#125;</span><br><span class="line">                            fos = new FileOutputStream(fileN);</span><br><span class="line">                            long sum = 0;</span><br><span class="line">                            while ((len = is.read(buf)) != -1) &#123;</span><br><span class="line">                                fos.write(buf, 0, len);</span><br><span class="line">                                sum += len;</span><br><span class="line">                                int progress = (int) (sum * 1.0f / total * 100);</span><br><span class="line">                            &#125;</span><br><span class="line">                            fos.flush();</span><br><span class="line">                        </span><br><span class="line">                            displayPdfFile(fileN);</span><br><span class="line">                        &#125; catch (Exception e) &#123;</span><br><span class="line">                            PLog.d(TAG, &quot;文件下载异常 = &quot; + e.toString());</span><br><span class="line">                        &#125; finally &#123;</span><br><span class="line">                            try &#123;</span><br><span class="line">                                if (is != null)</span><br><span class="line">                                    is.close();</span><br><span class="line">                            &#125; catch (IOException e) &#123;</span><br><span class="line">                            &#125;</span><br><span class="line">                            try &#123;</span><br><span class="line">                                if (fos != null)</span><br><span class="line">                                    fos.close();</span><br><span class="line">                            &#125; catch (IOException e) &#123;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    @Override</span><br><span class="line">                    public void onError(Throwable e) &#123;</span><br><span class="line">                        PLog.d(TAG, &quot;文件下载失败&quot;);</span><br><span class="line">                        File file = getCacheFile(url);</span><br><span class="line">                        if (!file.exists()) &#123;</span><br><span class="line">                            PLog.d(TAG, &quot;删除下载失败文件&quot;);</span><br><span class="line">                            file.delete();</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    @Override</span><br><span class="line">                    public void onComplete() &#123;</span><br><span class="line"></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void displayPdfFile(File file)&#123;</span><br><span class="line">        if (file != null &amp;&amp; !TextUtils.isEmpty(file.toString())) &#123;</span><br><span class="line">            //加载文件</span><br><span class="line">            Bundle localBundle = new Bundle();</span><br><span class="line">            localBundle.putString(&quot;filePath&quot;, file.toString());</span><br><span class="line">            localBundle.putString(&quot;tempPath&quot;, getExternalFilesDir(&quot;TbsReaderTemp&quot;).getAbsolutePath());</span><br><span class="line">            if (mTbsReaderView != null) &#123;</span><br><span class="line">                boolean bool = this.mTbsReaderView.preOpen(getFileType(mFile.toString()), false);</span><br><span class="line">                if (bool) &#123;</span><br><span class="line">                    mTbsReaderView.openFile(localBundle);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /***</span><br><span class="line">     * 获取缓存目录</span><br><span class="line">     *</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    private File getAgreementCacheDir() &#123;</span><br><span class="line">        String path = getExternalFilesDir(&quot;agreement&quot;).getAbsolutePath();</span><br><span class="line">        return new File(path);</span><br><span class="line">    &#125;</span><br><span class="line">    /***</span><br><span class="line">     * 绝对路径获取缓存文件</span><br><span class="line">     *</span><br><span class="line">     * @param url</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    private File getCacheFile(String url) &#123;</span><br><span class="line">        String fileName = &quot;agreement&quot; + &quot;.&quot; + getFileType(url);</span><br><span class="line">        File cacheFile = new File(getAgreementCacheDir(),fileName);</span><br><span class="line">        return cacheFile;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  /***</span><br><span class="line">     * 获取文件类型</span><br><span class="line">     *</span><br><span class="line">     * @param paramString</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    private String getFileType(String paramString) &#123;</span><br><span class="line">        String str = &quot;&quot;;</span><br><span class="line"></span><br><span class="line">        if (TextUtils.isEmpty(paramString)) &#123;</span><br><span class="line">            return str;</span><br><span class="line">        &#125;</span><br><span class="line">        int i = paramString.lastIndexOf(&apos;.&apos;);</span><br><span class="line">        if (i &lt;= -1) &#123;</span><br><span class="line">            return str;</span><br><span class="line">        &#125;</span><br><span class="line">        str = paramString.substring(i + 1);</span><br><span class="line">        return str;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onDestroy() &#123;</span><br><span class="line">        super.onDestroy();</span><br><span class="line">        if (mTbsReaderView != null) &#123;</span><br><span class="line">            mTbsReaderView.onStopDisplay();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3、退出-Activity-销毁-TbsReaderView"><a href="#3、退出-Activity-销毁-TbsReaderView" class="headerlink" title="3、退出 Activity 销毁 TbsReaderView"></a>3、退出 Activity 销毁 TbsReaderView</h3><p>退出页面时，一定要销毁 TbsReaderView，否则下次进来无法打开文件。<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">@Override</span><br><span class="line"> protected void onDestroy() &#123;</span><br><span class="line">     super.onDestroy();</span><br><span class="line">     if (mSuperFileview != null) &#123;</span><br><span class="line">         mSuperFileview.onStopDisplay();</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/PDF/" rel="tag"># PDF</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/archives/cc128e34.html" rel="next" title="Android 8.0 崩溃问题记录：Only fullscreen opaque activities can request">
+                <i class="fa fa-chevron-left"></i> Android 8.0 崩溃问题记录：Only fullscreen opaque activities can request
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  <div>
+      
+          <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">
+              -------------本文结束,感谢您的阅读-------------
+        </div>
+    
+</div>
+
+      
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="阮烁">
+            
+              <p class="site-author-name" itemprop="name">阮烁</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="298" height="52" src="//music.163.com/outchain/player?type=2&id=529267746&auto=1&height=32"></iframe>
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#常用的第三库："><span class="nav-text">常用的第三库：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#PdfViewPager"><span class="nav-text">PdfViewPager</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AndroidPdfViewer"><span class="nav-text">AndroidPdfViewer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#android-pdfview"><span class="nav-text">android-pdfview</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#腾讯浏览服务"><span class="nav-text">腾讯浏览服务</span></a></li></ol></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#一、下载腾讯浏览服务-SDK-并集成到应用"><span class="nav-text">一、下载腾讯浏览服务 SDK 并集成到应用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、NDK-设置"><span class="nav-text">二、NDK 设置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、AndroidManifest-xml-里加入权限声明"><span class="nav-text">三、AndroidManifest.xml 里加入权限声明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、初始化-X５-内核"><span class="nav-text">四、初始化 X５ 内核</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、将-PDF-文件下载到本地，然后使用-SDK-里面的-TbsReaderView-打开-PDF-文件。"><span class="nav-text">五、将 PDF 文件下载到本地，然后使用 SDK 里面的 TbsReaderView 打开 PDF 文件。</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、xml-布局页面"><span class="nav-text">1、xml 布局页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、Activity-核心代码"><span class="nav-text">2、Activity 核心代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、退出-Activity-销毁-TbsReaderView"><span class="nav-text">3、退出 Activity 销毁 TbsReaderView</span></a></li></ol></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阮烁</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+      <style>
+        a.gitment-editor-footer-tip { display: none; }
+        .gitment-container.gitment-footer-container { display: none; }
+      </style>
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'RaphetS',
+            repo: 'RaphetS.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '6b473ec87510b43657f491b237987f5044d2d427',
+            
+                client_id: 'ee62f38c2a95302edc73'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/shizuku.model.json"},"display":{"position":"left","width":120,"height":250},"mobile":{"show":false},"log":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/click_love.js"></script>
