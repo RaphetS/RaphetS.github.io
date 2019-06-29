@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="尚拙">
 <meta property="og:description" content="最近有个需求，在 App 内查看使用第三方签名的电子协议，电子协议为 PDF 文件。 上网查了一下，要实现 App 内在线查看 PDF，主要思路都是先把 PDF 文件下载下来，再通过 GitHub 第三方的库，打开 PDF 文件。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-06-29T07:37:41.630Z">
+<meta property="og:updated_time" content="2019-06-29T07:44:08.375Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 实现应用内在线查看 PDF 文件">
 <meta name="twitter:description" content="最近有个需求，在 App 内查看使用第三方签名的电子协议，电子协议为 PDF 文件。 上网查了一下，要实现 App 内在线查看 PDF，主要思路都是先把 PDF 文件下载下来，再通过 GitHub 第三方的库，打开 PDF 文件。">
@@ -327,7 +327,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-06-29T15:37:41+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2019-06-29T15:44:08+08:00">
                 2019-06-29
               </time>
             
@@ -407,6 +407,8 @@
         <p>最近有个需求，在 App 内查看使用第三方签名的电子协议，电子协议为 PDF 文件。</p>
 <p>上网查了一下，要实现 App 内在线查看 PDF，主要思路都是先把 PDF 文件下载下来，再通过 GitHub 第三方的库，打开 PDF 文件。</p>
 <a id="more"></a>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p>使用腾讯TBS打开Office文件 <a href="https://www.jianshu.com/p/8bd1c4918857" target="_blank" rel="noopener">https://www.jianshu.com/p/8bd1c4918857</a></p>
+<p>Android应用内展示word、excel、pdf、ppt等文件 <a href="https://www.jianshu.com/p/3f57d640b24d" target="_blank" rel="noopener">https://www.jianshu.com/p/3f57d640b24d</a></p>
 <h2 id="常用的第三库："><a href="#常用的第三库：" class="headerlink" title="常用的第三库："></a>常用的第三库：</h2><h5 id="PdfViewPager"><a href="#PdfViewPager" class="headerlink" title="PdfViewPager"></a>PdfViewPager</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://github.com/voghDev/PdfViewPager</span><br></pre></td></tr></table></figure>
 <h5 id="AndroidPdfViewer"><a href="#AndroidPdfViewer" class="headerlink" title="AndroidPdfViewer"></a>AndroidPdfViewer</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://github.com/barteksc/AndroidPdfViewer</span><br></pre></td></tr></table></figure>
 <h5 id="android-pdfview"><a href="#android-pdfview" class="headerlink" title="android-pdfview"></a>android-pdfview</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://github.com/JoanZapata/android-pdfview</span><br></pre></td></tr></table></figure>
@@ -617,7 +619,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#常用的第三库："><span class="nav-text">常用的第三库：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#PdfViewPager"><span class="nav-text">PdfViewPager</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AndroidPdfViewer"><span class="nav-text">AndroidPdfViewer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#android-pdfview"><span class="nav-text">android-pdfview</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#腾讯浏览服务"><span class="nav-text">腾讯浏览服务</span></a></li></ol></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#一、下载腾讯浏览服务-SDK-并集成到应用"><span class="nav-text">一、下载腾讯浏览服务 SDK 并集成到应用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、NDK-设置"><span class="nav-text">二、NDK 设置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、AndroidManifest-xml-里加入权限声明"><span class="nav-text">三、AndroidManifest.xml 里加入权限声明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、初始化-X５-内核"><span class="nav-text">四、初始化 X５ 内核</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、将-PDF-文件下载到本地，然后使用-SDK-里面的-TbsReaderView-打开-PDF-文件。"><span class="nav-text">五、将 PDF 文件下载到本地，然后使用 SDK 里面的 TbsReaderView 打开 PDF 文件。</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、xml-布局页面"><span class="nav-text">1、xml 布局页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、Activity-核心代码"><span class="nav-text">2、Activity 核心代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、退出-Activity-销毁-TbsReaderView"><span class="nav-text">3、退出 Activity 销毁 TbsReaderView</span></a></li></ol></li></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文章"><span class="nav-text">参考文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用的第三库："><span class="nav-text">常用的第三库：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#PdfViewPager"><span class="nav-text">PdfViewPager</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AndroidPdfViewer"><span class="nav-text">AndroidPdfViewer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#android-pdfview"><span class="nav-text">android-pdfview</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#腾讯浏览服务"><span class="nav-text">腾讯浏览服务</span></a></li></ol></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#一、下载腾讯浏览服务-SDK-并集成到应用"><span class="nav-text">一、下载腾讯浏览服务 SDK 并集成到应用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、NDK-设置"><span class="nav-text">二、NDK 设置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、AndroidManifest-xml-里加入权限声明"><span class="nav-text">三、AndroidManifest.xml 里加入权限声明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、初始化-X５-内核"><span class="nav-text">四、初始化 X５ 内核</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、将-PDF-文件下载到本地，然后使用-SDK-里面的-TbsReaderView-打开-PDF-文件。"><span class="nav-text">五、将 PDF 文件下载到本地，然后使用 SDK 里面的 TbsReaderView 打开 PDF 文件。</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、xml-布局页面"><span class="nav-text">1、xml 布局页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、Activity-核心代码"><span class="nav-text">2、Activity 核心代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、退出-Activity-销毁-TbsReaderView"><span class="nav-text">3、退出 Activity 销毁 TbsReaderView</span></a></li></ol></li></div>
             
 
           </div>
