@@ -77,7 +77,7 @@
 
 
 
-  <meta name="keywords" content="模拟登录,">
+  <meta name="keywords" content="Jetpack,Room,">
 
 
 
@@ -88,18 +88,18 @@
 
 
 
-<meta name="description" content="最近爬虫的时候，有些网站需要登录才能爬，记录一下python模拟登录的几种方法。">
-<meta name="keywords" content="模拟登录">
+<meta name="description" content="Room是Google推出的Android架构组件库中的数据持久化组件库, 也可以说是在SQLite上实现的一套ORM解决方案。">
+<meta name="keywords" content="Jetpack,Room">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Python 爬虫模拟登录的3种方法">
-<meta property="og:url" content="https://raphets.github.io/archives/17527.html">
+<meta property="og:title" content="Jetpack架构组件之Room">
+<meta property="og:url" content="https://raphets.github.io/archives/7692b4d9.html">
 <meta property="og:site_name" content="尚拙">
-<meta property="og:description" content="最近爬虫的时候，有些网站需要登录才能爬，记录一下python模拟登录的几种方法。">
+<meta property="og:description" content="Room是Google推出的Android架构组件库中的数据持久化组件库, 也可以说是在SQLite上实现的一套ORM解决方案。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-04-08T08:32:36.936Z">
+<meta property="og:updated_time" content="2020-07-31T02:48:16.141Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Python 爬虫模拟登录的3种方法">
-<meta name="twitter:description" content="最近爬虫的时候，有些网站需要登录才能爬，记录一下python模拟登录的几种方法。">
+<meta name="twitter:title" content="Jetpack架构组件之Room">
+<meta name="twitter:description" content="Room是Google推出的Android架构组件库中的数据持久化组件库, 也可以说是在SQLite上实现的一套ORM解决方案。">
 
 
 
@@ -129,13 +129,13 @@
 
 
 
-  <link rel="canonical" href="https://raphets.github.io/archives/17527.html">
+  <link rel="canonical" href="https://raphets.github.io/archives/7692b4d9.html">
 
 
 
 
 
-  <title>Python 爬虫模拟登录的3种方法 | 尚拙</title>
+  <title>Jetpack架构组件之Room | 尚拙</title>
   
 
 
@@ -282,7 +282,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/17527.html">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/7692b4d9.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="阮烁">
@@ -299,7 +299,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">Python 爬虫模拟登录的3种方法</h2>
+          <h2 class="post-title" itemprop="name headline">Jetpack架构组件之Room</h2>
         
 
         <div class="post-meta">
@@ -311,8 +311,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-22T15:40:41+08:00">
-                2019-03-22
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-30T17:24:43+08:00">
+                2020-07-30
               </time>
             
 
@@ -327,8 +327,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2020-04-08T16:32:36+08:00">
-                2020-04-08
+              <time title="更新于" itemprop="dateModified" datetime="2020-07-31T10:48:16+08:00">
+                2020-07-31
               </time>
             
           </span>
@@ -357,8 +357,8 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/技术文章/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
+                  <a href="/categories/技术文章/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
                   </a>
                 </span>
 
@@ -375,8 +375,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/archives/17527.html#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count gitment-comments-count" data-xid="/archives/17527.html" itemprop="commentsCount"></span>
+                <a href="/archives/7692b4d9.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/archives/7692b4d9.html" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -404,19 +404,33 @@
       
 
       
-        <p>最近爬虫的时候，有些网站需要登录才能爬，记录一下python模拟登录的几种方法。</p>
+        <p>Room是Google推出的Android架构组件库中的数据持久化组件库, 也可以说是在SQLite上实现的一套ORM解决方案。</p>
 <a id="more"></a>
-<h1 id="方法一-：通过接口实现登录"><a href="#方法一-：通过接口实现登录" class="headerlink" title="方法一 ：通过接口实现登录"></a>方法一 ：通过接口实现登录</h1><p>1、在web浏览器上打开登录页面，开启浏览器的开发者模式，在浏览器上登录，然后在开发者模式里面分析登录之后请求的地址，找到登录接口，以及请求参数。</p>
-<p>2、使用python的requests框架，请求登录接口，并保存返回的cookie，从而实现登录。</p>
-<p><strong>缺点 : 有的网站，登录需要传token，以及其他加密的参数，这种情况处理起来有点复杂</strong></p>
-<h1 id="方法二-：使用已知的cookie直接访问"><a href="#方法二-：使用已知的cookie直接访问" class="headerlink" title="方法二 ：使用已知的cookie直接访问"></a>方法二 ：使用已知的cookie直接访问</h1><p>1、直接在网页端登录，然后打开浏览器的开发者模式，直接在登录之后的网络请求头中，找到cookie，复制出来。</p>
-<p>2、python爬虫的时候，直接将复制出来的cookie放到请求头header中，请求的时候就不用登录了。</p>
-<p><strong>缺点 : cookie是有有效期的，不适合长期使用的场景。</strong></p>
-<h1 id="方法三-：使用selenium库和PhantomJS无界面浏览器模拟登录"><a href="#方法三-：使用selenium库和PhantomJS无界面浏览器模拟登录" class="headerlink" title="方法三 ：使用selenium库和PhantomJS无界面浏览器模拟登录"></a>方法三 ：使用selenium库和PhantomJS无界面浏览器模拟登录</h1><p>1、使用selenuim的api取出登录页面的账号、密码输入框元素</p>
-<p>2、给账号、密码元素赋值</p>
-<p>3、使用selenuim的api取出登录按钮元素，模拟点击事件，完成登录。</p>
-<p><strong>缺点 : 有的网站登录需要验证码，这个时候就需要集成图片识别框架，进行验证码识别</strong></p>
-
+<h1 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h1><p>Room是Google提供的一个ORM库。Room提供了三个主要的组件：</p>
+<p>Entity：实体类，对应的是数据库的一张表结构。需要使用注解 @Entity 标记。</p>
+<p>Dao：包含访问一系列访问数据库的方法。需要使用注解 @Dao 标记。</p>
+<p>Database：数据库持有者，作为与应用持久化相关数据的底层连接的主要接入点。需要使用注解 @Database 标记。 使用@Database注解需满足以下条件： 定义的类必须是一个继承于RoomDatabase的抽象类。 在注解中需要定义与数据库相关联的实体类列表。 包含一个没有参数的抽象方法并且返回一个带有注解的 @Dao。</p>
+<h1 id="二、基本使用"><a href="#二、基本使用" class="headerlink" title="二、基本使用"></a>二、基本使用</h1><h3 id="1、添加依赖"><a href="#1、添加依赖" class="headerlink" title="1、添加依赖"></a>1、添加依赖</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">def room_version = &quot;2.2.5&quot;</span><br><span class="line">implementation &quot;androidx.room:room-runtime:$room_version&quot;</span><br><span class="line">//kotlin下使用</span><br><span class="line">kapt &quot;androidx.room:room-compiler:$room_version&quot;</span><br><span class="line">//java下使用</span><br><span class="line">annotationProcessor &quot;androidx.room:room-compiler:$room_version&quot;</span><br></pre></td></tr></table></figure>
+<p>在kotlin中使用需要添加kapt插件，在app的build.gradle文件的最上方添加如下代码：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">apply plugin: &apos;kotlin-kapt&apos;</span><br></pre></td></tr></table></figure></p>
+<h3 id="2、Entity-实体类配置"><a href="#2、Entity-实体类配置" class="headerlink" title="2、Entity 实体类配置"></a>2、Entity 实体类配置</h3><p>使用@Entity注解实体类<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">@Entity</span><br><span class="line">data class User(</span><br><span class="line">    @PrimaryKey(autoGenerate = true) var id: Long,</span><br><span class="line">    var name: String,</span><br><span class="line">    var age: Int,</span><br><span class="line">    var onLine: Boolean,</span><br><span class="line">    @Ignore var remark: String,</span><br><span class="line">    var mobile:String</span><br><span class="line">)&#123;</span><br><span class="line">    constructor() : this(0,&quot;&quot;,0,false,&quot;&quot;,&quot;&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>注解说明：</p>
+<p>@Entity：定义表名、复合主键、索引等</p>
+<p>tableName：设置表名字。默认是类的名字。</p>
+<p>indices：设置索引。</p>
+<p>inheritSuperIndices：父类的索引是否会自动被当前类继承。</p>
+<p>primaryKeys：设置联合主键。</p>
+<p>foreignKeys：设置外键。</p>
+<p>ignoredColumns : 被忽略的字段。</p>
+<p>@PrimaryKey：定义主键，autoGenerate设置是否自增</p>
+<p>@ColumnInfo：定义字段名，name设置表中字段名，不设置默认为属性名</p>
+<p>@Ignore：定义属性不被创建在表中</p>
+<h3 id="3、创建-Dao-数据访问类"><a href="#3、创建-Dao-数据访问类" class="headerlink" title="3、创建 Dao 数据访问类"></a>3、创建 Dao 数据访问类</h3><p>Dao类是一个 interface，其中定义了一系列的操作数据库的方法。通常我们操作数据库无非就是增删改查。Room也为我们的提供了相关的注解，有@Insert、@Delete、@Update 和 @Query。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">@Dao</span><br><span class="line">interface UserDao &#123;</span><br><span class="line">    //查询所有用户</span><br><span class="line">    @Query(&quot;select * from user&quot;)</span><br><span class="line">    fun getUsers(): List&lt;User&gt;</span><br><span class="line"></span><br><span class="line">    //根据ID查询用户</span><br><span class="line">    @Query(&quot;select * from user where id = :id&quot;)</span><br><span class="line">    fun getUserById(id: Long): User</span><br><span class="line"></span><br><span class="line">    //根据用户名模糊查询用户</span><br><span class="line">    @Query(&quot;select * from user where name Like &apos;%&apos; || :name ||&apos;%&apos;&quot;)</span><br><span class="line">    fun getUsersByName(name: String): List&lt;User&gt;</span><br><span class="line"></span><br><span class="line">    //根据用户名和年龄查询用户</span><br><span class="line">    @Query(&quot;select * from user where name =:name and age &gt;:age&quot;)</span><br><span class="line">    fun getUsersByNameAndAge(name: String, age: Int): List&lt;User&gt;</span><br><span class="line"></span><br><span class="line">    //插入用户</span><br><span class="line">    /*</span><br><span class="line">        onConflict：默认值是OnConflictStrategy.ABORT，表示当插入有冲突的时候的处理策略。</span><br><span class="line">                    OnConflictStrategy封装了Room解决冲突的相关策略：</span><br><span class="line">       1. OnConflictStrategy.REPLACE：冲突策略是取代旧数据同时继续事务。</span><br><span class="line">       2. OnConflictStrategy.ROLLBACK：冲突策略是回滚事务。</span><br><span class="line">       3. OnConflictStrategy.ABORT：冲突策略是终止事务。</span><br><span class="line">       4. OnConflictStrategy.FAIL：冲突策略是事务失败。</span><br><span class="line">       5. OnConflictStrategy.IGNORE：冲突策略是忽略冲突。</span><br><span class="line">     */</span><br><span class="line">    @Insert(onConflict = OnConflictStrategy.REPLACE)</span><br><span class="line">    fun addUsers(users: List&lt;User&gt;)</span><br><span class="line"></span><br><span class="line">    //更新用户</span><br><span class="line">    @Update</span><br><span class="line">    fun updateUsers(users: List&lt;User&gt;)</span><br><span class="line"></span><br><span class="line">    //删除用户</span><br><span class="line">    @Delete</span><br><span class="line">    fun deleteUser(user: User)</span><br><span class="line"></span><br><span class="line">    //根据条件删除用户</span><br><span class="line">    @Query(&quot;delete from user where id = :id&quot;)</span><br><span class="line">    fun deleteUserById(id: Long)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4、创建-Database-单例数据库"><a href="#4、创建-Database-单例数据库" class="headerlink" title="4、创建 Database 单例数据库"></a>4、创建 Database 单例数据库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">@Database(entities = [User::class], version = 2)</span><br><span class="line">abstract class AppDatabase : RoomDatabase() &#123;</span><br><span class="line"></span><br><span class="line">    abstract fun userDao(): UserDao</span><br><span class="line"></span><br><span class="line">    companion object &#123;</span><br><span class="line">        private var instance: AppDatabase? = null</span><br><span class="line">        fun getInstance(context: Context): AppDatabase &#123;</span><br><span class="line">            if (instance == null) &#123;</span><br><span class="line">                instance = Room.databaseBuilder(</span><br><span class="line">                    context.applicationContext,</span><br><span class="line">                    AppDatabase::class.java,</span><br><span class="line">                    &quot;data.db&quot;</span><br><span class="line">                ).allowMainThreadQueries()</span><br><span class="line">                    .build()</span><br><span class="line">            &#125;</span><br><span class="line">            return instance as AppDatabase</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="5、使用"><a href="#5、使用" class="headerlink" title="5、使用"></a>5、使用</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">val users = listOf(</span><br><span class="line">            User(1, &quot;张三&quot;, 20, true, &quot;123456&quot;,&quot;45454&quot;),</span><br><span class="line">            User(2, &quot;李四&quot;, 22, true, &quot;123456&quot;,&quot;45454&quot;)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">AppDatabase.getInstance(this).userDao().addUsers(users)</span><br><span class="line"></span><br><span class="line">var userList = AppDatabase.getInstance(this)</span><br><span class="line">            .userDao()</span><br><span class="line">            .getUsers()</span><br></pre></td></tr></table></figure>
+<h3 id="6、数据库升级"><a href="#6、数据库升级" class="headerlink" title="6、数据库升级"></a>6、数据库升级</h3><p>1、修改版本号</p>
+<p>2、调用addMigrations方法，其中Migration需要两个参数，startVersion表示的是升级开始的版本，endVersion表示要升级到的版本。同时需要将@Database注解中的version的值修改为和endVersion相同。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">@Database(entities = [User::class], version = 2)</span><br><span class="line">abstract class AppDatabase : RoomDatabase() &#123;</span><br><span class="line"></span><br><span class="line">    abstract fun userDao(): UserDao</span><br><span class="line"></span><br><span class="line">    companion object &#123;</span><br><span class="line">        private var instance: AppDatabase? = null</span><br><span class="line">        fun getInstance(context: Context): AppDatabase &#123;</span><br><span class="line">            if (instance == null) &#123;</span><br><span class="line">                instance = Room.databaseBuilder(</span><br><span class="line">                    context.applicationContext,</span><br><span class="line">                    AppDatabase::class.java,</span><br><span class="line">                    &quot;data.db&quot;</span><br><span class="line">                ).allowMainThreadQueries()</span><br><span class="line">                    .addMigrations(object : Migration(1, 2) &#123;</span><br><span class="line">                        override fun migrate(database: SupportSQLiteDatabase) &#123;</span><br><span class="line">                            database.execSQL(&quot;ALTER TABLE User ADD COLUMN mobile TEXT  NOT NULL DEFAULT 10&quot;)</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;)</span><br><span class="line">                    .build()</span><br><span class="line">            &#125;</span><br><span class="line">            return instance as AppDatabase</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
     </div>
     
@@ -433,7 +447,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/模拟登录/" rel="tag"># 模拟登录</a>
+            <a href="/tags/Jetpack/" rel="tag"># Jetpack</a>
+          
+            <a href="/tags/Room/" rel="tag"># Room</a>
           
         </div>
       
@@ -446,8 +462,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/archives/19105.html" rel="next" title="GitHub + Hexo 搭建个人博客教程">
-                <i class="fa fa-chevron-left"></i> GitHub + Hexo 搭建个人博客教程
+              <a href="/archives/2895a1e7.html" rel="next" title="Jenkins实现Android自动化打包并上传至蒲公英">
+                <i class="fa fa-chevron-left"></i> Jenkins实现Android自动化打包并上传至蒲公英
               </a>
             
           </div>
@@ -455,10 +471,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/archives/60074.html" rel="prev" title="如何将本地项目添加到Git远程仓库？">
-                如何将本地项目添加到Git远程仓库？ <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -612,7 +624,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#方法一-：通过接口实现登录"><span class="nav-text">方法一 ：通过接口实现登录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方法二-：使用已知的cookie直接访问"><span class="nav-text">方法二 ：使用已知的cookie直接访问</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方法三-：使用selenium库和PhantomJS无界面浏览器模拟登录"><span class="nav-text">方法三 ：使用selenium库和PhantomJS无界面浏览器模拟登录</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、简介"><span class="nav-text">一、简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、基本使用"><span class="nav-text">二、基本使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、添加依赖"><span class="nav-text">1、添加依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、Entity-实体类配置"><span class="nav-text">2、Entity 实体类配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、创建-Dao-数据访问类"><span class="nav-text">3、创建 Dao 数据访问类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、创建-Database-单例数据库"><span class="nav-text">4、创建 Database 单例数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、使用"><span class="nav-text">5、使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6、数据库升级"><span class="nav-text">6、数据库升级</span></a></li></ol></li></ol></div>
             
 
           </div>
