@@ -77,7 +77,7 @@
 
 
 
-  <meta name="keywords" content="SwipeRefreshLayout,">
+  <meta name="keywords" content="Gson,">
 
 
 
@@ -88,20 +88,18 @@
 
 
 
-<meta name="description" content="看到了Android版知乎实现了这种效果，就自己也实现了一下。 使用这个效果，不用另外再加loading了。">
-<meta name="keywords" content="SwipeRefreshLayout">
+<meta name="description" content="Gson是谷歌发布的一个json解析框架。">
+<meta name="keywords" content="Gson">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SwipeRefreshLayout 首次进入界面自动刷新">
-<meta property="og:url" content="https://raphets.github.io/archives/9e761e8b.html">
+<meta property="og:title" content="Gson基本用法介绍">
+<meta property="og:url" content="https://raphets.github.io/archives/a46bddc0.html">
 <meta property="og:site_name" content="尚拙">
-<meta property="og:description" content="看到了Android版知乎实现了这种效果，就自己也实现了一下。 使用这个效果，不用另外再加loading了。">
+<meta property="og:description" content="Gson是谷歌发布的一个json解析框架。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raphets.github.io/archives/9e761e8b/1.gif">
-<meta property="og:updated_time" content="2019-05-29T08:10:26.273Z">
+<meta property="og:updated_time" content="2020-09-12T07:54:25.606Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SwipeRefreshLayout 首次进入界面自动刷新">
-<meta name="twitter:description" content="看到了Android版知乎实现了这种效果，就自己也实现了一下。 使用这个效果，不用另外再加loading了。">
-<meta name="twitter:image" content="https://raphets.github.io/archives/9e761e8b/1.gif">
+<meta name="twitter:title" content="Gson基本用法介绍">
+<meta name="twitter:description" content="Gson是谷歌发布的一个json解析框架。">
 
 
 
@@ -131,13 +129,13 @@
 
 
 
-  <link rel="canonical" href="https://raphets.github.io/archives/9e761e8b.html">
+  <link rel="canonical" href="https://raphets.github.io/archives/a46bddc0.html">
 
 
 
 
 
-  <title>SwipeRefreshLayout 首次进入界面自动刷新 | 尚拙</title>
+  <title>Gson基本用法介绍 | 尚拙</title>
   
 
 
@@ -284,7 +282,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/9e761e8b.html">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/a46bddc0.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="阮烁">
@@ -301,7 +299,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">SwipeRefreshLayout 首次进入界面自动刷新</h2>
+          <h2 class="post-title" itemprop="name headline">Gson基本用法介绍</h2>
         
 
         <div class="post-meta">
@@ -313,8 +311,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-30T10:20:46+08:00">
-                2019-04-30
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-09-12T15:29:24+08:00">
+                2020-09-12
               </time>
             
 
@@ -329,8 +327,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-05-29T16:10:26+08:00">
-                2019-05-29
+              <time title="更新于" itemprop="dateModified" datetime="2020-09-12T15:54:25+08:00">
+                2020-09-12
               </time>
             
           </span>
@@ -377,8 +375,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/archives/9e761e8b.html#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count gitment-comments-count" data-xid="/archives/9e761e8b.html" itemprop="commentsCount"></span>
+                <a href="/archives/a46bddc0.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/archives/a46bddc0.html" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -406,29 +404,15 @@
       
 
       
-        <p>看到了Android版知乎实现了这种效果，就自己也实现了一下。</p>
-<p>使用这个效果，不用另外再加loading了。</p>
-<a id="more"></a>
-<img src="/archives/9e761e8b/1.gif">
-<p>实现方式：</p>
-<h1 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h1><p>①在onWindowFocusChanged()方法中，设置为刷新状态为true</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">@Override</span><br><span class="line">    public void onWindowFocusChanged(boolean hasFocus) &#123;</span><br><span class="line">        super.onWindowFocusChanged(hasFocus);</span><br><span class="line">        mSwipeRefreshLayout.setRefreshing(true);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>②在获取数据完成后，设置刷新状态为false</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if (mSwipeRefreshLayout.isRefreshing()) &#123;</span><br><span class="line">        mSwipeRefreshLayout.setRefreshing(false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h1><p>①调用mSwipeRefreshLayout.measure()方法后，设置刷新状态为true</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">//手动调用,通知系统去测量</span><br><span class="line">mSwipeRefreshLayout.measure(0,0);</span><br><span class="line">mSwipeRefreshLayout.setRefreshing(true);</span><br></pre></td></tr></table></figure>
-<p>②在获取数据完成后，设置刷新状态为false</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if (mSwipeRefreshLayout.isRefreshing()) &#123;</span><br><span class="line">        mSwipeRefreshLayout.setRefreshing(false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="方法三"><a href="#方法三" class="headerlink" title="方法三"></a>方法三</h1><p>①在view.post(new Runnable)方法中设置刷新状态为true</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mSwipeRefreshLayout.post(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                Log.i(&quot;getMeasuredHeight&quot;,mSwipeRefreshLayout.getMeasuredHeight()+&quot;&quot;);</span><br><span class="line">                mSwipeRefreshLayout.setRefreshing(true);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
-<p>②在获取数据完成后，设置刷新状态为false</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if (mSwipeRefreshLayout.isRefreshing()) &#123;</span><br><span class="line">        mSwipeRefreshLayout.setRefreshing(false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="方法四"><a href="#方法四" class="headerlink" title="方法四"></a>方法四</h1><p>①使用ViewTreeObserver</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ViewTreeObserver obeser=mSwipeRefreshLayout.getViewTreeObserver();</span><br><span class="line">obeser.addOnWindowFocusChangeListener(new ViewTreeObserver.OnWindowFocusChangeListener() &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void onWindowFocusChanged(boolean hasFocus) &#123;</span><br><span class="line">        mSwipeRefreshLayout.setRefreshing(true);</span><br><span class="line">        Log.i(&quot;11getMeasuredHeight&quot;,mSwipeRefreshLayout.getMeasuredHeight()+&quot;&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>②在获取数据完成后，设置刷新状态为false</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if (mSwipeRefreshLayout.isRefreshing()) &#123;</span><br><span class="line">        mSwipeRefreshLayout.setRefreshing(false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="说明："><a href="#说明：" class="headerlink" title="说明："></a>说明：</h1><p>每种方法的第一步，都是为了保证SwipeRefreshLayout绘制完成，再调用方法显示刷新球，否则界面比较的复杂的时候，刷新球会不显示。</p>
-<h6 id="源码：https-github-com-RaphetS-swiperefreshdemo"><a href="#源码：https-github-com-RaphetS-swiperefreshdemo" class="headerlink" title="源码：https://github.com/RaphetS/swiperefreshdemo"></a>源码：<a href="https://github.com/RaphetS/swiperefreshdemo" target="_blank" rel="noopener">https://github.com/RaphetS/swiperefreshdemo</a></h6>
+        <p>Gson是谷歌发布的一个json解析框架。<br><a id="more"></a></p>
+<h1 id="一、集成"><a href="#一、集成" class="headerlink" title="一、集成"></a>一、集成</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  implementation &apos;com.google.code.gson:gson:2.8.6&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="二、基本使用"><a href="#二、基本使用" class="headerlink" title="二、基本使用"></a>二、基本使用</h1><h3 id="1、json转对象"><a href="#1、json转对象" class="headerlink" title="1、json转对象"></a>1、json转对象</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">String jsonStr = &quot;&#123;\&quot;name\&quot;:\&quot;张三\&quot;,\&quot;age\&quot;:24&#125;&quot;;</span><br><span class="line">Gson gson = new Gson();</span><br><span class="line">User user = gson.fromJson(jsonStr, User.class);</span><br></pre></td></tr></table></figure>
+<h3 id="2、json转List"><a href="#2、json转List" class="headerlink" title="2、json转List"></a>2、json转List</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Gson gson = new Gson();</span><br><span class="line">String jsonStr = &quot;[&#123;\&quot;name\&quot;:\&quot;李白\&quot;,\&quot;age\&quot;:24&#125;,&#123;\&quot;name\&quot;:\&quot;百里\&quot;,\&quot;age\&quot;:18&#125;,&#123;\&quot;name\&quot;:\&quot;兰陵王\&quot;,\&quot;age\&quot;:30&#125;]&quot;;</span><br><span class="line">List&lt;User&gt; userList = new Gson().fromJson(jsonStr, new TypeToken&lt;List&lt;User&gt;&gt;()&#123;&#125;.getType());</span><br></pre></td></tr></table></figure>
+<h3 id="3、json转数组"><a href="#3、json转数组" class="headerlink" title="3、json转数组"></a>3、json转数组</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Gson gson = new Gson();</span><br><span class="line"> String jsonStr = &quot;[\&quot;Java\&quot;,\&quot;Kotlin\&quot;,\&quot;Git\&quot;,\&quot;GitHub\&quot;]&quot;;</span><br><span class="line"> String[] strings = gson.fromJson(jsonStr, String[].class);</span><br></pre></td></tr></table></figure>
+<h3 id="4、对象转json"><a href="#4、对象转json" class="headerlink" title="4、对象转json"></a>4、对象转json</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">User user = new User(&quot;李白&quot;, 24);</span><br><span class="line">Gson gson = new Gson();</span><br><span class="line">String jsonStr = gson.toJson(user);</span><br></pre></td></tr></table></figure>
+<h3 id="5、List转json"><a href="#5、List转json" class="headerlink" title="5、List转json"></a>5、List转json</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Gson gson = new Gson();</span><br><span class="line">List&lt;User&gt; userList = new ArrayList();</span><br><span class="line">String jsonStr = gson.toJson(userList, new TypeToken&lt;List&lt;User&gt;&gt;()&#123;&#125;.getType());</span><br></pre></td></tr></table></figure>
+<h3 id="6、数组转json"><a href="#6、数组转json" class="headerlink" title="6、数组转json"></a>6、数组转json</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">String[] strings =&#123;&quot;Java&quot;,&quot;Kotlin&quot;,&quot;Android&quot;&#125;;</span><br><span class="line">Gson gson = new Gson();</span><br><span class="line">String jsonStr = gson.toJson(strings, String[].class);</span><br></pre></td></tr></table></figure>
+
       
     </div>
     
@@ -445,7 +429,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/SwipeRefreshLayout/" rel="tag"># SwipeRefreshLayout</a>
+            <a href="/tags/Gson/" rel="tag"># Gson</a>
           
         </div>
       
@@ -458,8 +442,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/archives/aa588849.html" rel="next" title="Android 序列化总结">
-                <i class="fa fa-chevron-left"></i> Android 序列化总结
+              <a href="/archives/7692b4d9.html" rel="next" title="Jetpack架构组件之Room">
+                <i class="fa fa-chevron-left"></i> Jetpack架构组件之Room
               </a>
             
           </div>
@@ -467,10 +451,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/archives/b9e67ec1.html" rel="prev" title="HTTP 协议详解">
-                HTTP 协议详解 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -624,7 +604,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#方法一"><span class="nav-text">方法一</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方法二"><span class="nav-text">方法二</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方法三"><span class="nav-text">方法三</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方法四"><span class="nav-text">方法四</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#说明："><span class="nav-text">说明：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#源码：https-github-com-RaphetS-swiperefreshdemo"><span class="nav-text">源码：https://github.com/RaphetS/swiperefreshdemo</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、集成"><span class="nav-text">一、集成</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、基本使用"><span class="nav-text">二、基本使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、json转对象"><span class="nav-text">1、json转对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、json转List"><span class="nav-text">2、json转List</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、json转数组"><span class="nav-text">3、json转数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、对象转json"><span class="nav-text">4、对象转json</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、List转json"><span class="nav-text">5、List转json</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6、数组转json"><span class="nav-text">6、数组转json</span></a></li></ol></li></ol></div>
             
 
           </div>
