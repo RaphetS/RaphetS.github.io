@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"raphets.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Room是Google推出的Android架构组件库中的数据持久化组件库, 也可以说是在SQLite上实现的一套ORM解决方案。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jetpack架构组件之Room">
+<meta property="og:url" content="https://raphets.github.io/archives/7692b4d9.html">
+<meta property="og:site_name" content="尚拙">
+<meta property="og:description" content="Room是Google推出的Android架构组件库中的数据持久化组件库, 也可以说是在SQLite上实现的一套ORM解决方案。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-30T09:24:43.000Z">
+<meta property="article:modified_time" content="2022-05-25T02:42:58.024Z">
+<meta property="article:author" content="阮烁">
+<meta property="article:tag" content="Jetpack">
+<meta property="article:tag" content="Room">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://raphets.github.io/archives/7692b4d9.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Jetpack架构组件之Room | 尚拙</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">尚拙</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个分享技术、学习成长的个人博客网站</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tool">
+
+    <a href="/tool/" rel="section"><i class="fa fa-hammer fa-fw"></i>工具</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/7692b4d9.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="阮烁">
+      <meta itemprop="description" content="不积跬步，无以至千里；不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="尚拙">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Jetpack架构组件之Room
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-30 17:24:43" itemprop="dateCreated datePublished" datetime="2020-07-30T17:24:43+08:00">2020-07-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-25 10:42:58" itemprop="dateModified" datetime="2022-05-25T10:42:58+08:00">2022-05-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" itemprop="url" rel="index"><span itemprop="name">技术文章</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Room是Google推出的Android架构组件库中的数据持久化组件库, 也可以说是在SQLite上实现的一套ORM解决方案。</p>
+<span id="more"></span>
+
+<h1 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h1><p>Room是Google提供的一个ORM库。Room提供了三个主要的组件：</p>
+<p>Entity：实体类，对应的是数据库的一张表结构。需要使用注解 @Entity 标记。</p>
+<p>Dao：包含访问一系列访问数据库的方法。需要使用注解 @Dao 标记。</p>
+<p>Database：数据库持有者，作为与应用持久化相关数据的底层连接的主要接入点。需要使用注解 @Database 标记。 使用@Database注解需满足以下条件： 定义的类必须是一个继承于RoomDatabase的抽象类。 在注解中需要定义与数据库相关联的实体类列表。 包含一个没有参数的抽象方法并且返回一个带有注解的 @Dao。</p>
+<h1 id="二、基本使用"><a href="#二、基本使用" class="headerlink" title="二、基本使用"></a>二、基本使用</h1><h3 id="1、添加依赖"><a href="#1、添加依赖" class="headerlink" title="1、添加依赖"></a>1、添加依赖</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def room_version = &quot;2.2.5&quot;</span><br><span class="line">implementation &quot;androidx.room:room-runtime:$room_version&quot;</span><br><span class="line">//kotlin下使用</span><br><span class="line">kapt &quot;androidx.room:room-compiler:$room_version&quot;</span><br><span class="line">//java下使用</span><br><span class="line">annotationProcessor &quot;androidx.room:room-compiler:$room_version&quot;</span><br></pre></td></tr></table></figure>
+<p>在kotlin中使用需要添加kapt插件，在app的build.gradle文件的最上方添加如下代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">apply plugin: &#x27;kotlin-kapt&#x27;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2、Entity-实体类配置"><a href="#2、Entity-实体类配置" class="headerlink" title="2、Entity 实体类配置"></a>2、Entity 实体类配置</h3><p>使用@Entity注解实体类</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@Entity</span><br><span class="line">data class User(</span><br><span class="line">    @PrimaryKey(autoGenerate = true) var id: Long,</span><br><span class="line">    var name: String,</span><br><span class="line">    var age: Int,</span><br><span class="line">    var onLine: Boolean,</span><br><span class="line">    @Ignore var remark: String,</span><br><span class="line">    var mobile:String</span><br><span class="line">)&#123;</span><br><span class="line">    constructor() : this(0,&quot;&quot;,0,false,&quot;&quot;,&quot;&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注解说明：</p>
+<p>@Entity：定义表名、复合主键、索引等</p>
+<p>tableName：设置表名字。默认是类的名字。</p>
+<p>indices：设置索引。</p>
+<p>inheritSuperIndices：父类的索引是否会自动被当前类继承。</p>
+<p>primaryKeys：设置联合主键。</p>
+<p>foreignKeys：设置外键。</p>
+<p>ignoredColumns : 被忽略的字段。</p>
+<p>@PrimaryKey：定义主键，autoGenerate设置是否自增</p>
+<p>@ColumnInfo：定义字段名，name设置表中字段名，不设置默认为属性名</p>
+<p>@Ignore：定义属性不被创建在表中</p>
+<h3 id="3、创建-Dao-数据访问类"><a href="#3、创建-Dao-数据访问类" class="headerlink" title="3、创建 Dao 数据访问类"></a>3、创建 Dao 数据访问类</h3><p>Dao类是一个 interface，其中定义了一系列的操作数据库的方法。通常我们操作数据库无非就是增删改查。Room也为我们的提供了相关的注解，有@Insert、@Delete、@Update 和 @Query。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@Dao</span><br><span class="line">interface UserDao &#123;</span><br><span class="line">    //查询所有用户</span><br><span class="line">    @Query(&quot;select * from user&quot;)</span><br><span class="line">    fun getUsers(): List&lt;User&gt;</span><br><span class="line"></span><br><span class="line">    //根据ID查询用户</span><br><span class="line">    @Query(&quot;select * from user where id = :id&quot;)</span><br><span class="line">    fun getUserById(id: Long): User</span><br><span class="line"></span><br><span class="line">    //根据用户名模糊查询用户</span><br><span class="line">    @Query(&quot;select * from user where name Like &#x27;%&#x27; || :name ||&#x27;%&#x27;&quot;)</span><br><span class="line">    fun getUsersByName(name: String): List&lt;User&gt;</span><br><span class="line"></span><br><span class="line">    //根据用户名和年龄查询用户</span><br><span class="line">    @Query(&quot;select * from user where name =:name and age &gt;:age&quot;)</span><br><span class="line">    fun getUsersByNameAndAge(name: String, age: Int): List&lt;User&gt;</span><br><span class="line"></span><br><span class="line">    //插入用户</span><br><span class="line">    /*</span><br><span class="line">        onConflict：默认值是OnConflictStrategy.ABORT，表示当插入有冲突的时候的处理策略。</span><br><span class="line">                    OnConflictStrategy封装了Room解决冲突的相关策略：</span><br><span class="line">       1. OnConflictStrategy.REPLACE：冲突策略是取代旧数据同时继续事务。</span><br><span class="line">       2. OnConflictStrategy.ROLLBACK：冲突策略是回滚事务。</span><br><span class="line">       3. OnConflictStrategy.ABORT：冲突策略是终止事务。</span><br><span class="line">       4. OnConflictStrategy.FAIL：冲突策略是事务失败。</span><br><span class="line">       5. OnConflictStrategy.IGNORE：冲突策略是忽略冲突。</span><br><span class="line">     */</span><br><span class="line">    @Insert(onConflict = OnConflictStrategy.REPLACE)</span><br><span class="line">    fun addUsers(users: List&lt;User&gt;)</span><br><span class="line"></span><br><span class="line">    //更新用户</span><br><span class="line">    @Update</span><br><span class="line">    fun updateUsers(users: List&lt;User&gt;)</span><br><span class="line"></span><br><span class="line">    //删除用户</span><br><span class="line">    @Delete</span><br><span class="line">    fun deleteUser(user: User)</span><br><span class="line"></span><br><span class="line">    //根据条件删除用户</span><br><span class="line">    @Query(&quot;delete from user where id = :id&quot;)</span><br><span class="line">    fun deleteUserById(id: Long)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4、创建-Database-单例数据库"><a href="#4、创建-Database-单例数据库" class="headerlink" title="4、创建 Database 单例数据库"></a>4、创建 Database 单例数据库</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@Database(entities = [User::class], version = 2)</span><br><span class="line">abstract class AppDatabase : RoomDatabase() &#123;</span><br><span class="line"></span><br><span class="line">    abstract fun userDao(): UserDao</span><br><span class="line"></span><br><span class="line">    companion object &#123;</span><br><span class="line">        private var instance: AppDatabase? = null</span><br><span class="line">        fun getInstance(context: Context): AppDatabase &#123;</span><br><span class="line">            if (instance == null) &#123;</span><br><span class="line">                instance = Room.databaseBuilder(</span><br><span class="line">                    context.applicationContext,</span><br><span class="line">                    AppDatabase::class.java,</span><br><span class="line">                    &quot;data.db&quot;</span><br><span class="line">                ).allowMainThreadQueries()</span><br><span class="line">                    .build()</span><br><span class="line">            &#125;</span><br><span class="line">            return instance as AppDatabase</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5、使用"><a href="#5、使用" class="headerlink" title="5、使用"></a>5、使用</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">val users = listOf(</span><br><span class="line">            User(1, &quot;张三&quot;, 20, true, &quot;123456&quot;,&quot;45454&quot;),</span><br><span class="line">            User(2, &quot;李四&quot;, 22, true, &quot;123456&quot;,&quot;45454&quot;)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">AppDatabase.getInstance(this).userDao().addUsers(users)</span><br><span class="line"></span><br><span class="line">var userList = AppDatabase.getInstance(this)</span><br><span class="line">            .userDao()</span><br><span class="line">            .getUsers()</span><br></pre></td></tr></table></figure>
+
+<h3 id="6、数据库升级"><a href="#6、数据库升级" class="headerlink" title="6、数据库升级"></a>6、数据库升级</h3><p>1、修改版本号</p>
+<p>2、调用addMigrations方法，其中Migration需要两个参数，startVersion表示的是升级开始的版本，endVersion表示要升级到的版本。同时需要将@Database注解中的version的值修改为和endVersion相同。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@Database(entities = [User::class], version = 2)</span><br><span class="line">abstract class AppDatabase : RoomDatabase() &#123;</span><br><span class="line"></span><br><span class="line">    abstract fun userDao(): UserDao</span><br><span class="line"></span><br><span class="line">    companion object &#123;</span><br><span class="line">        private var instance: AppDatabase? = null</span><br><span class="line">        fun getInstance(context: Context): AppDatabase &#123;</span><br><span class="line">            if (instance == null) &#123;</span><br><span class="line">                instance = Room.databaseBuilder(</span><br><span class="line">                    context.applicationContext,</span><br><span class="line">                    AppDatabase::class.java,</span><br><span class="line">                    &quot;data.db&quot;</span><br><span class="line">                ).allowMainThreadQueries()</span><br><span class="line">                    .addMigrations(object : Migration(1, 2) &#123;</span><br><span class="line">                        override fun migrate(database: SupportSQLiteDatabase) &#123;</span><br><span class="line">                            database.execSQL(&quot;ALTER TABLE User ADD COLUMN mobile TEXT  NOT NULL DEFAULT 10&quot;)</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;)</span><br><span class="line">                    .build()</span><br><span class="line">            &#125;</span><br><span class="line">            return instance as AppDatabase</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Jetpack/" rel="tag"><i class="fa fa-tag"></i> Jetpack</a>
+              <a href="/tags/Room/" rel="tag"><i class="fa fa-tag"></i> Room</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/2895a1e7.html" rel="prev" title="Jenkins实现Android自动化打包并上传至蒲公英">
+      <i class="fa fa-chevron-left"></i> Jenkins实现Android自动化打包并上传至蒲公英
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/a46bddc0.html" rel="next" title="Gson基本用法介绍">
+      Gson基本用法介绍 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">一、简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">二、基本使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96"><span class="nav-number">2.0.1.</span> <span class="nav-text">1、添加依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81Entity-%E5%AE%9E%E4%BD%93%E7%B1%BB%E9%85%8D%E7%BD%AE"><span class="nav-number">2.0.2.</span> <span class="nav-text">2、Entity 实体类配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E5%88%9B%E5%BB%BA-Dao-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE%E7%B1%BB"><span class="nav-number">2.0.3.</span> <span class="nav-text">3、创建 Dao 数据访问类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E5%88%9B%E5%BB%BA-Database-%E5%8D%95%E4%BE%8B%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">2.0.4.</span> <span class="nav-text">4、创建 Database 单例数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%E3%80%81%E4%BD%BF%E7%94%A8"><span class="nav-number">2.0.5.</span> <span class="nav-text">5、使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6%E3%80%81%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8D%87%E7%BA%A7"><span class="nav-number">2.0.6.</span> <span class="nav-text">6、数据库升级</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阮烁"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">阮烁</p>
+  <div class="site-description" itemprop="description">不积跬步，无以至千里；不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阮烁</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

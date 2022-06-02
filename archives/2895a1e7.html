@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"raphets.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="记录一下Jenkins实现Android自动化打包的过程，方便日后查阅。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jenkins实现Android自动化打包并上传至蒲公英">
+<meta property="og:url" content="https://raphets.github.io/archives/2895a1e7.html">
+<meta property="og:site_name" content="尚拙">
+<meta property="og:description" content="记录一下Jenkins实现Android自动化打包的过程，方便日后查阅。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/one.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/2.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/3.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/4.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/5.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/6.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/7.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/8.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/9.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/11.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/10.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/12.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/13.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/14.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/15.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/16.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/17.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/18.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/19.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/20.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/21.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/22.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/23.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/24.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/25.png">
+<meta property="og:image" content="https://raphets.github.io/archives/2895a1e7/26.png">
+<meta property="article:published_time" content="2020-06-29T03:23:06.000Z">
+<meta property="article:modified_time" content="2022-05-25T02:42:58.011Z">
+<meta property="article:author" content="阮烁">
+<meta property="article:tag" content="Jenkins">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raphets.github.io/archives/2895a1e7/one.png">
+
+<link rel="canonical" href="https://raphets.github.io/archives/2895a1e7.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Jenkins实现Android自动化打包并上传至蒲公英 | 尚拙</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">尚拙</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个分享技术、学习成长的个人博客网站</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tool">
+
+    <a href="/tool/" rel="section"><i class="fa fa-hammer fa-fw"></i>工具</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/2895a1e7.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="阮烁">
+      <meta itemprop="description" content="不积跬步，无以至千里；不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="尚拙">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Jenkins实现Android自动化打包并上传至蒲公英
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-29 11:23:06" itemprop="dateCreated datePublished" datetime="2020-06-29T11:23:06+08:00">2020-06-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-25 10:42:58" itemprop="dateModified" datetime="2022-05-25T10:42:58+08:00">2022-05-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" itemprop="url" rel="index"><span itemprop="name">技术文章</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>记录一下Jenkins实现Android自动化打包的过程，方便日后查阅。</p>
+<span id="more"></span>
+
+<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>在App开发测试过程中，经常需要重新打包，每次给测试发送apk文件，开发麻烦，测试也麻烦。</p>
+<p>通过Jenkins自动化构建打包，并自动上传到蒲公英等分发平台，测试就可以直接扫码下载了，提高了开发测试效率。</p>
+<p>本文主要是面向Android开发者的，如果你是测试人员，有不懂的建议寻求Android开发人员的帮助。</p>
+<h1 id="二、准备工作"><a href="#二、准备工作" class="headerlink" title="二、准备工作"></a>二、准备工作</h1><p>系统环境：win10系统</p>
+<h4 id="1、安装Git并配置环境变量"><a href="#1、安装Git并配置环境变量" class="headerlink" title="1、安装Git并配置环境变量"></a>1、安装Git并配置环境变量</h4><p>官网<a target="_blank" rel="noopener" href="https://git-scm.com/">https://git-scm.com/</a></p>
+<h4 id="2、安装JDK并配置环境变量"><a href="#2、安装JDK并配置环境变量" class="headerlink" title="2、安装JDK并配置环境变量"></a>2、安装JDK并配置环境变量</h4><p>JDK下载地址<a target="_blank" rel="noopener" href="https://www.oracle.com/cn/java/technologies/javase/javase-jdk8-downloads.html">https://www.oracle.com/cn/java/technologies/javase/javase-jdk8-downloads.html</a></p>
+<p>具体步骤请百度。</p>
+<h4 id="3、安装Gradle并配置环境变量"><a href="#3、安装Gradle并配置环境变量" class="headerlink" title="3、安装Gradle并配置环境变量"></a>3、安装Gradle并配置环境变量</h4><p>Gradle下载地址<a target="_blank" rel="noopener" href="https://services.gradle.org/distributions/">https://services.gradle.org/distributions/</a></p>
+<p>选择all.zip结尾的文件下载，我下载的版本是gradle-5.4.1-all.zip，下载完解压，然后就bin目录配置到环境变量path里面。</p>
+<p>这里不细述，详情请百度。</p>
+<h4 id="4、Android-SDK下载，并配置环境变量"><a href="#4、Android-SDK下载，并配置环境变量" class="headerlink" title="4、Android SDK下载，并配置环境变量"></a>4、Android SDK下载，并配置环境变量</h4><p>Android Studio下载地址<a target="_blank" rel="noopener" href="https://developer.android.google.cn/studio/">https://developer.android.google.cn/studio/</a></p>
+<p>这里推荐直接下载Android studio，安装的时候有个选项会让你下载SDK。具体步骤请百度。</p>
+<h4 id="5、环境变量检查"><a href="#5、环境变量检查" class="headerlink" title="5、环境变量检查"></a>5、环境变量检查</h4><p>（1）Git 环境变量检查</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git --version</span><br></pre></td></tr></table></figure>
+<p>输出成功则表示安装配置正确，否则安装配置有问题</p>
+<p>（2）JDK 环境变量检查</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">java -version</span><br></pre></td></tr></table></figure>
+<p>输出成功则表示安装配置正确，否则安装配置有问题</p>
+<p>（3）Gradle 环境变量检查</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gradle -v</span><br></pre></td></tr></table></figure>
+<p>输出成功则表示安装配置正确，否则安装配置有问题</p>
+<p>（3）Android SDK 环境变量检查</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">adb version</span><br></pre></td></tr></table></figure>
+<p>输出成功则表示安装配置正确，否则安装配置有问题</p>
+<h1 id="三、Jenkins下载与安装"><a href="#三、Jenkins下载与安装" class="headerlink" title="三、Jenkins下载与安装"></a>三、Jenkins下载与安装</h1><h3 id="1、Jenkins下载安装"><a href="#1、Jenkins下载安装" class="headerlink" title="1、Jenkins下载安装"></a>1、Jenkins下载安装</h3><p>下载地址<a target="_blank" rel="noopener" href="https://www.jenkins.io/download/">https://www.jenkins.io/download/</a></p>
+<p>选择windows版本下载就行，左边是稳定版，右边是开发版，自行选择。</p>
+<p>下载结束后，将压缩包解压，然后安装，一直点下一步就行。</p>
+<h3 id="2、Jenkins初始化"><a href="#2、Jenkins初始化" class="headerlink" title="2、Jenkins初始化"></a>2、Jenkins初始化</h3><p>（1）浏览器访问<a target="_blank" rel="noopener" href="http://localhost:8080/">http://localhost:8080/</a><br>按照提示输入初始密码，点击继续</p>
+<p>（2）选择安装插件，然后等待（时间较长）安装完成之后，配置用户名、密码等信息，就可以使用了。</p>
+<h3 id="3、修改默认端口号"><a href="#3、修改默认端口号" class="headerlink" title="3、修改默认端口号"></a>3、修改默认端口号</h3><p>Jenkins默认端口号为8080，有时会与其他服务端口冲突，可以把默认端口号改下。</p>
+<p>进入Jenkins安装根目录，找到jenkins.xml文件，用记事本打开文件，搜索httpPort，httpPort后面的8080就是端口号，这里我改成了8081，保存之后，Jenkins主页地址为<a target="_blank" rel="noopener" href="http://localhost:8081/">http://localhost:8081/</a></p>
+<h3 id="4、Jenkins常见命令"><a href="#4、Jenkins常见命令" class="headerlink" title="4、Jenkins常见命令"></a>4、Jenkins常见命令</h3><p>（1）启动Jenkins服务</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">net start jenkins</span><br></pre></td></tr></table></figure>
+
+<p>（2）关闭Jenkins服务</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">net stop jenkins</span><br></pre></td></tr></table></figure>
+<p>（3）重启Jenkins服务</p>
+<p><a target="_blank" rel="noopener" href="http://localhost:8081/restart">http://localhost:8081/restart</a></p>
+<h1 id="四、Jenkins环境配置"><a href="#四、Jenkins环境配置" class="headerlink" title="四、Jenkins环境配置"></a>四、Jenkins环境配置</h1><p>浏览器访问<a target="_blank" rel="noopener" href="http://localhost:8081/">http://localhost:8081/</a></p>
+<p>输入上一步骤配置好的用户名密码登录进去，就进入Jenkins了。</p>
+<h3 id="1、安装插件"><a href="#1、安装插件" class="headerlink" title="1、安装插件"></a>1、安装插件</h3><img src="/archives/2895a1e7/one.png" class="">
+
+<p>点击[系统管理]—&gt;[插件管理]，进入插件安装页面，点击[可选插件]，在搜索框内输入关键词搜索插件，勾选需要的插件，点击[直接安装]，等待安装完成即可。</p>
+<img src="/archives/2895a1e7/2.png" class="">
+
+<p>初始化的时候已经安装好大部分插件了，这里需要另外安装一个叫Git Parameter的插件，如果在可选插件里面搜索不出来，应该是已经安装了，就不用再安装了。</p>
+<h3 id="2、全局工具配置"><a href="#2、全局工具配置" class="headerlink" title="2、全局工具配置"></a>2、全局工具配置</h3><p>点击[系统管理]—&gt;[全局工具配置]，进入全局工具配置页面</p>
+<img src="/archives/2895a1e7/3.png" class="">
+
+<p>（1）JDK配置</p>
+<img src="/archives/2895a1e7/4.png" class="">
+
+<p>别名随便填，下面的JAVA_HOME填你的jdk安装目录</p>
+<p>（2）Git配置</p>
+<img src="/archives/2895a1e7/5.png" class="">
+
+<p>别名随便填，下面的路径填你的git.exe路径</p>
+<p>（3）Gradle配置</p>
+<img src="/archives/2895a1e7/6.png" class="">
+
+<p>别名随便填，下面的路径填你的Gradle安装目录</p>
+<h3 id="3、系统配置"><a href="#3、系统配置" class="headerlink" title="3、系统配置"></a>3、系统配置</h3><p>点击[系统管理]—&gt;[系统配置]，进入系统配置页面</p>
+<img src="/archives/2895a1e7/7.png" class="">
+
+<p>(1) 环境变量配置</p>
+<p>找到[全局属性]，勾选[环境变量]选项，点击新增，增加两个键值对</p>
+<p>ANDROID_HOME，值为sdk路径</p>
+<p>GRADLE_USER_HOME，值为gradle路径</p>
+<img src="/archives/2895a1e7/8.png" class="">
+
+<p>（2）Shell环境配置</p>
+<p>找到Shell配置，值为git安装目录下sh.exe文件路径</p>
+<img src="/archives/2895a1e7/9.png" class="">
+
+
+<h1 id="五、创建Android打包任务，并上传至蒲公英"><a href="#五、创建Android打包任务，并上传至蒲公英" class="headerlink" title="五、创建Android打包任务，并上传至蒲公英"></a>五、创建Android打包任务，并上传至蒲公英</h1><h3 id="1、新建任务"><a href="#1、新建任务" class="headerlink" title="1、新建任务"></a>1、新建任务</h3><p>（1）打开Jenkins主页，点击左侧[新建任务]</p>
+<img src="/archives/2895a1e7/11.png" class="">
+
+<p>（2）选择构建自由风格的项目，输入任务名，然后点击确定</p>
+<img src="/archives/2895a1e7/10.png" class="">
+
+<h3 id="2、General模块配置"><a href="#2、General模块配置" class="headerlink" title="2、General模块配置"></a>2、General模块配置</h3><p>进入配置页面后，找到[General]配置模块下的[This project is parameterized]选项，并勾选，点击添加参数</p>
+<img src="/archives/2895a1e7/12.png" class="">
+
+<p>（1）打包类型参数配置</p>
+<p>先选择[Choice Parameter]参数添加，名称为build_type，选项为Debug和Release</p>
+<img src="/archives/2895a1e7/13.png" class="">
+
+<p>(2)打包git分支参数配置</p>
+<p>继续添加参数，选择[Git Parameter]参数，名称为branch，参数类型选分支（根据自己的需求选择）</p>
+<blockquote>
+<p>如果找不到[Git Parameter]选项，需要去[管理插件]页面，安装Git Parameter插件</p>
+</blockquote>
+<img src="/archives/2895a1e7/14.png" class="">
+
+<h3 id="2、源码模块配置"><a href="#2、源码模块配置" class="headerlink" title="2、源码模块配置"></a>2、源码模块配置</h3><p>（1）git仓库地址配置</p>
+<p>找到[源码管理]配置模块，选择[Git]，[Repository URL]输入你的git仓库地址</p>
+<img src="/archives/2895a1e7/15.png" class="">
+
+<p>（2）git仓库账号密码配置</p>
+<p>点击[Credentials]右侧的[添加按钮]，添加git仓库的账号密码</p>
+<img src="/archives/2895a1e7/16.png" class="">
+
+<p>选择[用户名和密码]选项，输入[用户名]，[密码],点击添加</p>
+<img src="/archives/2895a1e7/17.png" class="">
+
+<p>回到[源码管理]模块，[Credentials]选择刚刚添加的账号密码</p>
+<p>（3）打包git分支配置</p>
+<p>[指定分支]里面输入${branch} ，其中“branch”为[General模块配置]的打包git分支参数</p>
+<img src="/archives/2895a1e7/18.png" class="">
+
+<h3 id="3、构建模块配置"><a href="#3、构建模块配置" class="headerlink" title="3、构建模块配置"></a>3、构建模块配置</h3><p>找到[构建]模块，点击增加构建步骤，选择[Invoke Gradle script]</p>
+<img src="/archives/2895a1e7/19.png" class="">
+
+<p>勾选[Invoke Gradle]选项，[Gradle Version]选择之前配置的Gradle版本，[Task]输入”clean assemble${build_type}”，其中build_type为[General模块配置]的打包类型参数</p>
+<img src="/archives/2895a1e7/20.png" class="">
+
+<h3 id="4、构建后操作模块配置，上传至蒲公英"><a href="#4、构建后操作模块配置，上传至蒲公英" class="headerlink" title="4、构建后操作模块配置，上传至蒲公英"></a>4、构建后操作模块配置，上传至蒲公英</h3><p>找到[构建后操作]模块，点击新增步骤，选择[Upload to pgyer with apiV1]，如果没有这个选项，需要先去[插件管理]页面安装upload to pgyer插件</p>
+<img src="/archives/2895a1e7/21.png" class="">
+
+<p>[pgyer uKey]必填，值为蒲公英user_key</p>
+<p>[pgyer api_key]必填，值为蒲公英api_key</p>
+<p>[scandir]必填，值为apk相对路径，${WORKSPACE}表示项目根目录，${}可以引用前面定义的参数，每个人项目可能路径略有不同，根据自己项目apk路径调整</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$&#123;WORKSPACE&#125;/app/build/outputs/apk/$&#123;build_type&#125;/</span><br></pre></td></tr></table></figure>
+<p>[file wildcard]必填，值为apk文件名，支持通配符</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">*.apk</span><br></pre></td></tr></table></figure>
+<p>[installType]选填，应用安装方式，值为(1,2,3)，1：公开，2：密码安装，3：邀请安装，默认为1公开</p>
+<p>[password]选填，设置App安装密码，如果不想设置密码，请传空字符串，或不传。</p>
+<p>[updateDescription]选填，版本更新描述</p>
+<img src="/archives/2895a1e7/22.png" class="">
+
+<h3 id="5、配置完毕后，点击保存"><a href="#5、配置完毕后，点击保存" class="headerlink" title="5、配置完毕后，点击保存"></a>5、配置完毕后，点击保存</h3><h1 id="六、执行打包任务"><a href="#六、执行打包任务" class="headerlink" title="六、执行打包任务"></a>六、执行打包任务</h1><p>1、进入Jekins主页，点击创建的任务，任务详情页</p>
+<img src="/archives/2895a1e7/23.png" class="">
+
+<p>2、点击左侧的[Build with Parameters]，选择构建参数，这个两个参数，就是之前配置的参数，一个打包类型，一个是git分支，选择完点击开始构建</p>
+<img src="/archives/2895a1e7/24.png" class="">
+
+<p>3、查看控制台输出</p>
+<p>点击左侧的正在构建的任务，进入详情</p>
+<img src="/archives/2895a1e7/25.png" class="">
+
+<p>点击左侧的[控制台输出]，即可查看控制台日志</p>
+<img src="/archives/2895a1e7/26.png" class="">
+
+<h1 id="七、结语"><a href="#七、结语" class="headerlink" title="七、结语"></a>七、结语</h1><p>第一次安装还是有些坑的，但是网上相关资源还是挺多的，遇到问题搜索一下，一般都能找到解决办法。</p>
+<p>感谢网络的帮助，因此也记录一下过程，反哺一下网络，方便自己查阅，也为后来人提供一些参考。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Jenkins/" rel="tag"><i class="fa fa-tag"></i> Jenkins</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/246a2921.html" rel="prev" title="将本地文件上传到远程服务器">
+      <i class="fa fa-chevron-left"></i> 将本地文件上传到远程服务器
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/7692b4d9.html" rel="next" title="Jetpack架构组件之Room">
+      Jetpack架构组件之Room <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text">二、准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E5%AE%89%E8%A3%85Git%E5%B9%B6%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">1、安装Git并配置环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81%E5%AE%89%E8%A3%85JDK%E5%B9%B6%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">2.0.0.2.</span> <span class="nav-text">2、安装JDK并配置环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E3%80%81%E5%AE%89%E8%A3%85Gradle%E5%B9%B6%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">2.0.0.3.</span> <span class="nav-text">3、安装Gradle并配置环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4%E3%80%81Android-SDK%E4%B8%8B%E8%BD%BD%EF%BC%8C%E5%B9%B6%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">2.0.0.4.</span> <span class="nav-text">4、Android SDK下载，并配置环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5%E3%80%81%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E6%A3%80%E6%9F%A5"><span class="nav-number">2.0.0.5.</span> <span class="nav-text">5、环境变量检查</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81Jenkins%E4%B8%8B%E8%BD%BD%E4%B8%8E%E5%AE%89%E8%A3%85"><span class="nav-number">3.</span> <span class="nav-text">三、Jenkins下载与安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81Jenkins%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85"><span class="nav-number">3.0.1.</span> <span class="nav-text">1、Jenkins下载安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81Jenkins%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.0.2.</span> <span class="nav-text">2、Jenkins初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%AB%AF%E5%8F%A3%E5%8F%B7"><span class="nav-number">3.0.3.</span> <span class="nav-text">3、修改默认端口号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81Jenkins%E5%B8%B8%E8%A7%81%E5%91%BD%E4%BB%A4"><span class="nav-number">3.0.4.</span> <span class="nav-text">4、Jenkins常见命令</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81Jenkins%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">4.</span> <span class="nav-text">四、Jenkins环境配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6"><span class="nav-number">4.0.1.</span> <span class="nav-text">1、安装插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E5%85%A8%E5%B1%80%E5%B7%A5%E5%85%B7%E9%85%8D%E7%BD%AE"><span class="nav-number">4.0.2.</span> <span class="nav-text">2、全局工具配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE"><span class="nav-number">4.0.3.</span> <span class="nav-text">3、系统配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%88%9B%E5%BB%BAAndroid%E6%89%93%E5%8C%85%E4%BB%BB%E5%8A%A1%EF%BC%8C%E5%B9%B6%E4%B8%8A%E4%BC%A0%E8%87%B3%E8%92%B2%E5%85%AC%E8%8B%B1"><span class="nav-number">5.</span> <span class="nav-text">五、创建Android打包任务，并上传至蒲公英</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E6%96%B0%E5%BB%BA%E4%BB%BB%E5%8A%A1"><span class="nav-number">5.0.1.</span> <span class="nav-text">1、新建任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81General%E6%A8%A1%E5%9D%97%E9%85%8D%E7%BD%AE"><span class="nav-number">5.0.2.</span> <span class="nav-text">2、General模块配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E6%BA%90%E7%A0%81%E6%A8%A1%E5%9D%97%E9%85%8D%E7%BD%AE"><span class="nav-number">5.0.3.</span> <span class="nav-text">2、源码模块配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9D%97%E9%85%8D%E7%BD%AE"><span class="nav-number">5.0.4.</span> <span class="nav-text">3、构建模块配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E6%9E%84%E5%BB%BA%E5%90%8E%E6%93%8D%E4%BD%9C%E6%A8%A1%E5%9D%97%E9%85%8D%E7%BD%AE%EF%BC%8C%E4%B8%8A%E4%BC%A0%E8%87%B3%E8%92%B2%E5%85%AC%E8%8B%B1"><span class="nav-number">5.0.5.</span> <span class="nav-text">4、构建后操作模块配置，上传至蒲公英</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%E3%80%81%E9%85%8D%E7%BD%AE%E5%AE%8C%E6%AF%95%E5%90%8E%EF%BC%8C%E7%82%B9%E5%87%BB%E4%BF%9D%E5%AD%98"><span class="nav-number">5.0.6.</span> <span class="nav-text">5、配置完毕后，点击保存</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E6%89%A7%E8%A1%8C%E6%89%93%E5%8C%85%E4%BB%BB%E5%8A%A1"><span class="nav-number">6.</span> <span class="nav-text">六、执行打包任务</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E7%BB%93%E8%AF%AD"><span class="nav-number">7.</span> <span class="nav-text">七、结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阮烁"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">阮烁</p>
+  <div class="site-description" itemprop="description">不积跬步，无以至千里；不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阮烁</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"raphets.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="使用CoordinatorLayout+AppBarLayout+CollapsingToolbarLayout使用详解打造各种炫酷的效果。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CoordinatorLayout、AppBarLayout、CollapsingToolbarLayout 使用详解">
+<meta property="og:url" content="https://raphets.github.io/archives/81ba5f3d.html">
+<meta property="og:site_name" content="尚拙">
+<meta property="og:description" content="使用CoordinatorLayout+AppBarLayout+CollapsingToolbarLayout使用详解打造各种炫酷的效果。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raphets.github.io/archives/81ba5f3d/one.gif">
+<meta property="og:image" content="https://raphets.github.io/archives/81ba5f3d/two.gif">
+<meta property="og:image" content="https://raphets.github.io/archives/81ba5f3d/three.gif">
+<meta property="article:published_time" content="2019-05-17T08:28:15.000Z">
+<meta property="article:modified_time" content="2022-05-25T02:42:58.004Z">
+<meta property="article:author" content="阮烁">
+<meta property="article:tag" content="UI">
+<meta property="article:tag" content="CoordinatorLayout">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raphets.github.io/archives/81ba5f3d/one.gif">
+
+<link rel="canonical" href="https://raphets.github.io/archives/81ba5f3d.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>CoordinatorLayout、AppBarLayout、CollapsingToolbarLayout 使用详解 | 尚拙</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">尚拙</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个分享技术、学习成长的个人博客网站</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tool">
+
+    <a href="/tool/" rel="section"><i class="fa fa-hammer fa-fw"></i>工具</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/81ba5f3d.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="阮烁">
+      <meta itemprop="description" content="不积跬步，无以至千里；不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="尚拙">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CoordinatorLayout、AppBarLayout、CollapsingToolbarLayout 使用详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-17 16:28:15" itemprop="dateCreated datePublished" datetime="2019-05-17T16:28:15+08:00">2019-05-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-25 10:42:58" itemprop="dateModified" datetime="2022-05-25T10:42:58+08:00">2022-05-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" itemprop="url" rel="index"><span itemprop="name">技术文章</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>使用CoordinatorLayout+AppBarLayout+CollapsingToolbarLayout使用详解打造各种炫酷的效果。</p>
+<span id="more"></span>
+
+
+<h1 id="一、CoordinatorLayout简介"><a href="#一、CoordinatorLayout简介" class="headerlink" title="一、CoordinatorLayout简介"></a>一、CoordinatorLayout简介</h1><p>CoordinatorLayout继承自FrameLayout，有两个主要用途：</p>
+<p>1、作为APP的顶层布局</p>
+<p>2、作为一个容器与一个或者多个子View进行交互</p>
+<p>CoordinatorLayout可以协调子View，而这些子View 的具体响应动作是通过 behavior 来指定的。</p>
+<p>一般需要和AppBarLayout、CollapsingToolbarLayout结合使用，才能实现炫酷的交互效果。</p>
+<h1 id="二、AppBarLayout简介"><a href="#二、AppBarLayout简介" class="headerlink" title="二、AppBarLayout简介"></a>二、AppBarLayout简介</h1><p>AppbarLayout继承于LinearLayout,是一个垂直的LinearLayout,它实现了Material Design的许多功能和特性,即滚动手势。</p>
+<p>AppbarLayout 严重依赖于CoordinatorLayout，必须用于CoordinatorLayout 的直接子View，如果你将AppbarLayout 放在其他的ViewGroup 里面，那么它的这些功能是无效的。</p>
+<p>其子View可以通过setScrollFlags()或在xml布局中通过app:layout_scrollFlags属性设置想要的滚动行为。</p>
+<h3 id="app-layout-scrollFlags属性介绍"><a href="#app-layout-scrollFlags属性介绍" class="headerlink" title="app:layout_scrollFlags属性介绍"></a>app:layout_scrollFlags属性介绍</h3><h5 id="scroll"><a href="#scroll" class="headerlink" title="scroll"></a>scroll</h5><p>View伴随着滚动事件而滚出或滚进屏幕。</p>
+<p>1、如果使用了其他值，必定要使用这个值才能起作用</p>
+<p>2、如果在这个View前面的任何其他View没有设置这个值，那么这个View的设置将失去作用。</p>
+<h5 id="enterAlways"><a href="#enterAlways" class="headerlink" title="enterAlways"></a>enterAlways</h5><p>快速返回模式。</p>
+<p>其实就是向下滚动时Scrolling View和Child View之间的滚动优先级问题。</p>
+<p>对比scroll和scroll | enterAlways设置，发生向下滚动事件时，前者优先滚动Scrolling View，后者优先滚动Child View，当优先滚动的一方已经全部滚进屏幕之后，另一方才开始滚动。</p>
+<h5 id="enterAlwaysCollapsed"><a href="#enterAlwaysCollapsed" class="headerlink" title="enterAlwaysCollapsed"></a>enterAlwaysCollapsed</h5><p>enterAlways的附加值。这里涉及到Child View的高度和最小高度，向下滚动时，Child View先向下滚动最小高度值，然后Scrolling View开始滚动，到达边界时，Child View再向下滚动，直至显示完全。</p>
+<h5 id="exitUntilCollapsed"><a href="#exitUntilCollapsed" class="headerlink" title="exitUntilCollapsed"></a>exitUntilCollapsed</h5><p>这里也涉及到最小高度。发生向上滚动事件时，Child View向上滚动退出直至最小高度，然后Scrolling View开始滚动。也就是，Child View不会完全退出屏幕。</p>
+<h5 id="snap"><a href="#snap" class="headerlink" title="snap"></a>snap</h5><p>简单理解，就是Child View滚动比例的一个吸附效果。也就是说，Child View不会存在局部显示的情况，滚动Child View的部分高度，当我们松开手指时，Child View要么向上全部滚出屏幕，要么向下全部滚进屏幕，有点类似ViewPager的左右滑动。</p>
+<p><strong>enterAlways、enterAlwaysCollapsed、exitUntilCollapsed、snap这几个属性需要配合scroll属性使用才有效果，单独使用没有任何效果。</strong></p>
+<h4 id="常用API"><a href="#常用API" class="headerlink" title="常用API"></a>常用API</h4><table>
+<thead>
+<tr>
+<th>API</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>addOnOffsetChangedListener</td>
+<td>当AppbarLayout 的竖直方向偏移量发生改变的时候回调</td>
+</tr>
+<tr>
+<td>removeOnOffsetChangedListener</td>
+<td>移除offsetChanged监听器</td>
+</tr>
+<tr>
+<td>setExpanded (boolean expanded)</td>
+<td>设置AppbarLayout 是展开状态还是折叠状态,默认有动画</td>
+</tr>
+<tr>
+<td>setExpanded (boolean expanded, boolean animate)</td>
+<td>设置AppbarLayout 是展开状态还是折叠状态,animate 参数控制切换到新的状态时是否需要动画</td>
+</tr>
+<tr>
+<td>setOrientation</td>
+<td>设置AppbarLayout里的子View排列方向</td>
+</tr>
+<tr>
+<td>getTotalScrollRange</td>
+<td>返回AppbarLayout 里的所有子View的滑动范围</td>
+</tr>
+</tbody></table>
+<h1 id="三、CollapsingToolbarLayout简介"><a href="#三、CollapsingToolbarLayout简介" class="headerlink" title="三、CollapsingToolbarLayout简介"></a>三、CollapsingToolbarLayout简介</h1><p>1、这是一个可折叠的Toolbar</p>
+<p>2、它的使用必须在AppBarLayout的基础之上，它必须作为AppBarLayout的直接子类元素使用，否则起不到应用的效果。</p>
+<p>3、CollapsingToolbarLayout的子布局有3种折叠模式（Toolbar中设置的app:layout_collapseMode）</p>
+<pre><code>off：这个是默认属性，布局将正常显示，没有折叠的行为。
+
+pin：CollapsingToolbarLayout折叠后，此布局将固定在顶部。
+
+parallax：CollapsingToolbarLayout折叠时，此布局也会有视差折叠效果。
+</code></pre>
+<p>当CollapsingToolbarLayout的子布局设置了parallax模式时，我们还可以通过app:layout_collapseParallaxMultiplier设置视差滚动因子，值为：0~1。</p>
+<h3 id="常用属性"><a href="#常用属性" class="headerlink" title="常用属性"></a>常用属性</h3><h5 id="app-collapsedTitleGravity-x3D-””属性"><a href="#app-collapsedTitleGravity-x3D-””属性" class="headerlink" title="app:collapsedTitleGravity&#x3D;””属性"></a>app:collapsedTitleGravity&#x3D;””属性</h5><p>在折叠的时候指定标题的位置，提供值有：top、bottom、left、right、center_vertical、fill_vertical、center_horizental、center、start、end</p>
+<h5 id="app-collapsedTitleTextAppearance-x3D-””属性"><a href="#app-collapsedTitleTextAppearance-x3D-””属性" class="headerlink" title="app:collapsedTitleTextAppearance&#x3D;””属性"></a>app:collapsedTitleTextAppearance&#x3D;””属性</h5><p>设置折叠的时候标题栏文字外观</p>
+<h5 id="app-contentScrim-x3D-””属性"><a href="#app-contentScrim-x3D-””属性" class="headerlink" title="app:contentScrim&#x3D;””属性"></a>app:contentScrim&#x3D;””属性</h5><p>设置当被滚出屏幕时候CollapsingToolbarLayout的样式，需要是一个颜色值</p>
+<h5 id="app-expandedTitleGravity-x3D-””属性"><a href="#app-expandedTitleGravity-x3D-””属性" class="headerlink" title="app:expandedTitleGravity&#x3D;””属性"></a>app:expandedTitleGravity&#x3D;””属性</h5><p>布局没有折叠的时候标题栏的位置，提供的值与app:collapsedTitleGravity&#x3D;””属性一样，设置多个值得时候用“|”分割</p>
+<h5 id="app-statusBarScrim-x3D-”-123456”属性"><a href="#app-statusBarScrim-x3D-”-123456”属性" class="headerlink" title="app:statusBarScrim&#x3D;”#123456”属性"></a>app:statusBarScrim&#x3D;”#123456”属性</h5><p>在折叠的时候状态栏的背景颜色</p>
+<h1 id="四、CoordinatorLayout-AppBarLayout-CollapsingToolbarLayout应用"><a href="#四、CoordinatorLayout-AppBarLayout-CollapsingToolbarLayout应用" class="headerlink" title="四、CoordinatorLayout+AppBarLayout+CollapsingToolbarLayout应用"></a>四、CoordinatorLayout+AppBarLayout+CollapsingToolbarLayout应用</h1><h3 id="1、CoordinatorLayout-AppBarLayout-TabLayout-ViewPager-组合"><a href="#1、CoordinatorLayout-AppBarLayout-TabLayout-ViewPager-组合" class="headerlink" title="1、CoordinatorLayout + AppBarLayout + TabLayout +  ViewPager 组合"></a>1、CoordinatorLayout + AppBarLayout + TabLayout +  ViewPager 组合</h3><img src="/archives/81ba5f3d/one.gif" class="">
+
+<p>代码如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;androidx.coordinatorlayout.widget.CoordinatorLayout</span><br><span class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">    android:layout_width=&quot;match_parent&quot;</span><br><span class="line">    android:layout_height=&quot;match_parent&quot;</span><br><span class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;</span><br><span class="line">    android:orientation=&quot;vertical&quot;&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;com.google.android.material.appbar.AppBarLayout</span><br><span class="line">        android:layout_width=&quot;match_parent&quot;</span><br><span class="line">        android:layout_height=&quot;wrap_content&quot;&gt;</span><br><span class="line">        </span><br><span class="line">        &lt;androidx.appcompat.widget.Toolbar</span><br><span class="line">            android:id=&quot;@+id/main_toolbar&quot;</span><br><span class="line">            app:layout_scrollFlags=&quot;scroll|enterAlways&quot;</span><br><span class="line">            app:titleTextColor=&quot;@android:color/white&quot;</span><br><span class="line">            android:layout_width=&quot;match_parent&quot;</span><br><span class="line">            android:layout_height=&quot;wrap_content&quot;&gt;</span><br><span class="line">        &lt;/androidx.appcompat.widget.Toolbar&gt;</span><br><span class="line">        </span><br><span class="line">        &lt;com.google.android.material.tabs.TabLayout</span><br><span class="line">            android:id=&quot;@+id/main_tab&quot;</span><br><span class="line">            app:tabTextColor=&quot;@android:color/white&quot;</span><br><span class="line">            android:layout_width=&quot;match_parent&quot;</span><br><span class="line">            android:layout_height=&quot;wrap_content&quot;&gt;</span><br><span class="line">        &lt;/com.google.android.material.tabs.TabLayout&gt;</span><br><span class="line">        </span><br><span class="line">    &lt;/com.google.android.material.appbar.AppBarLayout&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;androidx.viewpager.widget.ViewPager</span><br><span class="line">        android:id=&quot;@+id/main_viewpager&quot;</span><br><span class="line">        app:layout_behavior=&quot;@string/appbar_scrolling_view_behavior&quot;</span><br><span class="line">        android:layout_width=&quot;match_parent&quot;</span><br><span class="line">        android:layout_height=&quot;wrap_content&quot;/&gt;</span><br><span class="line">        </span><br><span class="line">    &lt;com.google.android.material.floatingactionbutton.FloatingActionButton</span><br><span class="line">        android:layout_width=&quot;wrap_content&quot;</span><br><span class="line">        android:layout_gravity=&quot;right|bottom&quot;</span><br><span class="line">        android:layout_margin=&quot;30dp&quot;</span><br><span class="line">        app:layout_behavior=&quot;org.raphets.coordinatorlayoutdemo.ScrollingFabBehavior&quot;</span><br><span class="line">        android:layout_height=&quot;wrap_content&quot;/&gt;</span><br><span class="line">        </span><br><span class="line">&lt;/androidx.coordinatorlayout.widget.CoordinatorLayout&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="2、CoordinatorLayout-AppBarLayout-RecyclerView-使用"><a href="#2、CoordinatorLayout-AppBarLayout-RecyclerView-使用" class="headerlink" title="2、CoordinatorLayout + AppBarLayout + RecyclerView 使用"></a>2、CoordinatorLayout + AppBarLayout + RecyclerView 使用</h3><img src="/archives/81ba5f3d/two.gif" class="">
+
+
+<p>代码如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;LinearLayout</span><br><span class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;</span><br><span class="line">    xmlns:tools=&quot;http://schemas.android.com/tools&quot;</span><br><span class="line">    android:layout_width=&quot;match_parent&quot;</span><br><span class="line">    android:layout_height=&quot;match_parent&quot;</span><br><span class="line">    android:orientation=&quot;vertical&quot;</span><br><span class="line">    tools:context=&quot;.RecyclerViewWithHeaderActivity&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;androidx.appcompat.widget.Toolbar</span><br><span class="line">        android:id=&quot;@+id/toolbar&quot;</span><br><span class="line">        android:layout_width=&quot;match_parent&quot;</span><br><span class="line">        android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">        android:background=&quot;@color/colorPrimary&quot;</span><br><span class="line">        app:titleTextColor=&quot;@android:color/white&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;androidx.coordinatorlayout.widget.CoordinatorLayout</span><br><span class="line">        android:layout_width=&quot;match_parent&quot;</span><br><span class="line">        android:layout_height=&quot;match_parent&quot;&gt;</span><br><span class="line"></span><br><span class="line">        &lt;com.google.android.material.appbar.AppBarLayout</span><br><span class="line">            android:layout_width=&quot;match_parent&quot;</span><br><span class="line">            android:layout_height=&quot;wrap_content&quot;&gt;</span><br><span class="line"></span><br><span class="line">            &lt;TextView</span><br><span class="line">                android:layout_width=&quot;match_parent&quot;</span><br><span class="line">                android:layout_height=&quot;100dp&quot;</span><br><span class="line">                android:background=&quot;@android:color/white&quot;</span><br><span class="line">                android:gravity=&quot;center&quot;</span><br><span class="line">                android:text=&quot;HeaderOne&quot;</span><br><span class="line">                android:textColor=&quot;@android:color/black&quot;</span><br><span class="line">                android:textSize=&quot;30dp&quot;</span><br><span class="line">                app:layout_scrollFlags=&quot;scroll&quot;/&gt;</span><br><span class="line"></span><br><span class="line">            &lt;TextView</span><br><span class="line">                android:layout_width=&quot;match_parent&quot;</span><br><span class="line">                android:layout_height=&quot;100dp&quot;</span><br><span class="line">                android:background=&quot;@android:color/white&quot;</span><br><span class="line">                android:gravity=&quot;center&quot;</span><br><span class="line">                android:text=&quot;HeaderTwo&quot;</span><br><span class="line">                android:textColor=&quot;@android:color/black&quot;</span><br><span class="line">                android:textSize=&quot;30dp&quot;</span><br><span class="line">                app:layout_scrollFlags=&quot;scroll&quot;/&gt;</span><br><span class="line"></span><br><span class="line">            &lt;TextView</span><br><span class="line">                android:layout_width=&quot;match_parent&quot;</span><br><span class="line">                android:layout_height=&quot;100dp&quot;</span><br><span class="line">                android:background=&quot;@android:color/white&quot;</span><br><span class="line">                android:gravity=&quot;center&quot;</span><br><span class="line">                android:text=&quot;HeaderThree&quot;</span><br><span class="line">                android:textColor=&quot;@android:color/black&quot;</span><br><span class="line">                android:textSize=&quot;30dp&quot;</span><br><span class="line">                app:layout_scrollFlags=&quot;scroll&quot;/&gt;</span><br><span class="line"></span><br><span class="line">            &lt;LinearLayout</span><br><span class="line">                android:layout_width=&quot;match_parent&quot;</span><br><span class="line">                android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">                android:background=&quot;@android:color/white&quot;</span><br><span class="line">                android:orientation=&quot;horizontal&quot;&gt;</span><br><span class="line"></span><br><span class="line">                &lt;TextView</span><br><span class="line">                    android:layout_width=&quot;0dp&quot;</span><br><span class="line">                    android:layout_height=&quot;50dp&quot;</span><br><span class="line">                    android:layout_weight=&quot;1&quot;</span><br><span class="line">                    android:gravity=&quot;center&quot;</span><br><span class="line">                    android:text=&quot;销量&quot;</span><br><span class="line">                    android:textColor=&quot;@android:color/black&quot;/&gt;</span><br><span class="line"></span><br><span class="line">                &lt;TextView</span><br><span class="line">                    android:layout_width=&quot;0dp&quot;</span><br><span class="line">                    android:layout_height=&quot;50dp&quot;</span><br><span class="line">                    android:layout_weight=&quot;1&quot;</span><br><span class="line">                    android:gravity=&quot;center&quot;</span><br><span class="line">                    android:text=&quot;人气&quot;</span><br><span class="line">                    android:textColor=&quot;@android:color/black&quot;/&gt;</span><br><span class="line"></span><br><span class="line">                &lt;TextView</span><br><span class="line">                    android:layout_width=&quot;0dp&quot;</span><br><span class="line">                    android:layout_height=&quot;50dp&quot;</span><br><span class="line">                    android:layout_weight=&quot;1&quot;</span><br><span class="line">                    android:gravity=&quot;center&quot;</span><br><span class="line">                    android:text=&quot;价格&quot;</span><br><span class="line">                    android:textColor=&quot;@android:color/black&quot;/&gt;</span><br><span class="line">            &lt;/LinearLayout&gt;</span><br><span class="line"></span><br><span class="line">        &lt;/com.google.android.material.appbar.AppBarLayout&gt;</span><br><span class="line"></span><br><span class="line">        &lt;androidx.recyclerview.widget.RecyclerView</span><br><span class="line">            android:id=&quot;@+id/recyclerview&quot;</span><br><span class="line">            android:layout_width=&quot;match_parent&quot;</span><br><span class="line">            android:layout_height=&quot;match_parent&quot;</span><br><span class="line">            app:layout_behavior=&quot;@string/appbar_scrolling_view_behavior&quot;/&gt;</span><br><span class="line">    &lt;/androidx.coordinatorlayout.widget.CoordinatorLayout&gt;</span><br><span class="line"></span><br><span class="line">&lt;/LinearLayout&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="3、CoordinatorLayout-AppBarLayout-CollapsingToolbarLayout-RecyclerView-使用"><a href="#3、CoordinatorLayout-AppBarLayout-CollapsingToolbarLayout-RecyclerView-使用" class="headerlink" title="3、CoordinatorLayout + AppBarLayout + CollapsingToolbarLayout + RecyclerView 使用"></a>3、CoordinatorLayout + AppBarLayout + CollapsingToolbarLayout + RecyclerView 使用</h3><img src="/archives/81ba5f3d/three.gif" class="">
+
+
+<p>代码如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;androidx.coordinatorlayout.widget.CoordinatorLayout</span><br><span class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;</span><br><span class="line">    xmlns:tools=&quot;http://schemas.android.com/tools&quot;</span><br><span class="line">    android:layout_width=&quot;match_parent&quot;</span><br><span class="line">    android:layout_height=&quot;match_parent&quot;</span><br><span class="line">    tools:context=&quot;.RecyclerViewWithHeaderTwoActivity&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;com.google.android.material.appbar.AppBarLayout</span><br><span class="line">        android:layout_width=&quot;match_parent&quot;</span><br><span class="line">        android:layout_height=&quot;wrap_content&quot;&gt;</span><br><span class="line"></span><br><span class="line">        &lt;com.google.android.material.appbar.CollapsingToolbarLayout</span><br><span class="line">            android:id=&quot;@+id/colltoolbar&quot;</span><br><span class="line">            android:layout_width=&quot;match_parent&quot;</span><br><span class="line">            android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">            app:contentScrim=&quot;?attr/colorPrimary&quot;</span><br><span class="line">            app:layout_scrollFlags=&quot;scroll|exitUntilCollapsed&quot;&gt;</span><br><span class="line"></span><br><span class="line">            &lt;LinearLayout</span><br><span class="line">                android:layout_width=&quot;match_parent&quot;</span><br><span class="line">                android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">                android:orientation=&quot;vertical&quot;</span><br><span class="line">                app:layout_collapseMode=&quot;parallax&quot;</span><br><span class="line">                app:layout_collapseParallaxMultiplier=&quot;0.1&quot;&gt;</span><br><span class="line"></span><br><span class="line">                &lt;ImageView</span><br><span class="line">                    android:layout_width=&quot;match_parent&quot;</span><br><span class="line">                    android:layout_height=&quot;150dp&quot;</span><br><span class="line">                    android:src=&quot;@android:color/holo_orange_light&quot;</span><br><span class="line">                    /&gt;</span><br><span class="line"></span><br><span class="line">                &lt;ImageView</span><br><span class="line">                    android:layout_width=&quot;match_parent&quot;</span><br><span class="line">                    android:layout_height=&quot;150dp&quot;</span><br><span class="line">                    android:src=&quot;@android:color/darker_gray&quot;/&gt;</span><br><span class="line"></span><br><span class="line">                &lt;ImageView</span><br><span class="line">                    android:layout_width=&quot;match_parent&quot;</span><br><span class="line">                    android:layout_height=&quot;150dp&quot;</span><br><span class="line">                    android:src=&quot;@android:color/holo_red_light&quot;</span><br><span class="line">                    /&gt;</span><br><span class="line">            &lt;/LinearLayout&gt;</span><br><span class="line"></span><br><span class="line">            &lt;androidx.appcompat.widget.Toolbar</span><br><span class="line">                android:id=&quot;@+id/toolbar_two&quot;</span><br><span class="line">                android:layout_width=&quot;match_parent&quot;</span><br><span class="line">                android:layout_height=&quot;?attr/actionBarSize&quot;</span><br><span class="line">                app:layout_collapseMode=&quot;pin&quot;</span><br><span class="line">                app:popupTheme=&quot;@style/ThemeOverlay.AppCompat.Light&quot;&gt;</span><br><span class="line">            &lt;/androidx.appcompat.widget.Toolbar&gt;</span><br><span class="line"></span><br><span class="line">        &lt;/com.google.android.material.appbar.CollapsingToolbarLayout&gt;</span><br><span class="line"></span><br><span class="line">    &lt;/com.google.android.material.appbar.AppBarLayout&gt;</span><br><span class="line"></span><br><span class="line">    &lt;androidx.recyclerview.widget.RecyclerView</span><br><span class="line">        android:id=&quot;@+id/recyclerview&quot;</span><br><span class="line">        android:layout_width=&quot;match_parent&quot;</span><br><span class="line">        android:layout_height=&quot;match_parent&quot;</span><br><span class="line">        app:layout_behavior=&quot;@string/appbar_scrolling_view_behavior&quot;/&gt;</span><br><span class="line"></span><br><span class="line">&lt;/androidx.coordinatorlayout.widget.CoordinatorLayout&gt;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/UI/" rel="tag"><i class="fa fa-tag"></i> UI</a>
+              <a href="/tags/CoordinatorLayout/" rel="tag"><i class="fa fa-tag"></i> CoordinatorLayout</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/bb162381.html" rel="prev" title="『学习之道』读书笔记">
+      <i class="fa fa-chevron-left"></i> 『学习之道』读书笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/999aafda.html" rel="next" title="Toolbar 动态改变 Menuitem 的两种方式">
+      Toolbar 动态改变 Menuitem 的两种方式 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81CoordinatorLayout%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">一、CoordinatorLayout简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81AppBarLayout%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">二、AppBarLayout简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#app-layout-scrollFlags%E5%B1%9E%E6%80%A7%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.0.1.</span> <span class="nav-text">app:layout_scrollFlags属性介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#scroll"><span class="nav-number">2.0.1.0.1.</span> <span class="nav-text">scroll</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#enterAlways"><span class="nav-number">2.0.1.0.2.</span> <span class="nav-text">enterAlways</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#enterAlwaysCollapsed"><span class="nav-number">2.0.1.0.3.</span> <span class="nav-text">enterAlwaysCollapsed</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#exitUntilCollapsed"><span class="nav-number">2.0.1.0.4.</span> <span class="nav-text">exitUntilCollapsed</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#snap"><span class="nav-number">2.0.1.0.5.</span> <span class="nav-text">snap</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8API"><span class="nav-number">2.0.1.1.</span> <span class="nav-text">常用API</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81CollapsingToolbarLayout%E7%AE%80%E4%BB%8B"><span class="nav-number">3.</span> <span class="nav-text">三、CollapsingToolbarLayout简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%B1%9E%E6%80%A7"><span class="nav-number">3.0.1.</span> <span class="nav-text">常用属性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#app-collapsedTitleGravity-x3D-%E2%80%9D%E2%80%9D%E5%B1%9E%E6%80%A7"><span class="nav-number">3.0.1.0.1.</span> <span class="nav-text">app:collapsedTitleGravity&#x3D;””属性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#app-collapsedTitleTextAppearance-x3D-%E2%80%9D%E2%80%9D%E5%B1%9E%E6%80%A7"><span class="nav-number">3.0.1.0.2.</span> <span class="nav-text">app:collapsedTitleTextAppearance&#x3D;””属性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#app-contentScrim-x3D-%E2%80%9D%E2%80%9D%E5%B1%9E%E6%80%A7"><span class="nav-number">3.0.1.0.3.</span> <span class="nav-text">app:contentScrim&#x3D;””属性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#app-expandedTitleGravity-x3D-%E2%80%9D%E2%80%9D%E5%B1%9E%E6%80%A7"><span class="nav-number">3.0.1.0.4.</span> <span class="nav-text">app:expandedTitleGravity&#x3D;””属性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#app-statusBarScrim-x3D-%E2%80%9D-123456%E2%80%9D%E5%B1%9E%E6%80%A7"><span class="nav-number">3.0.1.0.5.</span> <span class="nav-text">app:statusBarScrim&#x3D;”#123456”属性</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81CoordinatorLayout-AppBarLayout-CollapsingToolbarLayout%E5%BA%94%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">四、CoordinatorLayout+AppBarLayout+CollapsingToolbarLayout应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81CoordinatorLayout-AppBarLayout-TabLayout-ViewPager-%E7%BB%84%E5%90%88"><span class="nav-number">4.0.1.</span> <span class="nav-text">1、CoordinatorLayout + AppBarLayout + TabLayout +  ViewPager 组合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81CoordinatorLayout-AppBarLayout-RecyclerView-%E4%BD%BF%E7%94%A8"><span class="nav-number">4.0.2.</span> <span class="nav-text">2、CoordinatorLayout + AppBarLayout + RecyclerView 使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81CoordinatorLayout-AppBarLayout-CollapsingToolbarLayout-RecyclerView-%E4%BD%BF%E7%94%A8"><span class="nav-number">4.0.3.</span> <span class="nav-text">3、CoordinatorLayout + AppBarLayout + CollapsingToolbarLayout + RecyclerView 使用</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阮烁"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">阮烁</p>
+  <div class="site-description" itemprop="description">不积跬步，无以至千里；不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阮烁</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
