@@ -22,18 +22,20 @@
     var CONFIG = {"hostname":"raphets.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="不积跬步，无以至千里；不积小流，无以成江海。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="尚拙">
-<meta property="og:url" content="https://raphets.github.io/tags/mongodb/index.html">
+  <meta name="description" content="Python连接MySql数据库，并插入数据。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python连接MySql并插入数据操作详解">
+<meta property="og:url" content="https://raphets.github.io/archives/5f48daf9.html">
 <meta property="og:site_name" content="尚拙">
-<meta property="og:description" content="不积跬步，无以至千里；不积小流，无以成江海。">
+<meta property="og:description" content="Python连接MySql数据库，并插入数据。">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-01-30T06:12:52.000Z">
+<meta property="article:modified_time" content="2024-01-30T06:25:42.826Z">
 <meta property="article:author" content="阮烁">
-<meta property="article:tag" content="Android，技术，学习，成长">
+<meta property="article:tag" content="MySql">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://raphets.github.io/tags/mongodb/">
+<link rel="canonical" href="https://raphets.github.io/archives/5f48daf9.html">
 
 
 <script id="page-configurations">
@@ -41,12 +43,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>标签: mongodb | 尚拙</title>
+  <title>Python连接MySql并插入数据操作详解 | 尚拙</title>
   
 
 
@@ -165,51 +167,109 @@
         <div class="content-wrap">
           
 
-          <div class="content tag">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">mongodb
-          <small>标签</small>
-        </h2>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/5f48daf9.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="阮烁">
+      <meta itemprop="description" content="不积跬步，无以至千里；不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="尚拙">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python连接MySql并插入数据操作详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-01-30 14:12:52 / 修改时间：14:25:42" itemprop="dateCreated datePublished" datetime="2024-01-30T14:12:52+08:00">2024-01-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" itemprop="url" rel="index"><span itemprop="name">技术文章</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2019</span>
+        <p>Python连接MySql数据库，并插入数据。</p>
+<span id="more"></span>
+
+<h1 id="1、安装并导入pymysql库"><a href="#1、安装并导入pymysql库" class="headerlink" title="1、安装并导入pymysql库"></a>1、安装并导入pymysql库</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">pip install pymysql</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import pymysql</span><br></pre></td></tr></table></figure>
+
+<h1 id="2、连接Mysql数据库"><a href="#2、连接Mysql数据库" class="headerlink" title="2、连接Mysql数据库"></a>2、连接Mysql数据库</h1><p>host：如果是本地数据库，就是127.0.0.1,远程数据库就是服务器ip地址</p>
+<p>database：连接的数据库名称</p>
+<p>port：端口号，一般为3306</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqlDb = pymysql.connect(host=&quot;127.0.0.1&quot;,</span><br><span class="line">                              user=&quot;root&quot;,</span><br><span class="line">                              password=&quot;1234&quot;,</span><br><span class="line">                              port=3306,  # 端口</span><br><span class="line">                              database=&quot;history&quot;,</span><br><span class="line">                              charset=&#x27;utf8mb4&#x27;)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="3、插入数据"><a href="#3、插入数据" class="headerlink" title="3、插入数据"></a>3、插入数据</h1><p>book_content为表名</p>
+<p>book_id、book_name等为表字段</p>
+<p>VALUES后面括号里面的为要插入的数据类型，参数个数要与前面的表字段个数对应</p>
+<p>data为要插入的数据的集合，参数个数要与sql语句对应</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 创建游标</span><br><span class="line">mySqlCursor = mysqlDb.cursor()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">sql = &#x27;insert into book_content (book_id,book_name,category_id,category_name,content,transtate,is_vip) VALUES (%s,%s,%s,%s,%s,%s,%s)&#x27;</span><br><span class="line"></span><br><span class="line">data = (book_id, book_name, category_id, category_name, content,transtate,is_vip)</span><br><span class="line"></span><br><span class="line">mySqlCursor.execute(sql, data)</span><br><span class="line"></span><br><span class="line">mysqlDb.commit()</span><br><span class="line"></span><br><span class="line"># 关闭游标</span><br><span class="line">mySqlCursor.close()</span><br><span class="line"># 关闭数据库</span><br><span class="line">mysqlDb.close()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2019-04-15T17:28:45+08:00"
-              content="2019-04-15">
-          04-15
-        </time>
-      </div>
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MySql/" rel="tag"><i class="fa fa-tag"></i> MySql</a>
+          </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/archives/49500.html" itemprop="url">
-            <span itemprop="name">Python 操作 Mongodb 详解</span>
-          </a>
-      </div>
+        
 
-    </header>
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/9ceffb4a.html" rel="prev" title="Python文件读写详解">
+      <i class="fa fa-chevron-left"></i> Python文件读写详解
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
   </article>
-
-    </div>
-  </div>
   
   
-  
-
   
 
 
@@ -262,6 +322,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1%E3%80%81%E5%AE%89%E8%A3%85%E5%B9%B6%E5%AF%BC%E5%85%A5pymysql%E5%BA%93"><span class="nav-number">1.</span> <span class="nav-text">1、安装并导入pymysql库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2%E3%80%81%E8%BF%9E%E6%8E%A5Mysql%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">2.</span> <span class="nav-text">2、连接Mysql数据库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3%E3%80%81%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="nav-number">3.</span> <span class="nav-text">3、插入数据</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
