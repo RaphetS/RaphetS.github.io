@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"raphets.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="PBL教学法，是一套设计学习情境的教学方法；是指问题式学习或者项目式学习的教学方法，最早起源于20世纪50年代的医学教育，PBL教学法以问题为导向的教学方法，是基于现实世界的以学生为中心的教学方法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PBL教学法">
+<meta property="og:url" content="https://raphets.github.io/archives/5dcc0b15.html">
+<meta property="og:site_name" content="尚拙">
+<meta property="og:description" content="PBL教学法，是一套设计学习情境的教学方法；是指问题式学习或者项目式学习的教学方法，最早起源于20世纪50年代的医学教育，PBL教学法以问题为导向的教学方法，是基于现实世界的以学生为中心的教学方法。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-01-30T05:46:08.000Z">
+<meta property="article:modified_time" content="2024-01-30T05:48:26.526Z">
+<meta property="article:author" content="阮烁">
+<meta property="article:tag" content="Android，技术，学习，成长">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://raphets.github.io/archives/5dcc0b15.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>PBL教学法 | 尚拙</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">尚拙</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个分享技术、学习成长的个人博客网站</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tool">
+
+    <a href="/tool/" rel="section"><i class="fa fa-hammer fa-fw"></i>工具</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/5dcc0b15.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="阮烁">
+      <meta itemprop="description" content="不积跬步，无以至千里；不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="尚拙">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PBL教学法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-01-30 13:46:08 / 修改时间：13:48:26" itemprop="dateCreated datePublished" datetime="2024-01-30T13:46:08+08:00">2024-01-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>PBL教学法，是一套设计学习情境的教学方法；是指问题式学习或者项目式学习的教学方法，最早起源于20世纪50年代的医学教育，PBL教学法以问题为导向的教学方法，是基于现实世界的以学生为中心的教学方法。</p>
+<span id="more"></span>
+
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>问题驱动教学法即基于问题的教学方法(Problem-Based Learning，PBL)。</p>
+<p>问题驱动教学法能够提高学生学习的主动性，提高学生在教学过程中的参与程度，容易激起学生的求知欲，活跃其思维。</p>
+<p>PBL教学法以问题为导向的教学方法，是基于现实世界的以学生为中心的教育方式， 是在教师的引导下，“以学生为中心，以问题为基础”，通过采用小组讨论的形式，学生围绕问题独立收集资料，发现问题、解决问题，培养学生自主学习能力和创新能力的教学模式 。</p>
+<p>与传统的以学科为基础的教学法有很大不同，PBL 强调以学生的主动学习为主，而不是传统教学中的以教师讲授为主 。</p>
+<p>PBL将学习与更大的任务或问题挂钩，使学习者投入于问题中。</p>
+<p>它设计真实性任务，强调把学习设置到复杂的、有意义的问题情景中，通过学习者的自主探究和合作来解决问题，从而学习隐含在问题背后的科学知识，形成解决问题的技能和自主学习的能力。</p>
+<h1 id="基本要素"><a href="#基本要素" class="headerlink" title="基本要素"></a>基本要素</h1><p>1 ．以问题为学习的起点；学生的一切学习内容是以问题为主轴所架构的；</p>
+<p>2 ．问题必须是学生在其未来的专业领域可能遭遇的“真实世界”的非结构化的问题，没有固定的解决方法和过程；</p>
+<p>3 ．偏重小组合作学习和自主学习，较少讲述法的教学；学习者能通过社会交往发展能力和协作技巧；</p>
+<p>4 ．以学生为中心，学生必须担负起学习的责任；</p>
+<p>5 ．教师的角色是指导认知学习技巧的教练；</p>
+<p>6 ．在每一个问题完成和每个课程单元结束时要进行自我评价和小组评价；</p>
+<h1 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h1><h5 id="1．教师提出问题。"><a href="#1．教师提出问题。" class="headerlink" title="1．教师提出问题。"></a>1．教师提出问题。</h5><p>教师要在课前准备好问题。这一步骤不仅仅需要教师熟悉教学内容，还要较好地了解学生的情况。这是成功实施问题驱动教学法的基础。</p>
+<h5 id="2．分析问题。"><a href="#2．分析问题。" class="headerlink" title="2．分析问题。"></a>2．分析问题。</h5><p>这一阶段以学生的活动为主，常常让全班同学相互间进行讨论和交流，也可以全体同学分组讨论，争取让每个学生都提出自己的观点和看法。教师在此阶段主要是发挥引导作用，当讨论发生跑题或者学生们误解问题的本意时，给予及时的提醒和引导。</p>
+<h5 id="3．解决问题。"><a href="#3．解决问题。" class="headerlink" title="3．解决问题。"></a>3．解决问题。</h5><p>即在上一阶段分析的基础上，让学生们提出解决问题的方法。这时可以让学生用报告的方式与全班进行交流。</p>
+<h5 id="4．结果评价。"><a href="#4．结果评价。" class="headerlink" title="4．结果评价。"></a>4．结果评价。</h5><p>包括自我评估、小组互评及教师评价等，评价内容为小组整体表现、问题解决方法的合理性、个人贡献等。</p>
+<h1 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h1><p>问题设计是PBL教学法的基础，问题设计得科学与否直接关系到教学的成败。一般地说，问题设计应当遵循以下几个原则： </p>
+<h5 id="1．要有明确的目标"><a href="#1．要有明确的目标" class="headerlink" title="1．要有明确的目标"></a>1．要有明确的目标</h5><p>问题设计必须紧紧围绕教学目标，教师要尽量了解教材和学生的具体情况，设计的问题要明确。</p>
+<h5 id="2．由浅入深"><a href="#2．由浅入深" class="headerlink" title="2．由浅入深"></a>2．由浅入深</h5><p>在设计问题时，要给学生以清晰的层次感，由易到难，以便增强学生的自信心，激发学生的学习兴趣，促使学生积极思考。</p>
+<h5 id="3．难度适当"><a href="#3．难度适当" class="headerlink" title="3．难度适当"></a>3．难度适当</h5><p>过于简单的问题难以激发学生的兴趣，但如果问题太难，学生就会望而生畏。</p>
+<h5 id="4．面向全体学生"><a href="#4．面向全体学生" class="headerlink" title="4．面向全体学生"></a>4．面向全体学生</h5><p>在设计问题时，要注意调动每一个学生的学习积极性，力争让每个人都有发挥和表现的机会，做到人人参与、人人有收获。</p>
+<h1 id="如何开始一门PBL课程"><a href="#如何开始一门PBL课程" class="headerlink" title="如何开始一门PBL课程"></a>如何开始一门PBL课程</h1><h5 id="1、从一个人激动人心的入门活动开始"><a href="#1、从一个人激动人心的入门活动开始" class="headerlink" title="1、从一个人激动人心的入门活动开始"></a>1、从一个人激动人心的入门活动开始</h5><p>入门很重，要有吸引力。</p>
+<h5 id="2、确立一个又驱动力的问题"><a href="#2、确立一个又驱动力的问题" class="headerlink" title="2、确立一个又驱动力的问题"></a>2、确立一个又驱动力的问题</h5><p>这个问题会贯穿整个过程，自始至终。</p>
+<h5 id="3、进入研究和创造阶段"><a href="#3、进入研究和创造阶段" class="headerlink" title="3、进入研究和创造阶段"></a>3、进入研究和创造阶段</h5><p>研究和创造是保持学生积极参与的根本</p>
+<h5 id="4、最后是一个真正的社区成果分享"><a href="#4、最后是一个真正的社区成果分享" class="headerlink" title="4、最后是一个真正的社区成果分享"></a>4、最后是一个真正的社区成果分享</h5><p>课程的成果必须是对个人，对社区有意义。</p>
+<h1 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h1><p>首先，它为学生们营造了一个轻松、主动的学习氛围，使其能够自主地、积极地畅所欲言，充分表达自己的观点，同时也可以十分容易地获得来自其他同学和老师的信息。</p>
+<p>其次，可使有关课程的问题尽可能多地当场暴露，在讨论中可以加深对正确理论的理解，还可以不断发现新问题，解答新问题，使学习过程缩短，印象更加深刻。</p>
+<p>第三，它不仅对理论学习大有益处，还可锻炼学生们多方面的能力，如文献检索、查阅资料的能力，归纳总结、综合理解的能力，逻辑推理、口头表达的能力，主导学习、终身学习的能力等，这些将对今后开展临床工作打下良好基础。</p>
+<h1 id="教师要求"><a href="#教师要求" class="headerlink" title="教师要求"></a>教师要求</h1><p>PBL教学法时应注意的问题PBL作为一种开放式的教学模式，对教师自身的素质和教学技巧都有很高的要求。</p>
+<p>要求教师不但对本专业、本课程内容熟练掌握，还应当扎实掌握相关学科知识，并要具备提出问题解决问题的能力、灵活运用知识的能力、严密的逻辑思维能力和良好的组织管理能力，要善于调动学生积极性、寓教于乐、控制课堂节奏等技巧。</p>
+<p>教师应该熟悉教学大纲和学生的能力情况，这样才能规划好学习的重点、难点，制定有针对性的讨论提纲，选择出适当的临床病例，此为做好PBL教学的基本前提。</p>
+<p>另外，教师要学习和具备良好的组织管理能力，控制课堂节奏等技巧，才能调动学生积极性、寓教于乐。</p>
+<h1 id="学生要求"><a href="#学生要求" class="headerlink" title="学生要求"></a>学生要求</h1><p>PBL教学的成功开展，需要学生的主动配合，从准备资料开始，就要结合提纲、病例去查阅大量的文献资料，并积极与其它同学交流沟通，大家同心协力得出最佳结论。</p>
+<p>这样的学习，花在前期准备工作上的时间精力大大多于普通的课堂学习，因此需要学生们有主动学习的自觉性，否则很难达到预期的教学效果和目标。</p>
+<p>由于中国的学生长期接受“填鸭式”教育，对传统教育模式形成一定依赖性，缺乏主动发现问题，解决问题的积极性和能力，部分学生只满足于获取好的“分数”，所以对PBL教学改革形式会觉得太“花费”时间，这也是一种依赖于以往教学理念和学习方法的表现，因此，学生也应从自身出发，完成角色转换，从被动的学习者转变为学习的主人。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/b60e9782.html" rel="prev" title="Linux系统更新MySql用户Host">
+      <i class="fa fa-chevron-left"></i> Linux系统更新MySql用户Host
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E8%A6%81%E7%B4%A0"><span class="nav-number">2.</span> <span class="nav-text">基本要素</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.</span> <span class="nav-text">步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%EF%BC%8E%E6%95%99%E5%B8%88%E6%8F%90%E5%87%BA%E9%97%AE%E9%A2%98%E3%80%82"><span class="nav-number">3.0.0.0.1.</span> <span class="nav-text">1．教师提出问题。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%EF%BC%8E%E5%88%86%E6%9E%90%E9%97%AE%E9%A2%98%E3%80%82"><span class="nav-number">3.0.0.0.2.</span> <span class="nav-text">2．分析问题。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%EF%BC%8E%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98%E3%80%82"><span class="nav-number">3.0.0.0.3.</span> <span class="nav-text">3．解决问题。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%EF%BC%8E%E7%BB%93%E6%9E%9C%E8%AF%84%E4%BB%B7%E3%80%82"><span class="nav-number">3.0.0.0.4.</span> <span class="nav-text">4．结果评价。</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="nav-number">4.</span> <span class="nav-text">设计原则</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%EF%BC%8E%E8%A6%81%E6%9C%89%E6%98%8E%E7%A1%AE%E7%9A%84%E7%9B%AE%E6%A0%87"><span class="nav-number">4.0.0.0.1.</span> <span class="nav-text">1．要有明确的目标</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%EF%BC%8E%E7%94%B1%E6%B5%85%E5%85%A5%E6%B7%B1"><span class="nav-number">4.0.0.0.2.</span> <span class="nav-text">2．由浅入深</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%EF%BC%8E%E9%9A%BE%E5%BA%A6%E9%80%82%E5%BD%93"><span class="nav-number">4.0.0.0.3.</span> <span class="nav-text">3．难度适当</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%EF%BC%8E%E9%9D%A2%E5%90%91%E5%85%A8%E4%BD%93%E5%AD%A6%E7%94%9F"><span class="nav-number">4.0.0.0.4.</span> <span class="nav-text">4．面向全体学生</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%BC%80%E5%A7%8B%E4%B8%80%E9%97%A8PBL%E8%AF%BE%E7%A8%8B"><span class="nav-number">5.</span> <span class="nav-text">如何开始一门PBL课程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E4%BB%8E%E4%B8%80%E4%B8%AA%E4%BA%BA%E6%BF%80%E5%8A%A8%E4%BA%BA%E5%BF%83%E7%9A%84%E5%85%A5%E9%97%A8%E6%B4%BB%E5%8A%A8%E5%BC%80%E5%A7%8B"><span class="nav-number">5.0.0.0.1.</span> <span class="nav-text">1、从一个人激动人心的入门活动开始</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E7%A1%AE%E7%AB%8B%E4%B8%80%E4%B8%AA%E5%8F%88%E9%A9%B1%E5%8A%A8%E5%8A%9B%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">5.0.0.0.2.</span> <span class="nav-text">2、确立一个又驱动力的问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E8%BF%9B%E5%85%A5%E7%A0%94%E7%A9%B6%E5%92%8C%E5%88%9B%E9%80%A0%E9%98%B6%E6%AE%B5"><span class="nav-number">5.0.0.0.3.</span> <span class="nav-text">3、进入研究和创造阶段</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E6%9C%80%E5%90%8E%E6%98%AF%E4%B8%80%E4%B8%AA%E7%9C%9F%E6%AD%A3%E7%9A%84%E7%A4%BE%E5%8C%BA%E6%88%90%E6%9E%9C%E5%88%86%E4%BA%AB"><span class="nav-number">5.0.0.0.4.</span> <span class="nav-text">4、最后是一个真正的社区成果分享</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%98%E5%8A%BF"><span class="nav-number">6.</span> <span class="nav-text">优势</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%99%E5%B8%88%E8%A6%81%E6%B1%82"><span class="nav-number">7.</span> <span class="nav-text">教师要求</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%A6%E7%94%9F%E8%A6%81%E6%B1%82"><span class="nav-number">8.</span> <span class="nav-text">学生要求</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阮烁"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">阮烁</p>
+  <div class="site-description" itemprop="description">不积跬步，无以至千里；不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阮烁</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
