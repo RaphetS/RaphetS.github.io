@@ -24,18 +24,18 @@
 
   <meta name="description" content="详细记录一下鸿蒙系统版本的微信登录开发，避免日后踩坑。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="鸿蒙系统微信登录开发指南">
-<meta property="og:url" content="https://raphets.github.io/archives/8113207a.html">
+<meta property="og:title" content="HarmonyOS Next微信登录开发指南">
+<meta property="og:url" content="https://raphets.github.io/archives/43c4d593.html">
 <meta property="og:site_name" content="尚拙">
 <meta property="og:description" content="详细记录一下鸿蒙系统版本的微信登录开发，避免日后踩坑。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-05-21T08:57:04.000Z">
-<meta property="article:modified_time" content="2025-05-21T12:06:20.183Z">
+<meta property="article:published_time" content="2025-11-30T02:22:43.000Z">
+<meta property="article:modified_time" content="2025-11-30T02:23:14.713Z">
 <meta property="article:author" content="John Doe">
-<meta property="article:tag" content="鸿蒙">
+<meta property="article:tag" content="HarmonyOS">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://raphets.github.io/archives/8113207a.html">
+<link rel="canonical" href="https://raphets.github.io/archives/43c4d593.html">
 
 
 <script id="page-configurations">
@@ -48,7 +48,7 @@
   };
 </script>
 
-  <title>鸿蒙系统微信登录开发指南 | 尚拙</title>
+  <title>HarmonyOS Next微信登录开发指南 | 尚拙</title>
   
 
 
@@ -174,7 +174,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/8113207a.html">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/43c4d593.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -187,7 +187,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          鸿蒙系统微信登录开发指南
+          HarmonyOS Next微信登录开发指南
         </h1>
 
         <div class="post-meta">
@@ -198,7 +198,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2025-05-21 16:57:04 / 修改时间：20:06:20" itemprop="dateCreated datePublished" datetime="2025-05-21T16:57:04+08:00">2025-05-21</time>
+              <time title="创建时间：2025-11-30 10:22:43 / 修改时间：10:23:14" itemprop="dateCreated datePublished" datetime="2025-11-30T10:22:43+08:00">2025-11-30</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -210,7 +210,7 @@
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/%E9%B8%BF%E8%92%99/" itemprop="url" rel="index"><span itemprop="name">鸿蒙</span></a>
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/HarmonyOS/" itemprop="url" rel="index"><span itemprop="name">HarmonyOS</span></a>
                 </span>
             </span>
 
@@ -255,7 +255,8 @@
 
 <h4 id="3、启动微信登录"><a href="#3、启动微信登录" class="headerlink" title="3、启动微信登录"></a>3、启动微信登录</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">let req = new wxopensdk.SendAuthReq</span><br><span class="line">    req.isOption1 = false</span><br><span class="line">    req.nonAutomatic = true</span><br><span class="line">    req.scope = &#x27;snsapi_userinfo&#x27;</span><br><span class="line">    req.state = &#x27;none&#x27;</span><br><span class="line">    req.transaction = &#x27;test123&#x27;</span><br><span class="line"></span><br><span class="line">    let finished = await this.wxApi.sendReq(getContext(this) as common.UIAbilityContext, req)</span><br><span class="line">    LogUtil.debug(&quot;wechat login send request finished:&quot; + finished)</span><br></pre></td></tr></table></figure>
 
-<h4 id="4、请求接口获取openid"><a href="#4、请求接口获取openid" class="headerlink" title="4、请求接口获取openid"></a>4、请求接口获取openid</h4><p>根据微信登录回调中的code，请求微信接口获取openid和unionid</p>
+
+<h4 id="4、请求接口获取openid"><a href="#4、请求接口获取openid" class="headerlink" title="4、请求接口获取openid"></a>4、请求接口获取openid</h4><p>微信授权成功后，会在onWXResp回调里面返回code，根据微信登录回调中的code，请求微信接口获取openid和unionid</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">async getWechatInfo(code:string)&#123;</span><br><span class="line">   let dto = await efRcpClientApi.get&lt;string&gt;(&#123;</span><br><span class="line">     url: `https://api.weixin.qq.com/sns/oauth2/access_token?appid=$&#123;WechatConstants.APPID&#125;&amp;secret=$&#123;WechatConstants.APP_SECRET&#125;&amp;code=$&#123;code&#125;&amp;grant_type=authorization_code`</span><br><span class="line">   &#125;);</span><br><span class="line">   if(dto.data)&#123;</span><br><span class="line">     LogUtil.debug(&quot;getWechatInfo:&quot; + JSON.stringify(dto.data))</span><br><span class="line">     let unionid:string = dto.data[&quot;unionid&quot;]</span><br><span class="line">     let openid:string = dto.data[&quot;openid&quot;]</span><br><span class="line">     this.thirdLogin(&quot;wechat&quot;,unionid)</span><br><span class="line">   &#125;else &#123;</span><br><span class="line">     promptAction.showToast(&#123;</span><br><span class="line">       message: &quot;微信登录异常，请稍后重试&quot;,</span><br><span class="line">       duration: 3000</span><br><span class="line">     &#125;)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
     </div>
 
@@ -265,7 +266,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E9%B8%BF%E8%92%99/" rel="tag"><i class="fa fa-tag"></i> 鸿蒙</a>
+              <a href="/tags/HarmonyOS/" rel="tag"><i class="fa fa-tag"></i> HarmonyOS</a>
           </div>
 
         
@@ -274,13 +275,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/archives/5dbc44b9.html" rel="prev" title="如何在本地调用魔塔社区的大模型">
-      <i class="fa fa-chevron-left"></i> 如何在本地调用魔塔社区的大模型
+    <a href="/archives/50045b2e.html" rel="prev" title="HarmonyOS Next 微信支付开发指南">
+      <i class="fa fa-chevron-left"></i> HarmonyOS Next 微信支付开发指南
     </a></div>
-      <div class="post-nav-item">
-    <a href="/archives/8113207a.html" rel="next" title="鸿蒙系统微信登录开发指南">
-      鸿蒙系统微信登录开发指南 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
