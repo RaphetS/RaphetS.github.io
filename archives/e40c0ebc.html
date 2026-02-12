@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"raphets.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在高并发的 Web 应用场景中，单一数据库服务器往往难以承受巨大的读写压力。读写分离 是一种经典的数据库架构优化方案：主库负责“写”操作，从库负责“读”操作，以此分担负载并提升系统可用性。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql主从数据库配置指南">
+<meta property="og:url" content="https://raphets.github.io/archives/e40c0ebc.html">
+<meta property="og:site_name" content="尚拙">
+<meta property="og:description" content="在高并发的 Web 应用场景中，单一数据库服务器往往难以承受巨大的读写压力。读写分离 是一种经典的数据库架构优化方案：主库负责“写”操作，从库负责“读”操作，以此分担负载并提升系统可用性。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-02-12T01:51:36.000Z">
+<meta property="article:modified_time" content="2026-02-12T08:08:57.907Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Django">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://raphets.github.io/archives/e40c0ebc.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>mysql主从数据库配置指南 | 尚拙</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">尚拙</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个分享技术、学习成长的个人博客网站</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tool">
+
+    <a href="/tool/" rel="section"><i class="fa fa-hammer fa-fw"></i>工具</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/e40c0ebc.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="不积跬步，无以至千里；不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="尚拙">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          mysql主从数据库配置指南
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-02-12 09:51:36 / 修改时间：16:08:57" itemprop="dateCreated datePublished" datetime="2026-02-12T09:51:36+08:00">2026-02-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" itemprop="url" rel="index"><span itemprop="name">技术文章</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在高并发的 Web 应用场景中，单一数据库服务器往往难以承受巨大的读写压力。读写分离 是一种经典的数据库架构优化方案：主库负责“写”操作，从库负责“读”操作，以此分担负载并提升系统可用性。</p>
+<span id="more"></span>
+
+
+<blockquote>
+<p>适用场景：  </p>
+<ul>
+<li>操作系统：Linux（CentOS &#x2F; Ubuntu）  </li>
+<li>数据库版本：MySQL 8.0  </li>
+<li>服务端框架：Django  </li>
+<li>目标：实现读写分离、提高系统性能与可用性</li>
+</ul>
+</blockquote>
+<hr>
+<h1 id="一、为什么要使用-MySQL-主从架构？"><a href="#一、为什么要使用-MySQL-主从架构？" class="headerlink" title="一、为什么要使用 MySQL 主从架构？"></a>一、为什么要使用 MySQL 主从架构？</h1><p>在生产环境中，随着业务增长，数据库会逐渐成为性能瓶颈。常见问题：</p>
+<ul>
+<li>查询压力过大</li>
+<li>并发请求高</li>
+<li>单点故障风险</li>
+</ul>
+<p>主从架构（Master-Slave）可以解决：</p>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>解决方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>读压力大</td>
+<td>读写分离，查询走从库</td>
+</tr>
+<tr>
+<td>数据安全</td>
+<td>从库可做备份</td>
+</tr>
+<tr>
+<td>高可用</td>
+<td>主库异常可切换</td>
+</tr>
+<tr>
+<td>扩展能力</td>
+<td>可扩展多个从库</td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="二、主从复制原理"><a href="#二、主从复制原理" class="headerlink" title="二、主从复制原理"></a>二、主从复制原理</h1><p>MySQL 主从复制基于 <strong>binlog（二进制日志）</strong>。</p>
+<p>流程如下：</p>
+<ol>
+<li>主库写入数据</li>
+<li>主库记录 binlog</li>
+<li>从库 IO 线程拉取主库 binlog</li>
+<li>从库 SQL 线程执行 relay log</li>
+<li>从库数据同步</li>
+</ol>
+<p>结构示意：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">Client</span><br><span class="line">↓</span><br><span class="line">Master（写 + binlog）</span><br><span class="line">↓</span><br><span class="line">Slave（relay log → 执行）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="三、环境准备"><a href="#三、环境准备" class="headerlink" title="三、环境准备"></a>三、环境准备</h1><p> 1️⃣ 安装 MySQL 8.0（主从都需安装）</p>
+<p>Ubuntu：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install mysql-server</span><br><span class="line">````</span><br><span class="line"></span><br><span class="line">CentOS：</span><br><span class="line"></span><br><span class="line">```bash</span><br><span class="line">yum install mysql-server</span><br></pre></td></tr></table></figure>
+
+<p>确认版本：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -V</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="四、配置主库（Master）"><a href="#四、配置主库（Master）" class="headerlink" title="四、配置主库（Master）"></a>四、配置主库（Master）</h1><p>假设：</p>
+<ul>
+<li>主库IP：192.168.1.10</li>
+<li>从库IP：192.168.1.20</li>
+</ul>
+<hr>
+<p> 1️⃣ 修改主库配置文件</p>
+<p>编辑：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/my.cnf</span><br><span class="line"><span class="comment"># 或</span></span><br><span class="line">vim /etc/mysql/mysql.conf.d/mysqld.cnf</span><br></pre></td></tr></table></figure>
+
+<p>在[mysqld]节点下添加以下配置（原有配置保留，新增如下内容）：</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="comment"># 主库唯一标识（1-2^32-1，不可与从库重复）</span></span><br><span class="line"><span class="attr">server-id</span> = <span class="number">1</span></span><br><span class="line"><span class="comment"># 开启二进制日志（核心，记录主库所有写操作，文件名前缀为mysql-bin）</span></span><br><span class="line"><span class="attr">log-bin</span> = mysql-bin</span><br><span class="line"><span class="comment"># 二进制日志格式（mixed：混合模式，推荐，兼顾性能与兼容性）</span></span><br><span class="line"><span class="attr">binlog_format</span> = mixed</span><br><span class="line"><span class="comment"># 指定需要同步的数据库（若不指定，同步所有数据库；适配Django项目，填写项目所用数据库）</span></span><br><span class="line"><span class="attr">binlog-do-db</span> = django_project_db</span><br><span class="line"><span class="comment"># 指定不需要同步的数据库（可选）</span></span><br><span class="line"><span class="attr">binlog-ignore-db</span> = mysql</span><br><span class="line"><span class="attr">binlog-ignore-db</span> = information_schema</span><br><span class="line"><span class="comment"># 禁止自动删除二进制日志（避免同步中断，可按需设置过期时间）</span></span><br><span class="line"><span class="attr">expire_logs_days</span> = <span class="number">30</span></span><br><span class="line"><span class="comment"># 主库写入二进制日志后，无需等待从库确认（提升主库性能，按需调整）</span></span><br><span class="line"><span class="attr">sync_binlog</span> = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>server-id</td>
+<td>主从必须唯一</td>
+</tr>
+<tr>
+<td>log-bin</td>
+<td>开启 binlog</td>
+</tr>
+<tr>
+<td>binlog_format</td>
+<td>建议 ROW</td>
+</tr>
+<tr>
+<td>binlog-do-db</td>
+<td>指定需要同步的数据库（若不指定，同步所有数据库）</td>
+</tr>
+<tr>
+<td>binlog-ignore-db</td>
+<td>指定不需要同步的数据库（可选）</td>
+</tr>
+</tbody></table>
+<p>重启MySQL，使配置生效：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl restart mysql</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p> 2️⃣ 创建复制账号</p>
+<p>登录 MySQL：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">&#x27;repl_user&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;StrongP@ss123!&#x27;</span>;  <span class="comment">-- 生产环境替换为强密码</span></span><br><span class="line"><span class="keyword">GRANT</span> REPLICATION SLAVE <span class="keyword">ON</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;repl_user&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br><span class="line">FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>安全提示</strong>：<code>&#39;%&#39;</code>允许任意IP连接，生产环境应替换为从库IP（如<code>&#39;repl_user&#39;@&#39;192.168.1.100&#39;</code>）。</p>
+</blockquote>
+<hr>
+<p> 3️⃣ 查看主库状态</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> MASTER STATUS;</span><br></pre></td></tr></table></figure>
+
+<p><strong>输出示例</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">+------------------+----------+--------------+------------------+</span><br><span class="line">| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |</span><br><span class="line">+------------------+----------+--------------+------------------+</span><br><span class="line">| mysql-bin.000001 | 154      |              |                  |</span><br><span class="line">+------------------+----------+--------------+------------------+</span><br></pre></td></tr></table></figure>
+
+<p>**记录<code>File</code>和<code>Position</code>**（后续配置从库必用）。</p>
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql-bin.000003</span><br><span class="line">120</span><br></pre></td></tr></table></figure>
+<p>⚠️ 注意：此时不要关闭MySQL终端，也不要在主库执行任何写操作（如增删改），否则Position会变化，影响后续从库配置。</p>
+<p>4️⃣ 导出主库现有数据（确保数据一致性）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 导出所有数据库（生产环境建议只导出应用数据库）</span></span><br><span class="line">mysqldump -u root -p --all-databases --single-transaction &gt; /tmp/full_backup.sql</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>关键参数</strong>：<code>--single-transaction</code>避免锁表，保证一致性。</p>
+</blockquote>
+<p>也可以通过其他mysql远程工具导出某个数据库的数据（比如Navicat For MYSQL的转储SQL文件功能）。</p>
+<hr>
+<h1 id="五、配置从库（Slave）"><a href="#五、配置从库（Slave）" class="headerlink" title="五、配置从库（Slave）"></a>五、配置从库（Slave）</h1><hr>
+<p> 1️⃣ 修改从库配置文件</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="comment"># 从库唯一标识（不可与主库重复，此处设为2）</span></span><br><span class="line"><span class="attr">server-id</span> = <span class="number">2</span></span><br><span class="line"><span class="comment"># 关闭从库二进制日志（若从库无需作为其他从库的主库，可关闭；若需级联同步，可开启）</span></span><br><span class="line"><span class="attr">log-bin</span> = <span class="literal">OFF</span></span><br><span class="line"><span class="comment"># 中继日志（核心，用于接收主库的二进制日志，再解析执行）</span></span><br><span class="line"><span class="attr">relay-log</span> = mysql-relay-bin</span><br><span class="line"><span class="comment"># 从库只读（禁止手动写操作，避免主从数据不一致，root用户不受限制）</span></span><br><span class="line"><span class="attr">read-only</span> = <span class="number">1</span></span><br><span class="line"><span class="comment"># 忽略同步的数据库（与主库保持一致，可选）</span></span><br><span class="line"><span class="attr">replicate-ignore-db</span> = mysql</span><br><span class="line"><span class="attr">replicate-ignore-db</span> = information_schema</span><br><span class="line"><span class="comment"># 指定需要同步的数据库（与主库保持一致，仅同步Django项目数据库）</span></span><br><span class="line"><span class="attr">replicate-do-db</span> = django_project_db</span><br><span class="line"><span class="comment"># 忽略mysql库下的user表同步（格式：库名.表名）</span></span><br><span class="line"><span class="attr">replicate-ignore-table</span> =history.user</span><br><span class="line"><span class="comment"># 注意：若主从复制是ROW格式（MySQL8.0默认），需加下面一行（避免表名大小写/通配符问题）</span></span><br><span class="line"><span class="attr">replicate-wild-ignore-table</span> = history.user</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果某个表数据不走从库，可以通过replicate-ignore-table &#x3D;history.user忽略该表同步</p>
+</blockquote>
+<p>重启：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl restart mysql</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p> 2️⃣ 导入主库数据</p>
+<p>导入所有数据</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -uroot -p &lt; dump.sql</span><br></pre></td></tr></table></figure>
+
+<p>导入某个数据库</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -u 用户名 -p new_database &lt; /path/to/backup.sql</span><br></pre></td></tr></table></figure>
+
+
+<p> 3️⃣ 初始化主从关系</p>
+<p>登录从库：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -uroot -p</span><br></pre></td></tr></table></figure>
+
+<p>执行：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">CHANGE MASTER <span class="keyword">TO</span></span><br><span class="line">  MASTER_HOST<span class="operator">=</span><span class="string">&#x27;主库IP&#x27;</span>,</span><br><span class="line">  MASTER_USER<span class="operator">=</span><span class="string">&#x27;repl&#x27;</span>,</span><br><span class="line">  MASTER_PASSWORD<span class="operator">=</span><span class="string">&#x27;repl123456&#x27;</span>,</span><br><span class="line">  MASTER_LOG_FILE<span class="operator">=</span><span class="string">&#x27;mysql-bin.000003&#x27;</span>,</span><br><span class="line">  MASTER_LOG_POS<span class="operator">=</span><span class="number">157</span>;</span><br></pre></td></tr></table></figure>
+
+<p>启动复制：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">START</span> SLAVE;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>4️⃣ 查看同步状态</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> SLAVE STATUS\G</span><br></pre></td></tr></table></figure>
+
+<p>重点关注：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">Slave_IO_Running: Yes</span><br><span class="line">Slave_SQL_Running: Yes</span><br><span class="line">Seconds_Behind_Master: 0</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Slave_IO_Running</td>
+<td>IO线程是否正常</td>
+</tr>
+<tr>
+<td>Slave_SQL_Running</td>
+<td>SQL线程是否正常</td>
+</tr>
+<tr>
+<td>Seconds_Behind_Master</td>
+<td>延迟时间</td>
+</tr>
+</tbody></table>
+<p>若出现错误：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">STOP SLAVE;</span><br><span class="line">RESET SLAVE;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="六、Django-配置读写分离"><a href="#六、Django-配置读写分离" class="headerlink" title="六、Django 配置读写分离"></a>六、Django 配置读写分离</h1><hr>
+<p> 1️⃣ 配置多个数据库</p>
+<p>编辑 <code>settings.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">DATABASES = &#123;</span><br><span class="line">    <span class="string">&#x27;default&#x27;</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;ENGINE&#x27;</span>: <span class="string">&#x27;django.db.backends.mysql&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;NAME&#x27;</span>: <span class="string">&#x27;your_db&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;USER&#x27;</span>: <span class="string">&#x27;root&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;PASSWORD&#x27;</span>: <span class="string">&#x27;password&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;HOST&#x27;</span>: <span class="string">&#x27;主库IP&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;PORT&#x27;</span>: <span class="string">&#x27;3306&#x27;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&#x27;slave&#x27;</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;ENGINE&#x27;</span>: <span class="string">&#x27;django.db.backends.mysql&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;NAME&#x27;</span>: <span class="string">&#x27;your_db&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;USER&#x27;</span>: <span class="string">&#x27;root&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;PASSWORD&#x27;</span>: <span class="string">&#x27;password&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;HOST&#x27;</span>: <span class="string">&#x27;从库IP&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;PORT&#x27;</span>: <span class="string">&#x27;3306&#x27;</span>,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p> 2️⃣ 创建数据库路由</p>
+<p>新建：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">project/utils/db_router.py</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> .slave_switch <span class="keyword">import</span> SLAVE_ENABLED</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MasterSlaveDBRouter</span>:</span><br><span class="line">    READ_REPLICA_MODELS = &#123;</span><br><span class="line">        <span class="string">&#x27;history_app.FigureList&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;history_app.FigureEvent&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;history_app.Wuqiannian&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;history_app.WuqiannianDetail&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;history_app.War&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;history_app.TodayOnHistoryList&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;history_app.HistoryCollectionList&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">db_for_read</span>(<span class="params">self, model, **hints</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> SLAVE_ENABLED:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&#x27;default&#x27;</span></span><br><span class="line"></span><br><span class="line">        model_key = <span class="string">f&quot;<span class="subst">&#123;model._meta.app_label&#125;</span>.<span class="subst">&#123;model.__name__&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> model_key <span class="keyword">in</span> self.READ_REPLICA_MODELS:</span><br><span class="line">            <span class="keyword">if</span> self.slave_available():</span><br><span class="line">                <span class="keyword">return</span> <span class="string">&#x27;slave&#x27;</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;default&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">db_for_write</span>(<span class="params">self, model, **hints</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;default&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">allow_relation</span>(<span class="params">self, obj1, obj2, **hints</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">allow_migrate</span>(<span class="params">self, db, app_label, model_name=<span class="literal">None</span>, **hints</span>):</span><br><span class="line">        <span class="keyword">return</span> db == <span class="string">&#x27;default&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">slave_available</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        判断从库是否可用</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">from</span> django.db <span class="keyword">import</span> connections</span><br><span class="line">            conn = connections[<span class="string">&#x27;slave&#x27;</span>]</span><br><span class="line">            conn.ensure_connection()</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">        <span class="keyword">except</span> Exception:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br></pre></td></tr></table></figure>
+
+<p>其中SLAVE_ENABLED为是否开启从库开关；READ_REPLICA_MODELS为配置哪些模型走从库。</p>
+<hr>
+<p> 3️⃣ 注册路由</p>
+<p>在<code>settings.py</code>中添加：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">DATABASE_ROUTERS = [<span class="string">&#x27;your_app.routers.DatabaseRouter&#x27;</span>]  <span class="comment"># 替换your_app为实际应用名</span></span><br></pre></td></tr></table></figure>
+
+<p>重启 Django 服务生效。</p>
+<p>4️⃣  测试Django项目读写分离</p>
+<p><strong>验证读写路由</strong>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 写操作（应走主库）</span></span><br><span class="line">obj = YourModel.objects.create(name=<span class="string">&quot;Test&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读操作（应走从库）</span></span><br><span class="line">objs = YourModel.objects.<span class="built_in">all</span>()  <span class="comment"># 通过日志确认查询在从库执行</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>检查实际路由</strong>（在Django shell中）：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> connections</span><br><span class="line"><span class="built_in">print</span>(connections[<span class="string">&#x27;default&#x27;</span>].settings_dict[<span class="string">&#x27;HOST&#x27;</span>])  <span class="comment"># 主库IP</span></span><br><span class="line"><span class="built_in">print</span>(connections[<span class="string">&#x27;replica&#x27;</span>].settings_dict[<span class="string">&#x27;HOST&#x27;</span>])  <span class="comment"># 从库IP</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>输出示例</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">192.168.1.50</span><br><span class="line">192.168.1.100</span><br></pre></td></tr></table></figure>
+</blockquote>
+<hr>
+<h1 id="八、常见问题排查"><a href="#八、常见问题排查" class="headerlink" title="八、常见问题排查"></a>八、常见问题排查</h1><p>配置过程中，最常见的问题是“从库同步失败”（Slave_IO_Running或Slave_SQL_Running为No），以下是高频问题及解决方案：</p>
+<p>1️⃣ Slave_IO_Running: No</p>
+<p>原因：从库无法连接主库，或主库同步用户权限不足、二进制日志文件名&#x2F;位置错误。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 解决方案：</span><br><span class="line">1. 检查主从库网络连通性（从库ping主库IP，确保能ping通）</span><br><span class="line">ping 192.168.1.100</span><br><span class="line"></span><br><span class="line">2. 检查主库同步用户权限（主库登录MySQL，查看权限）</span><br><span class="line">mysql -u root -p&#x27;MySql@123456&#x27;</span><br><span class="line">show grants for &#x27;slave_user&#x27;@&#x27;192.168.1.101&#x27;;</span><br><span class="line"># 若权限不足，重新授权（参考主库2.4步骤）</span><br><span class="line"></span><br><span class="line">3. 检查从库配置的主库二进制日志文件名/位置（与主库show master status输出一致）</span><br><span class="line"># 从库登录MySQL，查看配置</span><br><span class="line">show slave status\G;</span><br><span class="line"># 对比MASTER_LOG_FILE和MASTER_LOG_POS与主库是否一致，不一致则重新配置（参考从库3.4步骤）</span><br><span class="line">stop slave;</span><br><span class="line">CHANGE MASTER TO ...;  # 重新填写正确的File和Position</span><br><span class="line">start slave;</span><br></pre></td></tr></table></figure>
+
+<p>2️⃣  Slave_SQL_Running: No</p>
+<p>原因：主从数据不一致（从库缺少主库的某些表&#x2F;数据）、从库手动执行了写操作、SQL语句不兼容。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 解决方案：</span><br><span class="line">1. 重新同步主从数据（最常用，适合数据量不大的场景）</span><br><span class="line"># 主库重新导出数据，传输到从库，重新导入</span><br><span class="line">mysqldump -u root -p&#x27;MySql@123456&#x27; --databases django_project_db &gt; django_project_db.sql</span><br><span class="line">scp django_project_db.sql root@192.168.1.101:/root/</span><br><span class="line"></span><br><span class="line"># 从库重新导入数据，重启同步</span><br><span class="line">mysql -u root -p&#x27;MySql@123456&#x27;</span><br><span class="line">source /root/django_project_db.sql;</span><br><span class="line">stop slave;</span><br><span class="line">CHANGE MASTER TO ...;  # 重新配置主库信息（确保File和Position正确）</span><br><span class="line">start slave;</span><br><span class="line"></span><br><span class="line">2. 若从库手动执行了写操作，删除从库新增的数据，重启同步</span><br><span class="line"># 从库登录MySQL，删除手动新增的数据，然后：</span><br><span class="line">stop slave;</span><br><span class="line">start slave;</span><br></pre></td></tr></table></figure>
+
+<p>3️⃣  Django项目无法连接主从库</p>
+<p>原因：MySQL用户远程登录权限不足、防火墙未开放3306端口、数据库配置参数错误。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 解决方案：</span><br><span class="line">1. 检查MySQL用户远程权限（主从库均需配置，参考1.2.2步骤，允许Django项目所在IP连接）</span><br><span class="line">GRANT ALL PRIVILEGES ON *.* TO &#x27;root&#x27;@&#x27;Django项目IP&#x27; IDENTIFIED BY &#x27;MySql@123456&#x27; WITH GRANT OPTION;</span><br><span class="line">FLUSH PRIVILEGES;</span><br><span class="line"></span><br><span class="line">2. 检查防火墙（确保3306端口开放，参考1.2.3步骤）</span><br><span class="line"></span><br><span class="line">3. 检查Django settings.py中的数据库配置（HOST、PORT、USER、PASSWORD、NAME是否正确）</span><br><span class="line"></span><br><span class="line">5.4 主库二进制日志丢失/过期</span><br><span class="line"></span><br><span class="line">原因：主库配置了expire_logs_days，二进制日志过期删除，导致从库同步中断。</span><br><span class="line"></span><br><span class="line"># 解决方案：</span><br><span class="line">1. 调整主库my.cnf中的expire_logs_days参数，延长日志保存时间（如30天）</span><br><span class="line">expire_logs_days = 30</span><br><span class="line"></span><br><span class="line">2. 重新同步主从数据</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Django/" rel="tag"><i class="fa fa-tag"></i> Django</a>
+              <a href="/tags/mysql/" rel="tag"><i class="fa fa-tag"></i> mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/43c4d593.html" rel="prev" title="HarmonyOS Next微信登录开发指南">
+      <i class="fa fa-chevron-left"></i> HarmonyOS Next微信登录开发指南
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/4ab1a8de.html" rel="next" title="mysql常用命令">
+      mysql常用命令 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8-MySQL-%E4%B8%BB%E4%BB%8E%E6%9E%B6%E6%9E%84%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">一、为什么要使用 MySQL 主从架构？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">二、主从复制原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="nav-number">3.</span> <span class="nav-text">三、环境准备</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E9%85%8D%E7%BD%AE%E4%B8%BB%E5%BA%93%EF%BC%88Master%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">四、配置主库（Master）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E9%85%8D%E7%BD%AE%E4%BB%8E%E5%BA%93%EF%BC%88Slave%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">五、配置从库（Slave）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AD%E3%80%81Django-%E9%85%8D%E7%BD%AE%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="nav-number">6.</span> <span class="nav-text">六、Django 配置读写分离</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5"><span class="nav-number">7.</span> <span class="nav-text">八、常见问题排查</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description">不积跬步，无以至千里；不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

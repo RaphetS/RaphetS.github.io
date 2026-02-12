@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"raphets.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在生产环境中，MySQL 主从同步的稳定性对业务至关重要。一旦从库同步中断或延迟过高，可能导致数据不一致或业务异常。因此，通过自动化脚本监控从库状态，并在异常时及时告警，是运维必备手段。本文将记录我在 Linux 环境下使用 Python 脚本结合 Cron 定时任务实现这一目标的过程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用 Python 自动化监控 MySQL 主从复制状态：从部署到告警全流程指南">
+<meta property="og:url" content="https://raphets.github.io/archives/31c3b15b.html">
+<meta property="og:site_name" content="尚拙">
+<meta property="og:description" content="在生产环境中，MySQL 主从同步的稳定性对业务至关重要。一旦从库同步中断或延迟过高，可能导致数据不一致或业务异常。因此，通过自动化脚本监控从库状态，并在异常时及时告警，是运维必备手段。本文将记录我在 Linux 环境下使用 Python 脚本结合 Cron 定时任务实现这一目标的过程。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-02-12T08:33:19.000Z">
+<meta property="article:modified_time" content="2026-02-12T09:09:48.324Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://raphets.github.io/archives/31c3b15b.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>用 Python 自动化监控 MySQL 主从复制状态：从部署到告警全流程指南 | 尚拙</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">尚拙</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个分享技术、学习成长的个人博客网站</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tool">
+
+    <a href="/tool/" rel="section"><i class="fa fa-hammer fa-fw"></i>工具</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/31c3b15b.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="不积跬步，无以至千里；不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="尚拙">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          用 Python 自动化监控 MySQL 主从复制状态：从部署到告警全流程指南
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-02-12 16:33:19 / 修改时间：17:09:48" itemprop="dateCreated datePublished" datetime="2026-02-12T16:33:19+08:00">2026-02-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" itemprop="url" rel="index"><span itemprop="name">技术文章</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在生产环境中，MySQL 主从同步的稳定性对业务至关重要。一旦从库同步中断或延迟过高，可能导致数据不一致或业务异常。因此，通过自动化脚本监控从库状态，并在异常时及时告警，是运维必备手段。本文将记录我在 Linux 环境下使用 Python 脚本结合 Cron 定时任务实现这一目标的过程。</p>
+<span id="more"></span>
+
+<h1 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h1><ul>
+<li>操作系统：Linux</li>
+<li>Python 版本：Python 3.x</li>
+<li>MySQL 版本：8.0+</li>
+<li>邮件服务：126 邮箱 SMTP</li>
+<li>定时任务：Cron，每 3 小时执行一次</li>
+</ul>
+<h1 id="一、为什么需要自动化监控？"><a href="#一、为什么需要自动化监控？" class="headerlink" title="一、为什么需要自动化监控？"></a>一、为什么需要自动化监控？</h1><p>MySQL主从同步异常（IO&#x2F;SQL线程停止、延迟过高）会导致：</p>
+<ul>
+<li>数据不一致</li>
+<li>业务查询延迟</li>
+<li>严重时引发服务雪崩</li>
+</ul>
+<p><strong>手动检查效率低，自动化是运维刚需</strong>。</p>
+<hr>
+<h1 id="二、解决方案：Python脚本-Cron定时任务"><a href="#二、解决方案：Python脚本-Cron定时任务" class="headerlink" title="二、解决方案：Python脚本 + Cron定时任务"></a>二、解决方案：Python脚本 + Cron定时任务</h1><h4 id="设计思路"><a href="#设计思路" class="headerlink" title="设计思路"></a>设计思路</h4><p>监控 MySQL 主从同步状态，主要关注三个字段：</p>
+<ol>
+<li><strong>Slave_IO_Running</strong>：从库 IO 线程是否运行</li>
+<li><strong>Slave_SQL_Running</strong>：从库 SQL 线程是否运行</li>
+<li><strong>Seconds_Behind_Master</strong>：从库延迟（秒）</li>
+</ol>
+<h4 id="脚本主要功能"><a href="#脚本主要功能" class="headerlink" title="脚本主要功能"></a>脚本主要功能</h4><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>执行频率</strong></td>
+<td>每3小时（Cron实现，避免频繁轮询数据库）</td>
+</tr>
+<tr>
+<td><strong>异常检测</strong></td>
+<td>3维度：<code>Slave_IO_Running</code>、<code>Slave_SQL_Running</code>、<code>Seconds_Behind_Master</code></td>
+</tr>
+<tr>
+<td><strong>告警方式</strong></td>
+<td>126邮箱SMTP邮件（支持手机&#x2F;企业微信推送）</td>
+</tr>
+<tr>
+<td><strong>日志追踪</strong></td>
+<td>详细记录异常原因，定位问题更快</td>
+</tr>
+</tbody></table>
+<h4 id="脚本逻辑："><a href="#脚本逻辑：" class="headerlink" title="脚本逻辑："></a>脚本逻辑：</h4><ol>
+<li>连接从库数据库</li>
+<li>获取 <code>SHOW SLAVE STATUS</code> 信息</li>
+<li>判断 IO&#x2F;SQL 线程状态及延迟是否正常</li>
+<li>异常时发送告警邮件</li>
+<li>日志记录执行结果，便于追踪历史问题</li>
+</ol>
+<hr>
+<h1 id="三、环境准备（关键！）"><a href="#三、环境准备（关键！）" class="headerlink" title="三、环境准备（关键！）"></a>三、环境准备（关键！）</h1><h4 id="1-数据库权限配置"><a href="#1-数据库权限配置" class="headerlink" title="1. 数据库权限配置"></a>1. 数据库权限配置</h4><p><strong>必须创建专用监控账号</strong>（避免使用 root）：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">&#x27;monitor&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;your_strong_password&#x27;</span>;</span><br><span class="line"><span class="keyword">GRANT</span> REPLICATION CLIENT <span class="keyword">ON</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;monitor&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span><br><span class="line">FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-邮件服务配置"><a href="#2-邮件服务配置" class="headerlink" title="2. 邮件服务配置"></a>2. 邮件服务配置</h4><ul>
+<li><strong>126&#x2F;163 邮箱</strong>：需在邮箱设置中<strong>开启 POP3&#x2F;SMTP 服务</strong>，获取<strong>SMTP 授权码</strong>（非邮箱密码！）</li>
+<li><strong>其他邮箱</strong>：确认 SMTP 服务器地址和端口（如 Gmail 使用 <code>smtp.gmail.com:587</code>）</li>
+</ul>
+<h4 id="3-系统环境"><a href="#3-系统环境" class="headerlink" title="3. 系统环境"></a>3. 系统环境</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装 Python 依赖</span></span><br><span class="line">sudo apt-get install -y python3-pip</span><br><span class="line">pip3 install pymysql[rsa]  <span class="comment"># 注意：pymysql 需要 rsa 支持</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>✅ <strong>验证点</strong>：确保能用 <code>mysql -umonitor -p</code> 连接从库，且能执行 <code>SHOW SLAVE STATUS</code>。</p>
+</blockquote>
+<hr>
+<h1 id="四、脚本实现（核心逻辑）"><a href="#四、脚本实现（核心逻辑）" class="headerlink" title="四、脚本实现（核心逻辑）"></a>四、脚本实现（核心逻辑）</h1><h4 id="1-参数配置（config-py-隔离配置）"><a href="#1-参数配置（config-py-隔离配置）" class="headerlink" title="1. 参数配置（config.py 隔离配置）"></a>1. 参数配置（<code>config.py</code> 隔离配置）</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># config.py（建议单独文件，避免硬编码）</span></span><br><span class="line">DB_CONFIG = &#123;</span><br><span class="line">    <span class="string">&#x27;host&#x27;</span>: <span class="string">&#x27;192.168.1.100&#x27;</span>,  <span class="comment"># 从库IP</span></span><br><span class="line">    <span class="string">&#x27;port&#x27;</span>: <span class="number">3306</span>,</span><br><span class="line">    <span class="string">&#x27;user&#x27;</span>: <span class="string">&#x27;monitor&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;password&#x27;</span>: <span class="string">&#x27;your_strong_password&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;database&#x27;</span>: <span class="string">&#x27;mysql&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;charset&#x27;</span>: <span class="string">&#x27;utf8mb4&#x27;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MAIL_CONFIG = &#123;</span><br><span class="line">    <span class="string">&#x27;smtp_server&#x27;</span>: <span class="string">&#x27;smtp.126.com&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;smtp_port&#x27;</span>: <span class="number">465</span>,</span><br><span class="line">    <span class="string">&#x27;sender&#x27;</span>: <span class="string">&#x27;your_email@126.com&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;password&#x27;</span>: <span class="string">&#x27;YOUR_SMTP_AUTH_CODE&#x27;</span>,  <span class="comment"># 126 邮箱授权码</span></span><br><span class="line">    <span class="string">&#x27;receiver&#x27;</span>: <span class="string">&#x27;alert@yourcompany.com&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;subject_prefix&#x27;</span>: <span class="string">&#x27;[MySQL同步告警]&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ALERT_THRESHOLD = <span class="number">300</span>  <span class="comment"># 延迟超过 5 分钟告警（单位：秒）</span></span><br><span class="line">LOG_FILE = <span class="string">&#x27;/var/log/mysql_slave_monitor.log&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>💡 <strong>为什么设 300 秒？</strong><br>业务可接受的延迟通常 &lt; 5 分钟，超过即需人工介入。</p>
+</blockquote>
+<hr>
+<h4 id="2-日志配置（清晰记录每一步）"><a href="#2-日志配置（清晰记录每一步）" class="headerlink" title="2. 日志配置（清晰记录每一步）"></a>2. 日志配置（清晰记录每一步）</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 确保日志目录存在</span></span><br><span class="line">os.makedirs(os.path.dirname(LOG_FILE), exist_ok=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">logging.basicConfig(</span><br><span class="line">    level=logging.INFO,</span><br><span class="line">    <span class="built_in">format</span>=<span class="string">&#x27;%(asctime)s [%(levelname)s] %(message)s&#x27;</span>,</span><br><span class="line">    datefmt=<span class="string">&#x27;%Y-%m-%d %H:%M:%S&#x27;</span>,</span><br><span class="line">    handlers=[</span><br><span class="line">        logging.FileHandler(LOG_FILE, encoding=<span class="string">&#x27;utf-8&#x27;</span>),</span><br><span class="line">        logging.StreamHandler()  <span class="comment"># cron 执行时输出到 stdout</span></span><br><span class="line">    ]</span><br><span class="line">)</span><br><span class="line">logger = logging.getLogger(__name__)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="3-数据库连接与状态检查（关键逻辑）"><a href="#3-数据库连接与状态检查（关键逻辑）" class="headerlink" title="3. 数据库连接与状态检查（关键逻辑）"></a>3. 数据库连接与状态检查（关键逻辑）</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">check_replication</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;检查主从同步状态&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        conn = pymysql.connect(**DB_CONFIG)</span><br><span class="line">        cursor = conn.cursor(pymysql.cursors.DictCursor)</span><br><span class="line">        cursor.execute(<span class="string">&quot;SHOW SLAVE STATUS&quot;</span>)</span><br><span class="line">        status = cursor.fetchone()</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 检查关键字段</span></span><br><span class="line">        io_run = status[<span class="string">&#x27;Slave_IO_Running&#x27;</span>]</span><br><span class="line">        sql_run = status[<span class="string">&#x27;Slave_SQL_Running&#x27;</span>]</span><br><span class="line">        delay = status[<span class="string">&#x27;Seconds_Behind_Master&#x27;</span>]</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 异常判定</span></span><br><span class="line">        <span class="keyword">if</span> io_run != <span class="string">&#x27;Yes&#x27;</span> <span class="keyword">or</span> sql_run != <span class="string">&#x27;Yes&#x27;</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">f&quot;线程异常: IO=<span class="subst">&#123;io_run&#125;</span>, SQL=<span class="subst">&#123;sql_run&#125;</span>&quot;</span></span><br><span class="line">        <span class="keyword">if</span> delay <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span> <span class="keyword">and</span> delay &gt; ALERT_THRESHOLD:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">f&quot;延迟超标: <span class="subst">&#123;delay&#125;</span>s (阈值: <span class="subst">&#123;ALERT_THRESHOLD&#125;</span>s)&quot;</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span>  <span class="comment"># 无异常</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;数据库错误: <span class="subst">&#123;<span class="built_in">str</span>(e)&#125;</span>&quot;</span></span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;cursor&#x27;</span> <span class="keyword">in</span> <span class="built_in">locals</span>(): cursor.close()</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;conn&#x27;</span> <span class="keyword">in</span> <span class="built_in">locals</span>(): conn.close()</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>⚠️ <strong>关键细节</strong>：  </p>
+<ul>
+<li><code>Seconds_Behind_Master</code> 为 <code>NULL</code> 时（线程停止），需单独处理（代码中已覆盖）</li>
+<li>使用 <code>DictCursor</code> 确保字段名可读性</li>
+</ul>
+</blockquote>
+<hr>
+<h4 id="4-邮件告警（异常时触发）"><a href="#4-邮件告警（异常时触发）" class="headerlink" title="4. 邮件告警（异常时触发）"></a>4. 邮件告警（异常时触发）</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">send_alert</span>(<span class="params">issue</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;发送邮件告警&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        msg = MIMEText(</span><br><span class="line">            <span class="string">f&quot;【MySQL同步异常】\n时间: <span class="subst">&#123;datetime.now()&#125;</span>\n异常详情: <span class="subst">&#123;issue&#125;</span>&quot;</span>,</span><br><span class="line">            <span class="string">&#x27;plain&#x27;</span>, <span class="string">&#x27;utf-8&#x27;</span></span><br><span class="line">        )</span><br><span class="line">        msg[<span class="string">&#x27;Subject&#x27;</span>] = Header(<span class="string">f&quot;<span class="subst">&#123;MAIL_CONFIG[<span class="string">&#x27;subject_prefix&#x27;</span>]&#125;</span> <span class="subst">&#123;socket.gethostname()&#125;</span>&quot;</span>, <span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">        msg[<span class="string">&#x27;From&#x27;</span>] = MAIL_CONFIG[<span class="string">&#x27;sender&#x27;</span>]</span><br><span class="line">        msg[<span class="string">&#x27;To&#x27;</span>] = MAIL_CONFIG[<span class="string">&#x27;receiver&#x27;</span>]</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">with</span> smtplib.SMTP_SSL(MAIL_CONFIG[<span class="string">&#x27;smtp_server&#x27;</span>], MAIL_CONFIG[<span class="string">&#x27;smtp_port&#x27;</span>], timeout=<span class="number">10</span>) <span class="keyword">as</span> server:</span><br><span class="line">            server.login(MAIL_CONFIG[<span class="string">&#x27;sender&#x27;</span>], MAIL_CONFIG[<span class="string">&#x27;password&#x27;</span>])</span><br><span class="line">            server.sendmail(MAIL_CONFIG[<span class="string">&#x27;sender&#x27;</span>], [MAIL_CONFIG[<span class="string">&#x27;receiver&#x27;</span>]], msg.as_string())</span><br><span class="line">        logger.info(<span class="string">&quot;告警邮件发送成功&quot;</span>)</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        logger.error(<span class="string">f&quot;邮件发送失败: <span class="subst">&#123;<span class="built_in">str</span>(e)&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="五、脚本部署"><a href="#五、脚本部署" class="headerlink" title="五、脚本部署"></a>五、脚本部署</h1><ol>
+<li><p><strong>保存脚本</strong>（<code>/usr/local/bin/mysql_slave_monitor.py</code>）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo nano /usr/local/bin/mysql_slave_monitor.py</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>💡 用 <code>chmod +x</code> 确保可执行：<code>sudo chmod +x /usr/local/bin/mysql_slave_monitor.py</code></p>
+</blockquote>
+</li>
+<li><p><strong>创建日志目录</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> -p /var/log</span><br><span class="line">sudo <span class="built_in">chown</span> <span class="variable">$USER</span>:<span class="variable">$USER</span> /var/log  <span class="comment"># 确保当前用户有写权限</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<h1 id="六、定时任务配置（Cron-3小时一次）"><a href="#六、定时任务配置（Cron-3小时一次）" class="headerlink" title="六、定时任务配置（Cron 3小时一次）"></a>六、定时任务配置（Cron 3小时一次）</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编辑 cron 任务</span></span><br><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加以下行（每3小时执行一次，避开业务高峰）</span></span><br><span class="line">0 */3 * * * /usr/bin/python3 /usr/local/bin/mysql_slave_monitor.py &gt;&gt; /var/log/mysql_slave_monitor.log 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>✅ <strong>验证 Cron</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 检查 cron 是否生效</span></span><br><span class="line">ps aux | grep cron</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试执行（手动触发）</span></span><br><span class="line">/usr/bin/python3 /usr/local/bin/mysql_slave_monitor.py</span><br></pre></td></tr></table></figure>
+</blockquote>
+<hr>
+<h1 id="七、测试验证"><a href="#七、测试验证" class="headerlink" title="七、测试验证"></a>七、测试验证</h1><h4 id="测试-1：正常状态（无告警）"><a href="#测试-1：正常状态（无告警）" class="headerlink" title="测试 1：正常状态（无告警）"></a>测试 1：正常状态（无告警）</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 模拟正常状态（实际运行中无需操作）</span></span><br><span class="line">$ /usr/bin/python3 /usr/local/bin/mysql_slave_monitor.py</span><br><span class="line">[2026-02-12 17:00:00] INFO: 同步正常 | IO:Yes | SQL:Yes | 延迟:15s</span><br></pre></td></tr></table></figure>
+
+<h4 id="测试-2：模拟-IO-线程异常（触发告警）"><a href="#测试-2：模拟-IO-线程异常（触发告警）" class="headerlink" title="测试 2：模拟 IO 线程异常（触发告警）"></a>测试 2：模拟 IO 线程异常（触发告警）</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在 MySQL 从库执行（模拟故障）</span></span><br><span class="line">STOP SLAVE IO_THREAD;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行监控脚本</span></span><br><span class="line">$ /usr/bin/python3 /usr/local/bin/mysql_slave_monitor.py</span><br><span class="line">[2026-02-12 17:05:00] WARNING: IO线程异常: No</span><br><span class="line">[2026-02-12 17:05:00] ERROR: 检测到同步异常:</span><br><span class="line">• Slave_IO_Running 异常: No</span><br><span class="line">[2026-02-12 17:05:00] INFO: 告警邮件发送成功</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>✅ <strong>验证结果</strong>：  </p>
+<ol>
+<li>日志中记录 <code>WARNING</code> 和 <code>ERROR</code>  </li>
+<li>邮箱收到告警邮件（检查垃圾箱！）</li>
+</ol>
+</blockquote>
+<h4 id="测试-3：延迟超标（触发告警）"><a href="#测试-3：延迟超标（触发告警）" class="headerlink" title="测试 3：延迟超标（触发告警）"></a>测试 3：延迟超标（触发告警）</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在主库执行大事务（制造延迟）</span></span><br><span class="line">INSERT INTO large_table SELECT * FROM large_table;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 30 分钟后运行脚本（延迟 &gt; 300s）</span></span><br><span class="line">$ /usr/bin/python3 /usr/local/bin/mysql_slave_monitor.py</span><br><span class="line">[2026-02-12 17:30:00] WARNING: 同步延迟: 1800s</span><br><span class="line">[2026-02-12 17:30:00] ERROR: 检测到同步异常:</span><br><span class="line">• 同步延迟过高: 1800s (阈值: 300s)</span><br><span class="line">[2026-02-12 17:30:00] INFO: 告警邮件发送成功</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="常见问题排查"><a href="#常见问题排查" class="headerlink" title="常见问题排查"></a>常见问题排查</h1><table>
+<thead>
+<tr>
+<th>问题现象</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>邮件未收到</strong></td>
+<td>1. 检查 126 邮箱是否开启 SMTP 服务2. 确认授权码正确（非登录密码）3. 防火墙放行 465 端口</td>
+</tr>
+<tr>
+<td><strong>脚本执行失败（权限错误）</strong></td>
+<td><code>sudo chmod +x /usr/local/bin/mysql_slave_monitor.py</code> + 确保日志目录有写权限</td>
+</tr>
+<tr>
+<td><strong><code>Seconds_Behind_Master</code> 为 NULL</strong></td>
+<td>检查 <code>Slave_IO_Running</code> 和 <code>Slave_SQL_Running</code> 是否为 <code>Yes</code>（线程已停止）</td>
+</tr>
+<tr>
+<td><strong>Cron 无法执行</strong></td>
+<td>在脚本开头添加 <code>#!/usr/bin/env python3</code> + 使用 <strong>绝对路径</strong>（如 <code>/usr/bin/python3</code>）</td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">MySQL主从同步状态监控脚本</span><br><span class="line">- 每3小时通过cron执行一次</span><br><span class="line">- 监控关键字段：Slave_IO_Running, Slave_SQL_Running, Seconds_Behind_Master</span><br><span class="line">- 异常时发送邮件告警</span><br><span class="line">- 完整日志记录</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">import pymysql</span><br><span class="line">import smtplib</span><br><span class="line">import logging</span><br><span class="line">import os</span><br><span class="line">import sys</span><br><span class="line">import socket</span><br><span class="line">from datetime import datetime</span><br><span class="line">from email.mime.text import MIMEText</span><br><span class="line">from email.header import Header</span><br><span class="line"></span><br><span class="line"># ==================== 配置区（按实际修改）====================</span><br><span class="line"># 数据库配置（监控从库）</span><br><span class="line">DB_CONFIG = &#123;</span><br><span class="line">    &#x27;host&#x27;: &#x27;127.0.0.1&#x27;,  # 从库IP</span><br><span class="line">    &#x27;port&#x27;: 3306,</span><br><span class="line">    &#x27;user&#x27;: &#x27;&#x27;,  # 建议创建专用监控账号</span><br><span class="line">    &#x27;password&#x27;: &#x27;&#x27;,</span><br><span class="line">    &#x27;database&#x27;: &#x27;mysql&#x27;,  # 连接必需库</span><br><span class="line">    &#x27;charset&#x27;: &#x27;utf8mb4&#x27;,</span><br><span class="line">    &#x27;connect_timeout&#x27;: 10</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 邮件配置（使用126邮箱SMTP）</span><br><span class="line">MAIL_CONFIG = &#123;</span><br><span class="line">    &#x27;smtp_server&#x27;: &#x27;&#x27;,</span><br><span class="line">    &#x27;smtp_port&#x27;: 465,</span><br><span class="line">    &#x27;sender&#x27;: &#x27;&#x27;,  # 发件人邮箱（需与授权码匹配）</span><br><span class="line">    &#x27;password&#x27;: &#x27;&#x27;,  # 126邮箱SMTP授权码（非登录密码！）</span><br><span class="line">    &#x27;receiver&#x27;: &#x27;&#x27;,</span><br><span class="line">    &#x27;subject_prefix&#x27;: &#x27;[MySQL同步告警]&#x27;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 监控阈值</span><br><span class="line">ALERT_THRESHOLD = 1800  # Seconds_Behind_Master 超过300秒告警</span><br><span class="line">LOG_FILE = &#x27;/var/log/mysql_slave_monitor.log&#x27;  # 建议使用有写入权限的路径</span><br><span class="line"></span><br><span class="line"># ==================== 日志配置 ====================</span><br><span class="line">os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)</span><br><span class="line">logging.basicConfig(</span><br><span class="line">    level=logging.INFO,</span><br><span class="line">    format=&#x27;%(asctime)s [%(levelname)s] %(message)s&#x27;,</span><br><span class="line">    datefmt=&#x27;%Y-%m-%d %H:%M:%S&#x27;,</span><br><span class="line">    handlers=[</span><br><span class="line">        logging.FileHandler(LOG_FILE, encoding=&#x27;utf-8&#x27;),</span><br><span class="line">        logging.StreamHandler(sys.stdout)  # cron执行时可选保留，方便调试</span><br><span class="line">    ]</span><br><span class="line">)</span><br><span class="line">logger = logging.getLogger(__name__)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># ==================== 邮件发送函数 ====================</span><br><span class="line">def send_alert_email(issue_details: str, slave_status: dict):</span><br><span class="line">    &quot;&quot;&quot;发送告警邮件&quot;&quot;&quot;</span><br><span class="line">    try:</span><br><span class="line">        # 构建邮件内容</span><br><span class="line">        hostname = socket.gethostname()</span><br><span class="line">        ip_addr = socket.gethostbyname(hostname)</span><br><span class="line">        body = f&quot;&quot;&quot;</span><br><span class="line">                【MySQL主从同步异常告警】</span><br><span class="line">                检测时间：&#123;datetime.now().strftime(&#x27;%Y-%m-%d %H:%M:%S&#x27;)&#125;</span><br><span class="line">                服务器：&#123;hostname&#125; (&#123;ip_addr&#125;)</span><br><span class="line">                从库地址：&#123;DB_CONFIG[&#x27;host&#x27;]&#125;:&#123;DB_CONFIG[&#x27;port&#x27;]&#125;</span><br><span class="line"></span><br><span class="line">                异常详情：</span><br><span class="line">                &#123;issue_details&#125;</span><br><span class="line"></span><br><span class="line">                请及时处理！</span><br><span class="line">                &quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">        msg = MIMEText(body, &#x27;plain&#x27;, &#x27;utf-8&#x27;)</span><br><span class="line">        msg[&#x27;From&#x27;] = Header(MAIL_CONFIG[&#x27;sender&#x27;])</span><br><span class="line">        msg[&#x27;To&#x27;] = Header(MAIL_CONFIG[&#x27;receiver&#x27;])</span><br><span class="line">        msg[&#x27;Subject&#x27;] = Header(f&quot;&#123;MAIL_CONFIG[&#x27;subject_prefix&#x27;]&#125; 主从同步异常 - &#123;hostname&#125;&quot;, &#x27;utf-8&#x27;)</span><br><span class="line"></span><br><span class="line">        # 发送邮件（SSL）</span><br><span class="line">        with smtplib.SMTP_SSL(MAIL_CONFIG[&#x27;smtp_server&#x27;], MAIL_CONFIG[&#x27;smtp_port&#x27;], timeout=15) as smtp:</span><br><span class="line">            smtp.login(MAIL_CONFIG[&#x27;sender&#x27;], MAIL_CONFIG[&#x27;password&#x27;])</span><br><span class="line">            smtp.sendmail(MAIL_CONFIG[&#x27;sender&#x27;], [MAIL_CONFIG[&#x27;receiver&#x27;]], msg.as_string())</span><br><span class="line"></span><br><span class="line">        logger.info(&quot;告警邮件发送成功&quot;)</span><br><span class="line">        return True</span><br><span class="line">    except Exception as e:</span><br><span class="line">        logger.error(f&quot;邮件发送失败: &#123;str(e)&#125;&quot;, exc_info=True)</span><br><span class="line">        return False</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># ==================== 主监控逻辑 ====================</span><br><span class="line">def check_replication():</span><br><span class="line">    &quot;&quot;&quot;检查主从同步状态&quot;&quot;&quot;</span><br><span class="line">    conn = None</span><br><span class="line">    cursor = None</span><br><span class="line">    issues = []</span><br><span class="line">    slave_status = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    try:</span><br><span class="line">        # 连接数据库</span><br><span class="line">        conn = pymysql.connect(**DB_CONFIG)</span><br><span class="line">        cursor = conn.cursor(pymysql.cursors.DictCursor)</span><br><span class="line">        cursor.execute(&quot;SHOW SLAVE STATUS&quot;)</span><br><span class="line">        result = cursor.fetchone()</span><br><span class="line"></span><br><span class="line">        if not result:</span><br><span class="line">            err_msg = &quot;未检测到从库配置（SHOW SLAVE STATUS 无结果）&quot;</span><br><span class="line">            logger.error(err_msg)</span><br><span class="line">            issues.append(err_msg)</span><br><span class="line">        else:</span><br><span class="line">            slave_status = result</span><br><span class="line">            io_running = result.get(&#x27;Slave_IO_Running&#x27;, &#x27;&#x27;).strip()</span><br><span class="line">            sql_running = result.get(&#x27;Slave_SQL_Running&#x27;, &#x27;&#x27;).strip()</span><br><span class="line">            seconds_behind = result.get(&#x27;Seconds_Behind_Master&#x27;)</span><br><span class="line"></span><br><span class="line">            # 检查IO线程</span><br><span class="line">            if io_running != &#x27;Yes&#x27;:</span><br><span class="line">                issues.append(f&quot;Slave_IO_Running 异常: &#123;io_running&#125;&quot;)</span><br><span class="line">                logger.warning(f&quot;IO线程异常: &#123;io_running&#125;&quot;)</span><br><span class="line"></span><br><span class="line">            # 检查SQL线程</span><br><span class="line">            if sql_running != &#x27;Yes&#x27;:</span><br><span class="line">                issues.append(f&quot;Slave_SQL_Running 异常: &#123;sql_running&#125;&quot;)</span><br><span class="line">                logger.warning(f&quot;SQL线程异常: &#123;sql_running&#125;&quot;)</span><br><span class="line"></span><br><span class="line">            # 检查延迟（None视为异常）</span><br><span class="line">            if seconds_behind is None:</span><br><span class="line">                issues.append(&quot;Seconds_Behind_Master 为 NULL（可能线程已停止）&quot;)</span><br><span class="line">                logger.warning(&quot;同步延迟为NULL&quot;)</span><br><span class="line">            elif seconds_behind &gt; ALERT_THRESHOLD:</span><br><span class="line">                issues.append(f&quot;同步延迟过高: &#123;seconds_behind&#125;s (阈值: &#123;ALERT_THRESHOLD&#125;s)&quot;)</span><br><span class="line">                logger.warning(f&quot;同步延迟: &#123;seconds_behind&#125;s&quot;)</span><br><span class="line"></span><br><span class="line">            # 记录正常状态（便于日志追踪）</span><br><span class="line">            if not issues:</span><br><span class="line">                logger.info(f&quot;同步正常 | IO:&#123;io_running&#125; | SQL:&#123;sql_running&#125; | 延迟:&#123;seconds_behind&#125;s&quot;)</span><br><span class="line">                return True</span><br><span class="line"></span><br><span class="line">        # 存在异常且需告警</span><br><span class="line">        if issues:</span><br><span class="line">            issue_summary = &quot;\n&quot;.join([f&quot;• &#123;i&#125;&quot; for i in issues])</span><br><span class="line">            logger.error(f&quot;检测到同步异常:\n&#123;issue_summary&#125;&quot;)</span><br><span class="line">            if send_alert_email(issue_summary, slave_status):</span><br><span class="line">                return False</span><br><span class="line">            else:</span><br><span class="line">                logger.critical(&quot;告警邮件发送失败，需人工介入！&quot;)</span><br><span class="line">                return False</span><br><span class="line"></span><br><span class="line">        return True</span><br><span class="line"></span><br><span class="line">    except pymysql.err.OperationalError as e:</span><br><span class="line">        logger.error(f&quot;数据库连接失败: &#123;e&#125;&quot;, exc_info=True)</span><br><span class="line">        send_alert_email(f&quot;数据库连接失败: &#123;str(e)&#125;&quot;, &#123;&#125;)</span><br><span class="line">        return False</span><br><span class="line">    except Exception as e:</span><br><span class="line">        logger.error(f&quot;监控过程发生未知错误: &#123;str(e)&#125;&quot;, exc_info=True)</span><br><span class="line">        send_alert_email(f&quot;脚本执行异常: &#123;str(e)&#125;&quot;, &#123;&#125;)</span><br><span class="line">        return False</span><br><span class="line">    finally:</span><br><span class="line">        if cursor:</span><br><span class="line">            cursor.close()</span><br><span class="line">        if conn:</span><br><span class="line">            conn.close()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># ==================== 程序入口 ====================</span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">    logger.info(&quot;=&quot; * 50)</span><br><span class="line">    logger.info(&quot;开始执行MySQL主从同步状态检查&quot;)</span><br><span class="line">    success = check_replication()</span><br><span class="line">    status = &quot;✓ 检查完成（状态正常）&quot; if success else &quot;✗ 检查完成（存在异常）&quot;</span><br><span class="line">    logger.info(status)</span><br><span class="line">    sys.exit(0 if success else 1)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> python</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/4ab1a8de.html" rel="prev" title="mysql常用命令">
+      <i class="fa fa-chevron-left"></i> mysql常用命令
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">环境说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E8%87%AA%E5%8A%A8%E5%8C%96%E7%9B%91%E6%8E%A7%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">一、为什么需要自动化监控？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9APython%E8%84%9A%E6%9C%AC-Cron%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1"><span class="nav-number">3.</span> <span class="nav-text">二、解决方案：Python脚本 + Cron定时任务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF"><span class="nav-number">3.0.0.1.</span> <span class="nav-text">设计思路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E4%B8%BB%E8%A6%81%E5%8A%9F%E8%83%BD"><span class="nav-number">3.0.0.2.</span> <span class="nav-text">脚本主要功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E9%80%BB%E8%BE%91%EF%BC%9A"><span class="nav-number">3.0.0.3.</span> <span class="nav-text">脚本逻辑：</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87%EF%BC%88%E5%85%B3%E9%94%AE%EF%BC%81%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">三、环境准备（关键！）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9D%83%E9%99%90%E9%85%8D%E7%BD%AE"><span class="nav-number">4.0.0.1.</span> <span class="nav-text">1. 数据库权限配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE"><span class="nav-number">4.0.0.2.</span> <span class="nav-text">2. 邮件服务配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83"><span class="nav-number">4.0.0.3.</span> <span class="nav-text">3. 系统环境</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E8%84%9A%E6%9C%AC%E5%AE%9E%E7%8E%B0%EF%BC%88%E6%A0%B8%E5%BF%83%E9%80%BB%E8%BE%91%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">四、脚本实现（核心逻辑）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE%EF%BC%88config-py-%E9%9A%94%E7%A6%BB%E9%85%8D%E7%BD%AE%EF%BC%89"><span class="nav-number">5.0.0.1.</span> <span class="nav-text">1. 参数配置（config.py 隔离配置）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%97%A5%E5%BF%97%E9%85%8D%E7%BD%AE%EF%BC%88%E6%B8%85%E6%99%B0%E8%AE%B0%E5%BD%95%E6%AF%8F%E4%B8%80%E6%AD%A5%EF%BC%89"><span class="nav-number">5.0.0.2.</span> <span class="nav-text">2. 日志配置（清晰记录每一步）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E4%B8%8E%E7%8A%B6%E6%80%81%E6%A3%80%E6%9F%A5%EF%BC%88%E5%85%B3%E9%94%AE%E9%80%BB%E8%BE%91%EF%BC%89"><span class="nav-number">5.0.0.3.</span> <span class="nav-text">3. 数据库连接与状态检查（关键逻辑）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E9%82%AE%E4%BB%B6%E5%91%8A%E8%AD%A6%EF%BC%88%E5%BC%82%E5%B8%B8%E6%97%B6%E8%A7%A6%E5%8F%91%EF%BC%89"><span class="nav-number">5.0.0.4.</span> <span class="nav-text">4. 邮件告警（异常时触发）</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E8%84%9A%E6%9C%AC%E9%83%A8%E7%BD%B2"><span class="nav-number">6.</span> <span class="nav-text">五、脚本部署</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E9%85%8D%E7%BD%AE%EF%BC%88Cron-3%E5%B0%8F%E6%97%B6%E4%B8%80%E6%AC%A1%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">六、定时任务配置（Cron 3小时一次）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E6%B5%8B%E8%AF%95%E9%AA%8C%E8%AF%81"><span class="nav-number">8.</span> <span class="nav-text">七、测试验证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95-1%EF%BC%9A%E6%AD%A3%E5%B8%B8%E7%8A%B6%E6%80%81%EF%BC%88%E6%97%A0%E5%91%8A%E8%AD%A6%EF%BC%89"><span class="nav-number">8.0.0.1.</span> <span class="nav-text">测试 1：正常状态（无告警）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95-2%EF%BC%9A%E6%A8%A1%E6%8B%9F-IO-%E7%BA%BF%E7%A8%8B%E5%BC%82%E5%B8%B8%EF%BC%88%E8%A7%A6%E5%8F%91%E5%91%8A%E8%AD%A6%EF%BC%89"><span class="nav-number">8.0.0.2.</span> <span class="nav-text">测试 2：模拟 IO 线程异常（触发告警）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95-3%EF%BC%9A%E5%BB%B6%E8%BF%9F%E8%B6%85%E6%A0%87%EF%BC%88%E8%A7%A6%E5%8F%91%E5%91%8A%E8%AD%A6%EF%BC%89"><span class="nav-number">8.0.0.3.</span> <span class="nav-text">测试 3：延迟超标（触发告警）</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5"><span class="nav-number">9.</span> <span class="nav-text">常见问题排查</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81"><span class="nav-number">10.</span> <span class="nav-text">示例代码</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description">不积跬步，无以至千里；不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
