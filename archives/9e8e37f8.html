@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"raphets.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="最近我用 FastAPI 写了一个后端项目，项目使用 PostgreSQL 作为数据库，数据库访问采用异步方式，ORM 使用 SQLAlchemy，数据库迁移使用 Alembic。项目在本地开发完成后，我开始尝试把它部署到云服务器上。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker部署FastAPI项目实践">
+<meta property="og:url" content="https://raphets.github.io/archives/9e8e37f8.html">
+<meta property="og:site_name" content="尚拙">
+<meta property="og:description" content="最近我用 FastAPI 写了一个后端项目，项目使用 PostgreSQL 作为数据库，数据库访问采用异步方式，ORM 使用 SQLAlchemy，数据库迁移使用 Alembic。项目在本地开发完成后，我开始尝试把它部署到云服务器上。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-06-20T09:59:32.000Z">
+<meta property="article:modified_time" content="2026-06-20T10:00:06.184Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="-FastAPI">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://raphets.github.io/archives/9e8e37f8.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Docker部署FastAPI项目实践 | 尚拙</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">尚拙</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个分享技术、学习成长的个人博客网站</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tool">
+
+    <a href="/tool/" rel="section"><i class="fa fa-hammer fa-fw"></i>工具</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/9e8e37f8.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="不积跬步，无以至千里；不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="尚拙">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Docker部署FastAPI项目实践
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-06-20 17:59:32 / 修改时间：18:00:06" itemprop="dateCreated datePublished" datetime="2026-06-20T17:59:32+08:00">2026-06-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" itemprop="url" rel="index"><span itemprop="name">技术文章</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近我用 FastAPI 写了一个后端项目，项目使用 PostgreSQL 作为数据库，数据库访问采用异步方式，ORM 使用 SQLAlchemy，数据库迁移使用 Alembic。项目在本地开发完成后，我开始尝试把它部署到云服务器上。</p>
+  <span id="more"></span>
+
+
+<p>这是我第一次正式使用 Docker 部署项目。和之前直接在服务器上安装 Python、创建虚拟环境、安装依赖、手动启动服务不同，这次我选择把 <strong>FastAPI 应用打包成 Docker 镜像</strong>，然后在云服务器上通过 Docker 容器运行。</p>
+<p>不过需要说明的是，这次部署中 <strong>数据库没有使用 Docker 部署</strong>。PostgreSQL 是独立部署的，可能是云服务器上单独安装的 PostgreSQL，也可能是云厂商提供的云数据库服务。Docker 只负责运行 FastAPI 应用本身。</p>
+<p>这篇文章主要记录我第一次使用 Docker 部署 FastAPI 项目的完整过程，包括 Dockerfile 编写、环境变量配置、连接外部 PostgreSQL、执行 Alembic 数据库迁移、云服务器部署、日志查看，以及第一次使用 Docker 时遇到的一些问题。</p>
+<hr>
+<h2 id="一、为什么只把应用放进-Docker"><a href="#一、为什么只把应用放进-Docker" class="headerlink" title="一、为什么只把应用放进 Docker"></a><strong>一、为什么只把应用放进 Docker</strong></h2><p>刚开始接触 Docker 时，我以为所有服务都应该放进容器，包括应用、数据库、缓存等。后来实际部署时发现，并不是所有东西都必须容器化。</p>
+<p>这次我的选择是：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">FastAPI 应用：使用 Docker 部署</span><br><span class="line">PostgreSQL 数据库：独立部署，不放进 Docker</span><br></pre></td></tr></table></figure>
+
+<p>这样做有几个原因。</p>
+<p>首先，数据库是有状态服务，最重要的是数据安全和持久化。虽然 PostgreSQL 也可以放进 Docker，并通过 volume 持久化数据，但对于第一次部署来说，我更希望数据库保持独立，避免因为容器、volume 或部署脚本操作不当影响数据。</p>
+<p>其次，如果使用云数据库，数据库本身已经由云厂商负责运行、备份、监控和高可用，应用只需要通过连接地址访问它即可。这种方式比自己维护数据库容器更加省心。</p>
+<p>最后，把应用容器化已经可以解决很多部署问题，比如 Python 版本、依赖版本、运行环境不一致等。数据库独立出来之后，整体架构也更清晰。</p>
+<p>最终的部署结构大概是这样：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">用户请求</span><br><span class="line">↓</span><br><span class="line">云服务器 / 反向代理</span><br><span class="line">↓</span><br><span class="line">Docker 容器中的 FastAPI 应用</span><br><span class="line">↓</span><br><span class="line">外部 PostgreSQL 数据库</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="二、项目部署前的目录结构"><a href="#二、项目部署前的目录结构" class="headerlink" title="二、项目部署前的目录结构"></a><strong>二、项目部署前的目录结构</strong></h2><p>我的项目大致结构如下：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">fastapi-demo/</span><br><span class="line">├── alembic/</span><br><span class="line">│   ├── versions/</span><br><span class="line">│   └── env.py</span><br><span class="line">├── app/</span><br><span class="line">│   ├── api/</span><br><span class="line">│   ├── core/</span><br><span class="line">│   ├── db/</span><br><span class="line">│   ├── models/</span><br><span class="line">│   ├── schemas/</span><br><span class="line">│   ├── services/</span><br><span class="line">│   └── main.py</span><br><span class="line">├── alembic.ini</span><br><span class="line">├── Dockerfile</span><br><span class="line">├── docker-compose.yml</span><br><span class="line">├── .dockerignore</span><br><span class="line">├── .env</span><br><span class="line">└── requirements.txt</span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>app/main.py</code> 是 FastAPI 应用入口，<code>alembic</code> 目录用于数据库迁移，<code>requirements.txt</code> 用来记录 Python 项目依赖，<code>Dockerfile</code> 用于构建应用镜像，<code>docker-compose.yml</code> 用于在服务器上管理应用容器。</p>
+<p>因为数据库没有使用 Docker，所以这次的 <code>docker-compose.yml</code> 里只需要配置 FastAPI 应用服务，不需要再配置 PostgreSQL 服务。</p>
+<hr>
+<h2 id="三、准备-requirements-txt"><a href="#三、准备-requirements-txt" class="headerlink" title="三、准备 requirements.txt"></a><strong>三、准备 requirements.txt</strong></h2><p>首先需要确认项目依赖都写在 <code>requirements.txt</code> 中。</p>
+<p>示例：</p>
+<figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">fastapi</span><br><span class="line">uvicorn</span><br><span class="line">sqlalchemy</span><br><span class="line">asyncpg</span><br><span class="line">alembic</span><br><span class="line">pydantic</span><br><span class="line">pydantic-settings</span><br><span class="line">python-multipart</span><br></pre></td></tr></table></figure>
+
+<p>如果项目中使用了密码加密、JWT 或其他功能，也需要把对应依赖加入进去：</p>
+<figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">passlib[bcrypt]</span><br><span class="line">python-jose</span><br></pre></td></tr></table></figure>
+
+<p>第一次使用 Docker 部署时，我发现一个很容易忽略的问题：本地虚拟环境里装了某个包，但忘记写进 <code>requirements.txt</code>。本地运行没问题，一到容器里就报错：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">ModuleNotFoundError: No module named &#x27;xxx&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>原因很简单，Docker 构建镜像时只会安装 <code>requirements.txt</code> 中声明的依赖。本地虚拟环境里有什么包，容器并不知道。</p>
+<p>所以部署前一定要确认依赖文件完整。</p>
+<hr>
+<h2 id="四、编写-Dockerfile"><a href="#四、编写-Dockerfile" class="headerlink" title="四、编写 Dockerfile"></a><strong>四、编写 Dockerfile</strong></h2><p>在项目根目录创建 <code>Dockerfile</code>：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> python:<span class="number">3.12</span>-slim</span><br><span class="line"></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ENV</span> PYTHONDONTWRITEBYTECODE=<span class="number">1</span></span><br><span class="line"><span class="keyword">ENV</span> PYTHONUNBUFFERED=<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> requirements.txt .</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> pip install --no-cache-dir -r requirements.txt</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> . .</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">8000</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">&quot;uvicorn&quot;</span>, <span class="string">&quot;app.main:app&quot;</span>, <span class="string">&quot;--host&quot;</span>, <span class="string">&quot;0.0.0.0&quot;</span>, <span class="string">&quot;--port&quot;</span>, <span class="string">&quot;8000&quot;</span>]</span></span><br></pre></td></tr></table></figure>
+
+<p>这个 Dockerfile 的作用是把 FastAPI 项目打包成一个可以运行的镜像。</p>
+<p><code>FROM python:3.12-slim</code> 表示使用 Python 3.12 的轻量版镜像作为基础环境。<code>WORKDIR /app</code> 表示容器内的工作目录是 <code>/app</code>。</p>
+<p>我先复制 <code>requirements.txt</code> 并安装依赖，然后再复制项目代码。这是一个比较常见的写法，因为 Docker 构建镜像时有缓存机制。只要依赖文件没有变化，下次构建时就不需要重复安装依赖，可以节省构建时间。</p>
+<p>最后通过 <code>uvicorn</code> 启动 FastAPI 应用。</p>
+<p>这里特别需要注意：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">--host 0.0.0.0</span><br></pre></td></tr></table></figure>
+
+<p>在 Docker 容器中启动 Web 服务时，不能只监听 <code>127.0.0.1</code>。如果只监听容器内部的本地地址，宿主机或者外部网络可能访问不到服务。监听 <code>0.0.0.0</code> 表示允许容器内所有网络接口访问这个服务。</p>
+<hr>
+<h2 id="五、编写-dockerignore"><a href="#五、编写-dockerignore" class="headerlink" title="五、编写 .dockerignore"></a><strong>五、编写 .dockerignore</strong></h2><p>在项目根目录创建 <code>.dockerignore</code>：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">.venv</span><br><span class="line">__pycache__</span><br><span class="line">*.pyc</span><br><span class="line">.git</span><br><span class="line">.gitignore</span><br><span class="line">.env</span><br><span class="line">.pytest_cache</span><br><span class="line">.mypy_cache</span><br><span class="line">.idea</span><br><span class="line">.vscode</span><br></pre></td></tr></table></figure>
+
+<p><code>.dockerignore</code> 的作用是告诉 Docker，在构建镜像时哪些文件不需要复制进去。</p>
+<p>这里我特意把 <code>.env</code> 加进了忽略列表。因为 <code>.env</code> 通常包含数据库连接地址、数据库密码、密钥等敏感信息，不应该直接打包进镜像。</p>
+<p>更推荐的做法是：镜像只包含代码和依赖，具体环境配置在容器运行时注入。</p>
+<p>这样同一个镜像可以用于开发环境、测试环境和生产环境，只需要提供不同的环境变量即可。</p>
+<hr>
+<h2 id="六、配置外部-PostgreSQL-数据库连接"><a href="#六、配置外部-PostgreSQL-数据库连接" class="headerlink" title="六、配置外部 PostgreSQL 数据库连接"></a><strong>六、配置外部 PostgreSQL 数据库连接</strong></h2><p>因为数据库没有使用 Docker，所以 <code>.env</code> 文件里的数据库地址应该指向外部 PostgreSQL，而不是 docker-compose 里的服务名。</p>
+<p>如果 PostgreSQL 安装在同一台云服务器上，并且监听本机地址，可能是：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DATABASE_URL=postgresql+asyncpg://db_user:db_password@127.0.0.1:5432/db_name</span><br></pre></td></tr></table></figure>
+
+<p>但是这里要注意一个非常关键的问题：<strong>容器里的 <code>127.0.0.1</code> 不是云服务器的 <code>127.0.0.1</code>，而是容器自己的 <code>127.0.0.1</code>。</strong></p>
+<p>也就是说，如果 FastAPI 跑在 Docker 容器里，而 PostgreSQL 跑在宿主机上，那么容器内访问：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">127.0.0.1:5432</span><br></pre></td></tr></table></figure>
+
+<p>访问到的是容器自己，不是宿主机上的 PostgreSQL。</p>
+<p>所以如果数据库安装在宿主机上，需要根据实际环境选择合适的连接方式。</p>
+<p>一种方式是让 PostgreSQL 监听服务器内网 IP，然后在 <code>.env</code> 中使用服务器内网 IP：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DATABASE_URL=postgresql+asyncpg://db_user:db_password@服务器内网IP:5432/db_name</span><br></pre></td></tr></table></figure>
+
+<p>如果使用的是云数据库，则一般直接使用云数据库提供的连接地址：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DATABASE_URL=postgresql+asyncpg://db_user:db_password@数据库连接地址:5432/db_name</span><br></pre></td></tr></table></figure>
+
+<p>比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DATABASE_URL=postgresql+asyncpg://fastapi_user:strong_password@postgres.example.internal:5432/fastapi_demo</span><br></pre></td></tr></table></figure>
+
+<p>需要注意，异步 SQLAlchemy 连接 PostgreSQL 时，协议前缀应该使用：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">postgresql+asyncpg://</span><br></pre></td></tr></table></figure>
+
+<p>而不是：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">postgresql://</span><br></pre></td></tr></table></figure>
+
+<p>否则可能无法正常使用异步数据库连接。</p>
+<hr>
+<h2 id="七、编写-docker-compose-yml"><a href="#七、编写-docker-compose-yml" class="headerlink" title="七、编写 docker-compose.yml"></a><strong>七、编写 docker-compose.yml</strong></h2><p>因为数据库不在 Docker 中，所以 <code>docker-compose.yml</code> 只需要定义 FastAPI 应用服务。</p>
+<p>示例：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">web:</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">.</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">fastapi_web</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">uvicorn</span> <span class="string">app.main:app</span> <span class="string">--host</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span> <span class="string">--port</span> <span class="number">8000</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8000:8000&quot;</span></span><br><span class="line">    <span class="attr">env_file:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">.env</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br></pre></td></tr></table></figure>
+
+<p>这个配置比应用和数据库都容器化的版本简单很多。</p>
+<p><code>build: .</code> 表示使用当前目录下的 Dockerfile 构建镜像。<code>ports</code> 表示把容器内部的 <code>8000</code> 端口映射到服务器的 <code>8000</code> 端口。<code>env_file</code> 表示从 <code>.env</code> 文件中读取环境变量。<code>restart: always</code> 表示容器异常退出或服务器重启后，Docker 会尝试自动重启服务。</p>
+<p>如果后面使用 Nginx 做反向代理，并且不想直接把 <code>8000</code> 端口暴露到公网，可以改成：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">web:</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">.</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">fastapi_web</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">uvicorn</span> <span class="string">app.main:app</span> <span class="string">--host</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span> <span class="string">--port</span> <span class="number">8000</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;127.0.0.1:8000:8000&quot;</span></span><br><span class="line">    <span class="attr">env_file:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">.env</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br></pre></td></tr></table></figure>
+
+<p>这样 FastAPI 只暴露给服务器本机，公网用户不能直接访问 <code>服务器IP:8000</code>，只能通过 Nginx 或其他反向代理访问。</p>
+<hr>
+<h2 id="八、本地测试-Docker-构建"><a href="#八、本地测试-Docker-构建" class="headerlink" title="八、本地测试 Docker 构建"></a><strong>八、本地测试 Docker 构建</strong></h2><p>在部署到云服务器之前，最好先在本地测试 Docker 镜像是否能正常构建。</p>
+<p>执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose up -d --build</span><br></pre></td></tr></table></figure>
+
+<p>查看容器状态：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose ps</span><br></pre></td></tr></table></figure>
+
+<p>查看应用日志：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose logs -f web</span><br></pre></td></tr></table></figure>
+
+<p>如果容器正常运行，可以访问：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">http://127.0.0.1:8000/docs</span><br></pre></td></tr></table></figure>
+
+<p>查看 FastAPI 自动生成的接口文档。</p>
+<p>不过需要注意，如果本地容器要连接远程 PostgreSQL，需要确保本地网络可以访问数据库，并且数据库白名单、安全组、防火墙都允许当前机器连接。</p>
+<p>如果本地无法访问生产数据库，也可以在本地单独准备一套测试数据库连接配置。</p>
+<hr>
+<h2 id="九、部署到云服务器"><a href="#九、部署到云服务器" class="headerlink" title="九、部署到云服务器"></a><strong>九、部署到云服务器</strong></h2><p>本地测试没问题后，就可以部署到云服务器。</p>
+<p>首先登录服务器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh user@server_ip</span><br></pre></td></tr></table></figure>
+
+<p>进入项目目录：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /opt/fastapi-demo</span><br><span class="line"><span class="built_in">cd</span> /opt/fastapi-demo</span><br></pre></td></tr></table></figure>
+
+<p>拉取项目代码：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> your_repository_url .</span><br></pre></td></tr></table></figure>
+
+<p>如果项目已经存在，后续更新可以执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git pull</span><br></pre></td></tr></table></figure>
+
+<p>然后确认服务器上已经安装 Docker 和 Docker Compose：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker --version</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose version</span><br></pre></td></tr></table></figure>
+
+<p>在服务器项目目录中准备 <code>.env</code> 文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DATABASE_URL=postgresql+asyncpg://db_user:db_password@数据库地址:5432/db_name</span><br></pre></td></tr></table></figure>
+
+<p>这里的数据库地址要根据实际情况填写。</p>
+<p>如果使用云数据库，填写云数据库的内网地址或公网地址。</p>
+<p>如果数据库安装在同一台服务器上，不要想当然地在容器里写 <code>127.0.0.1</code>。需要确认容器能否访问宿主机的 PostgreSQL。更推荐使用服务器内网 IP，并确保 PostgreSQL 监听地址、防火墙和数据库权限都配置正确。</p>
+<p>启动服务：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose up -d --build</span><br></pre></td></tr></table></figure>
+
+<p>查看容器状态：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose ps</span><br></pre></td></tr></table></figure>
+
+<p>查看日志：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose logs -f web</span><br></pre></td></tr></table></figure>
+
+<p>如果日志里没有报错，说明 FastAPI 应用已经在容器中启动。</p>
+<hr>
+<h2 id="十、执行-Alembic-数据库迁移"><a href="#十、执行-Alembic-数据库迁移" class="headerlink" title="十、执行 Alembic 数据库迁移"></a><strong>十、执行 Alembic 数据库迁移</strong></h2><p>项目使用 Alembic 管理数据库表结构。因为数据库独立部署，所以迁移命令本质上是：在应用容器中执行 Alembic，然后连接外部 PostgreSQL，完成表结构更新。</p>
+<p>执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose <span class="built_in">exec</span> web alembic upgrade <span class="built_in">head</span></span><br></pre></td></tr></table></figure>
+
+<p>这条命令表示进入 <code>web</code> 容器，并执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">alembic upgrade <span class="built_in">head</span></span><br></pre></td></tr></table></figure>
+
+<p>Alembic 会读取容器中的环境变量，也就是 <code>.env</code> 中的 <code>DATABASE_URL</code>，然后连接外部 PostgreSQL 执行迁移。</p>
+<p>查看当前迁移版本：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose <span class="built_in">exec</span> web alembic current</span><br></pre></td></tr></table></figure>
+
+<p>如果修改了 ORM 模型，需要先生成迁移文件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">alembic revision --autogenerate -m <span class="string">&quot;add new field&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后提交迁移文件，部署到服务器后执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose <span class="built_in">exec</span> web alembic upgrade <span class="built_in">head</span></span><br></pre></td></tr></table></figure>
+
+<p>我个人更推荐在本地或测试环境生成迁移文件，并认真检查迁移内容，确认无误后再部署到生产环境执行。</p>
+<p>不要在生产服务器上随意使用 <code>--autogenerate</code> 生成迁移文件。生产环境应该只执行已经确认过的迁移脚本。</p>
+<hr>
+<h2 id="十一、配置反向代理"><a href="#十一、配置反向代理" class="headerlink" title="十一、配置反向代理"></a><strong>十一、配置反向代理</strong></h2><p>如果只是测试，可以直接开放 <code>8000</code> 端口访问 FastAPI：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">http://服务器IP:8000/docs</span><br></pre></td></tr></table></figure>
+
+<p>但正式部署时，更推荐使用 Nginx 做反向代理。</p>
+<p>比如 Nginx 配置可以写成：</p>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> your_domain.com;</span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> / &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://127.0.0.1:8000;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用反向代理后，可以把 <code>docker-compose.yml</code> 的端口映射改成：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;127.0.0.1:8000:8000&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>这样应用容器只对服务器本机开放端口，外部请求统一从 Nginx 进入。</p>
+<p>这种方式比直接暴露应用端口更适合正式部署，也方便后续配置 HTTPS、域名、访问日志和限流。</p>
+<hr>
+<h2 id="十二、常用-Docker-命令记录"><a href="#十二、常用-Docker-命令记录" class="headerlink" title="十二、常用 Docker 命令记录"></a><strong>十二、常用 Docker 命令记录</strong></h2><p>启动服务：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose up -d</span><br></pre></td></tr></table></figure>
+
+<p>重新构建并启动：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose up -d --build</span><br></pre></td></tr></table></figure>
+
+<p>停止服务：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose down</span><br></pre></td></tr></table></figure>
+
+<p>查看容器状态：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose ps</span><br></pre></td></tr></table></figure>
+
+<p>查看应用日志：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose logs -f web</span><br></pre></td></tr></table></figure>
+
+<p>进入应用容器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose <span class="built_in">exec</span> web sh</span><br></pre></td></tr></table></figure>
+
+<p>如果镜像里安装了 bash，也可以使用：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose <span class="built_in">exec</span> web bash</span><br></pre></td></tr></table></figure>
+
+<p>执行数据库迁移：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose <span class="built_in">exec</span> web alembic upgrade <span class="built_in">head</span></span><br></pre></td></tr></table></figure>
+
+<p>重启应用容器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose restart web</span><br></pre></td></tr></table></figure>
+
+<p>查看所有容器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps -a</span><br></pre></td></tr></table></figure>
+
+<p>查看所有镜像：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker images</span><br></pre></td></tr></table></figure>
+
+<p>清理无用资源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker system prune</span><br></pre></td></tr></table></figure>
+
+<p>清理命令执行前要谨慎确认，避免误删仍然需要的镜像、容器或缓存。</p>
+<hr>
+<h2 id="十三、第一次部署时遇到的问题"><a href="#十三、第一次部署时遇到的问题" class="headerlink" title="十三、第一次部署时遇到的问题"></a><strong>十三、第一次部署时遇到的问题</strong></h2><h3 id="1-容器里的-localhost-不是服务器-localhost"><a href="#1-容器里的-localhost-不是服务器-localhost" class="headerlink" title="1. 容器里的 localhost 不是服务器 localhost"></a><strong>1. 容器里的 localhost 不是服务器 localhost</strong></h3><p>这是这次部署中最容易踩的坑。</p>
+<p>因为数据库没有使用 Docker，而是独立部署，所以一开始很容易把数据库地址写成：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DATABASE_URL=postgresql+asyncpg://db_user:db_password@127.0.0.1:5432/db_name</span><br></pre></td></tr></table></figure>
+
+<p>但是 FastAPI 运行在 Docker 容器里。对容器来说，<code>127.0.0.1</code> 指的是容器自己，不是宿主机。</p>
+<p>所以如果 PostgreSQL 跑在宿主机上，容器内访问 <code>127.0.0.1:5432</code> 通常是连不上的。</p>
+<p>解决方式是使用宿主机可被容器访问的 IP 地址，或者使用云数据库提供的连接地址。</p>
+<hr>
+<h3 id="2-数据库安全组和白名单没有放行"><a href="#2-数据库安全组和白名单没有放行" class="headerlink" title="2. 数据库安全组和白名单没有放行"></a><strong>2. 数据库安全组和白名单没有放行</strong></h3><p>如果使用云数据库，除了数据库地址、用户名和密码正确之外，还需要检查云数据库的安全组、白名单或访问控制规则。</p>
+<p>应用容器运行在云服务器上，本质上是从云服务器发起数据库连接。所以数据库需要允许这台云服务器访问。</p>
+<p>如果网络不通，应用日志里可能会出现连接超时、连接拒绝等错误。</p>
+<hr>
+<h3 id="3-PostgreSQL-没有监听正确地址"><a href="#3-PostgreSQL-没有监听正确地址" class="headerlink" title="3. PostgreSQL 没有监听正确地址"></a><strong>3. PostgreSQL 没有监听正确地址</strong></h3><p>如果 PostgreSQL 安装在服务器宿主机上，还需要确认 PostgreSQL 是否允许外部连接。</p>
+<p>有时 PostgreSQL 只监听：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">127.0.0.1</span><br></pre></td></tr></table></figure>
+
+<p>这种情况下，容器通过服务器内网 IP 访问可能会失败。</p>
+<p>需要检查 PostgreSQL 的监听地址、访问权限和防火墙配置。</p>
+<hr>
+<h3 id="4-忘记使用-asyncpg-连接前缀"><a href="#4-忘记使用-asyncpg-连接前缀" class="headerlink" title="4. 忘记使用 asyncpg 连接前缀"></a><strong>4. 忘记使用 asyncpg 连接前缀</strong></h3><p>因为项目使用的是异步 SQLAlchemy，所以数据库连接地址应该使用：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">postgresql+asyncpg://</span><br></pre></td></tr></table></figure>
+
+<p>如果写成普通的：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">postgresql://</span><br></pre></td></tr></table></figure>
+
+<p>可能会导致异步数据库连接无法正常工作。</p>
+<hr>
+<h3 id="5-忘记执行-Alembic-迁移"><a href="#5-忘记执行-Alembic-迁移" class="headerlink" title="5. 忘记执行 Alembic 迁移"></a><strong>5. 忘记执行 Alembic 迁移</strong></h3><p>容器启动成功不代表数据库表已经存在。</p>
+<p>如果数据库是新的，或者代码中新增了表和字段，就需要执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker compose <span class="built_in">exec</span> web alembic upgrade <span class="built_in">head</span></span><br></pre></td></tr></table></figure>
+
+<p>否则接口访问数据库时可能会报表不存在、字段不存在等错误。</p>
+<hr>
+<h2 id="十四、一次完整的部署流程"><a href="#十四、一次完整的部署流程" class="headerlink" title="十四、一次完整的部署流程"></a><strong>十四、一次完整的部署流程</strong></h2><p>最终，我整理出来的部署流程是这样的：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">本地完成 FastAPI 项目</span><br><span class="line">↓</span><br><span class="line">确认 requirements.txt</span><br><span class="line">↓</span><br><span class="line">编写 Dockerfile</span><br><span class="line">↓</span><br><span class="line">编写 docker-compose.yml</span><br><span class="line">↓</span><br><span class="line">准备 .env 数据库连接配置</span><br><span class="line">↓</span><br><span class="line">本地构建镜像并测试</span><br><span class="line">↓</span><br><span class="line">提交代码</span><br><span class="line">↓</span><br><span class="line">登录云服务器</span><br><span class="line">↓</span><br><span class="line">拉取最新代码</span><br><span class="line">↓</span><br><span class="line">在服务器上配置 .env</span><br><span class="line">↓</span><br><span class="line">docker compose up -d --build</span><br><span class="line">↓</span><br><span class="line">docker compose exec web alembic upgrade head</span><br><span class="line">↓</span><br><span class="line">查看应用日志</span><br><span class="line">↓</span><br><span class="line">配置反向代理</span><br><span class="line">↓</span><br><span class="line">项目上线</span><br></pre></td></tr></table></figure>
+
+<p>用流程图表示：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    A[本地完成 FastAPI 项目] --&gt; B[整理 requirements.txt]</span><br><span class="line">    B --&gt; C[编写 Dockerfile]</span><br><span class="line">    C --&gt; D[编写 docker-compose.yml]</span><br><span class="line">    D --&gt; E[配置外部 PostgreSQL 连接]</span><br><span class="line">    E --&gt; F[本地 Docker 构建测试]</span><br><span class="line">    F --&gt; G[提交代码]</span><br><span class="line">    G --&gt; H[登录云服务器]</span><br><span class="line">    H --&gt; I[拉取最新代码]</span><br><span class="line">    I --&gt; J[准备服务器 .env 文件]</span><br><span class="line">    J --&gt; K[构建并启动应用容器]</span><br><span class="line">    K --&gt; L[执行 Alembic 数据库迁移]</span><br><span class="line">    L --&gt; M[查看日志和接口状态]</span><br><span class="line">    M --&gt; N[配置 Nginx 反向代理]</span><br><span class="line">    N --&gt; O[项目上线]</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="十五、最终-docker-compose-yml-示例"><a href="#十五、最终-docker-compose-yml-示例" class="headerlink" title="十五、最终 docker-compose.yml 示例"></a><strong>十五、最终 docker-compose.yml 示例</strong></h2><p>因为数据库没有使用 Docker，所以最终的 <code>docker-compose.yml</code> 很简单：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">web:</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">.</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">fastapi_web</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">uvicorn</span> <span class="string">app.main:app</span> <span class="string">--host</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span> <span class="string">--port</span> <span class="number">8000</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;127.0.0.1:8000:8000&quot;</span></span><br><span class="line">    <span class="attr">env_file:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">.env</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br></pre></td></tr></table></figure>
+
+<p>如果暂时没有配置 Nginx，需要直接通过服务器 IP 和端口访问，可以改成：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;8000:8000&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>正式部署时，我更推荐使用：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;127.0.0.1:8000:8000&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后通过 Nginx 转发外部请求。</p>
+<hr>
+<h2 id="十六、这次-Docker-部署的收获"><a href="#十六、这次-Docker-部署的收获" class="headerlink" title="十六、这次 Docker 部署的收获"></a><strong>十六、这次 Docker 部署的收获</strong></h2><p>这次部署让我对 Docker 有了更实际的理解。</p>
+<p>Docker 并不意味着一定要把所有服务都放进容器。对于后端项目来说，完全可以只把应用层容器化，而数据库使用独立部署或云数据库。</p>
+<p>这种方式既保留了 Docker 带来的环境一致性，也降低了数据库运维复杂度。</p>
+<p>通过 Dockerfile，我可以把 FastAPI 应用的运行环境固定下来。通过 docker-compose，我可以用统一的命令启动、停止、重启应用。通过 <code>.env</code>，我可以把敏感配置从镜像中剥离出来。通过 Alembic，我可以在容器中对外部 PostgreSQL 执行数据库迁移。</p>
+<p>这次最大的收获是理解了容器网络和数据库连接的关系。尤其是容器里的 <code>localhost</code> 并不是宿主机的 <code>localhost</code>，这一点如果不理解，部署时很容易卡在数据库连接问题上。</p>
+<p>整体来看，这种部署方式非常适合第一次把 FastAPI 项目上线：应用使用 Docker，数据库保持独立，部署流程清晰，后续也方便继续扩展到 Nginx、HTTPS、自动化部署、日志采集和监控。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/FastAPI/" rel="tag"><i class="fa fa-tag"></i> -FastAPI</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/ab560f20.html" rel="prev" title="FastAPI 项目实践">
+      <i class="fa fa-chevron-left"></i> FastAPI 项目实践
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AA%E6%8A%8A%E5%BA%94%E7%94%A8%E6%94%BE%E8%BF%9B-Docker"><span class="nav-number">1.</span> <span class="nav-text">一、为什么只把应用放进 Docker</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%89%8D%E7%9A%84%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">二、项目部署前的目录结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%87%86%E5%A4%87-requirements-txt"><span class="nav-number">3.</span> <span class="nav-text">三、准备 requirements.txt</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E7%BC%96%E5%86%99-Dockerfile"><span class="nav-number">4.</span> <span class="nav-text">四、编写 Dockerfile</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E7%BC%96%E5%86%99-dockerignore"><span class="nav-number">5.</span> <span class="nav-text">五、编写 .dockerignore</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E9%85%8D%E7%BD%AE%E5%A4%96%E9%83%A8-PostgreSQL-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5"><span class="nav-number">6.</span> <span class="nav-text">六、配置外部 PostgreSQL 数据库连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E7%BC%96%E5%86%99-docker-compose-yml"><span class="nav-number">7.</span> <span class="nav-text">七、编写 docker-compose.yml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E6%9C%AC%E5%9C%B0%E6%B5%8B%E8%AF%95-Docker-%E6%9E%84%E5%BB%BA"><span class="nav-number">8.</span> <span class="nav-text">八、本地测试 Docker 构建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">9.</span> <span class="nav-text">九、部署到云服务器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E3%80%81%E6%89%A7%E8%A1%8C-Alembic-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%81%E7%A7%BB"><span class="nav-number">10.</span> <span class="nav-text">十、执行 Alembic 数据库迁移</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E9%85%8D%E7%BD%AE%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86"><span class="nav-number">11.</span> <span class="nav-text">十一、配置反向代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%8C%E3%80%81%E5%B8%B8%E7%94%A8-Docker-%E5%91%BD%E4%BB%A4%E8%AE%B0%E5%BD%95"><span class="nav-number">12.</span> <span class="nav-text">十二、常用 Docker 命令记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%89%E3%80%81%E7%AC%AC%E4%B8%80%E6%AC%A1%E9%83%A8%E7%BD%B2%E6%97%B6%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">13.</span> <span class="nav-text">十三、第一次部署时遇到的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%B9%E5%99%A8%E9%87%8C%E7%9A%84-localhost-%E4%B8%8D%E6%98%AF%E6%9C%8D%E5%8A%A1%E5%99%A8-localhost"><span class="nav-number">13.1.</span> <span class="nav-text">1. 容器里的 localhost 不是服务器 localhost</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%89%E5%85%A8%E7%BB%84%E5%92%8C%E7%99%BD%E5%90%8D%E5%8D%95%E6%B2%A1%E6%9C%89%E6%94%BE%E8%A1%8C"><span class="nav-number">13.2.</span> <span class="nav-text">2. 数据库安全组和白名单没有放行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-PostgreSQL-%E6%B2%A1%E6%9C%89%E7%9B%91%E5%90%AC%E6%AD%A3%E7%A1%AE%E5%9C%B0%E5%9D%80"><span class="nav-number">13.3.</span> <span class="nav-text">3. PostgreSQL 没有监听正确地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%BF%98%E8%AE%B0%E4%BD%BF%E7%94%A8-asyncpg-%E8%BF%9E%E6%8E%A5%E5%89%8D%E7%BC%80"><span class="nav-number">13.4.</span> <span class="nav-text">4. 忘记使用 asyncpg 连接前缀</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%BF%98%E8%AE%B0%E6%89%A7%E8%A1%8C-Alembic-%E8%BF%81%E7%A7%BB"><span class="nav-number">13.5.</span> <span class="nav-text">5. 忘记执行 Alembic 迁移</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%9B%9B%E3%80%81%E4%B8%80%E6%AC%A1%E5%AE%8C%E6%95%B4%E7%9A%84%E9%83%A8%E7%BD%B2%E6%B5%81%E7%A8%8B"><span class="nav-number">14.</span> <span class="nav-text">十四、一次完整的部署流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%94%E3%80%81%E6%9C%80%E7%BB%88-docker-compose-yml-%E7%A4%BA%E4%BE%8B"><span class="nav-number">15.</span> <span class="nav-text">十五、最终 docker-compose.yml 示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%85%AD%E3%80%81%E8%BF%99%E6%AC%A1-Docker-%E9%83%A8%E7%BD%B2%E7%9A%84%E6%94%B6%E8%8E%B7"><span class="nav-number">16.</span> <span class="nav-text">十六、这次 Docker 部署的收获</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description">不积跬步，无以至千里；不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
