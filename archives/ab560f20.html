@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"raphets.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="最近用 FastAPI 写了一个新项目，这是我第一次在实际项目里完整使用 FastAPI。项目的技术栈主要是 FastAPI + PostgreSQL + SQLAlchemy Async ORM + Alembic，接口层使用异步请求，数据库访问也采用异步方式。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FastAPI 项目实践">
+<meta property="og:url" content="https://raphets.github.io/archives/ab560f20.html">
+<meta property="og:site_name" content="尚拙">
+<meta property="og:description" content="最近用 FastAPI 写了一个新项目，这是我第一次在实际项目里完整使用 FastAPI。项目的技术栈主要是 FastAPI + PostgreSQL + SQLAlchemy Async ORM + Alembic，接口层使用异步请求，数据库访问也采用异步方式。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-06-20T08:51:33.000Z">
+<meta property="article:modified_time" content="2026-06-20T08:53:51.120Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="-FastAPI">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://raphets.github.io/archives/ab560f20.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>FastAPI 项目实践 | 尚拙</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">尚拙</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个分享技术、学习成长的个人博客网站</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tool">
+
+    <a href="/tool/" rel="section"><i class="fa fa-hammer fa-fw"></i>工具</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://raphets.github.io/archives/ab560f20.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="不积跬步，无以至千里；不积小流，无以成江海。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="尚拙">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          FastAPI 项目实践
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-06-20 16:51:33 / 修改时间：16:53:51" itemprop="dateCreated datePublished" datetime="2026-06-20T16:51:33+08:00">2026-06-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" itemprop="url" rel="index"><span itemprop="name">技术文章</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近用 FastAPI 写了一个新项目，这是我第一次在实际项目里完整使用 FastAPI。项目的技术栈主要是 <strong>FastAPI + PostgreSQL + SQLAlchemy Async ORM + Alembic</strong>，接口层使用异步请求，数据库访问也采用异步方式。</p>
+  <span id="more"></span>
+
+
+<p>这篇文章主要记录我从零搭建项目的过程，包括项目结构、数据库连接、异步 Session 管理、ORM 模型定义、Alembic 迁移配置，以及开发过程中踩到的一些坑。</p>
+<p>FastAPI 本身并不强制绑定某一种数据库或 ORM，它更像是一个轻量、高性能的 Web 框架。数据库层可以根据项目需要选择 SQLAlchemy、SQLModel、Tortoise ORM 或其他工具。这里我选择的是 SQLAlchemy，因为它生态成熟，并且在 2.x 版本中对异步能力支持得比较完整。FastAPI 官方文档也说明，FastAPI 可以配合任意关系型数据库使用，SQLAlchemy &#x2F; SQLModel 都是常见选择。 <a target="_blank" rel="noopener" href="https://fastapi.tiangolo.com/tutorial/sql-databases">FastAPI</a> <a target="_blank" rel="noopener" href="http://docs.sqlalchemy.org/en/latest/_modules/examples/asyncio/async_orm.html">SQLAlchemy</a></p>
+<hr>
+<h2 id="一、项目技术栈"><a href="#一、项目技术栈" class="headerlink" title="一、项目技术栈"></a><strong>一、项目技术栈</strong></h2><p>这个项目的后端主要使用以下技术：</p>
+<table>
+<thead>
+<tr>
+<th>技术</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>FastAPI</td>
+<td>Web 框架，负责接口定义、请求处理、依赖注入</td>
+</tr>
+<tr>
+<td>PostgreSQL</td>
+<td>关系型数据库</td>
+</tr>
+<tr>
+<td>SQLAlchemy 2.x</td>
+<td>ORM，负责模型映射和数据库操作</td>
+</tr>
+<tr>
+<td>asyncpg</td>
+<td>PostgreSQL 异步驱动</td>
+</tr>
+<tr>
+<td>Alembic</td>
+<td>数据库迁移工具</td>
+</tr>
+<tr>
+<td>Pydantic</td>
+<td>请求参数和响应数据校验</td>
+</tr>
+<tr>
+<td>Uvicorn</td>
+<td>ASGI 服务启动器</td>
+</tr>
+</tbody></table>
+<p>整体思路是：FastAPI 负责 API 层，SQLAlchemy 负责数据库 ORM，asyncpg 负责异步连接 PostgreSQL，Alembic 负责维护数据库表结构的版本变更。</p>
+<hr>
+<h2 id="二、初始化项目"><a href="#二、初始化项目" class="headerlink" title="二、初始化项目"></a><strong>二、初始化项目</strong></h2><p>首先创建项目目录：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> fastapi-demo</span><br><span class="line"><span class="built_in">cd</span> fastapi-demo</span><br></pre></td></tr></table></figure>
+
+<p>创建虚拟环境：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python -m venv .venv</span><br></pre></td></tr></table></figure>
+
+<p>激活虚拟环境：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># macOS / Linux</span></span><br><span class="line"><span class="built_in">source</span> .venv/bin/activate</span><br><span class="line"></span><br><span class="line"><span class="comment"># Windows</span></span><br><span class="line">.venv\Scripts\activate</span><br></pre></td></tr></table></figure>
+
+<p>安装依赖：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install fastapi uvicorn sqlalchemy asyncpg alembic pydantic-settings</span><br></pre></td></tr></table></figure>
+
+<p>如果后续需要做密码加密、JWT 登录、环境变量管理等功能，也可以再安装：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install passlib[bcrypt] python-jose python-multipart</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="三、推荐的项目结构"><a href="#三、推荐的项目结构" class="headerlink" title="三、推荐的项目结构"></a><strong>三、推荐的项目结构</strong></h2><p>我这次采用了一个比较清晰的分层结构：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">fastapi-demo/</span><br><span class="line">├── alembic/</span><br><span class="line">│   ├── versions/</span><br><span class="line">│   └── env.py</span><br><span class="line">├── app/</span><br><span class="line">│   ├── api/</span><br><span class="line">│   │   └── user.py</span><br><span class="line">│   ├── core/</span><br><span class="line">│   │   └── config.py</span><br><span class="line">│   ├── db/</span><br><span class="line">│   │   ├── base.py</span><br><span class="line">│   │   └── session.py</span><br><span class="line">│   ├── models/</span><br><span class="line">│   │   └── user.py</span><br><span class="line">│   ├── schemas/</span><br><span class="line">│   │   └── user.py</span><br><span class="line">│   ├── services/</span><br><span class="line">│   │   └── user.py</span><br><span class="line">│   └── main.py</span><br><span class="line">├── alembic.ini</span><br><span class="line">├── .env</span><br><span class="line">└── requirements.txt</span><br></pre></td></tr></table></figure>
+
+<p>这个结构的好处是职责比较清楚：</p>
+<p><code>api</code> 层只负责路由和接口参数；<code>schemas</code> 层负责请求和响应数据结构；<code>models</code> 层负责数据库模型；<code>services</code> 层负责业务逻辑；<code>db</code> 层负责数据库连接和 Session 管理；<code>core</code> 层负责配置项。</p>
+<p>刚开始写 FastAPI 时，很容易把所有代码都堆到 <code>main.py</code> 里。小 demo 这样写没问题，但项目稍微复杂一点，就会变得很难维护。所以我更推荐一开始就做基础分层。</p>
+<hr>
+<h2 id="四、配置环境变量"><a href="#四、配置环境变量" class="headerlink" title="四、配置环境变量"></a><strong>四、配置环境变量</strong></h2><p>在项目根目录创建 <code>.env</code> 文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DATABASE_URL=postgresql+asyncpg://postgres:password@localhost:5432/fastapi_demo</span><br></pre></td></tr></table></figure>
+
+<p>这里要注意，异步连接 PostgreSQL 时，数据库 URL 需要使用：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">postgresql+asyncpg://</span><br></pre></td></tr></table></figure>
+
+<p>而不是传统同步连接里的：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">postgresql://</span><br></pre></td></tr></table></figure>
+
+<p>然后创建配置文件 <code>app/core/config.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pydantic_settings <span class="keyword">import</span> BaseSettings, SettingsConfigDict</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Settings</span>(<span class="title class_ inherited__">BaseSettings</span>):</span><br><span class="line">    DATABASE_URL: <span class="built_in">str</span></span><br><span class="line"></span><br><span class="line">    model_config = SettingsConfigDict(</span><br><span class="line">        env_file=<span class="string">&quot;.env&quot;</span>,</span><br><span class="line">        env_file_encoding=<span class="string">&quot;utf-8&quot;</span></span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">settings = Settings()</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就可以通过 <code>settings.DATABASE_URL</code> 统一读取数据库连接地址。</p>
+<hr>
+<h2 id="五、创建异步数据库连接"><a href="#五、创建异步数据库连接" class="headerlink" title="五、创建异步数据库连接"></a><strong>五、创建异步数据库连接</strong></h2><p>接下来创建 <code>app/db/session.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> collections.abc <span class="keyword">import</span> AsyncGenerator</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> sqlalchemy.ext.asyncio <span class="keyword">import</span> (</span><br><span class="line">    AsyncSession,</span><br><span class="line">    async_sessionmaker,</span><br><span class="line">    create_async_engine,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app.core.config <span class="keyword">import</span> settings</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">engine = create_async_engine(</span><br><span class="line">    settings.DATABASE_URL,</span><br><span class="line">    echo=<span class="literal">True</span>,</span><br><span class="line">    pool_pre_ping=<span class="literal">True</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">AsyncSessionLocal = async_sessionmaker(</span><br><span class="line">    bind=engine,</span><br><span class="line">    class_=AsyncSession,</span><br><span class="line">    expire_on_commit=<span class="literal">False</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">get_db</span>() -&gt; AsyncGenerator[AsyncSession, <span class="literal">None</span>]:</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> AsyncSessionLocal() <span class="keyword">as</span> session:</span><br><span class="line">        <span class="keyword">yield</span> session</span><br></pre></td></tr></table></figure>
+
+<p>这里有几个关键点。</p>
+<p><code>create_async_engine</code> 用来创建异步数据库引擎。<code>async_sessionmaker</code> 用来创建异步 Session 工厂。<code>get_db</code> 是 FastAPI 的依赖函数，在接口里可以通过 <code>Depends(get_db)</code> 注入数据库 Session。</p>
+<p><code>expire_on_commit=False</code> 也比较重要。默认情况下，SQLAlchemy 在 commit 后可能会让对象属性过期，后续再次访问属性时会触发数据库加载。在异步场景里，如果处理不好，可能会遇到额外的懒加载问题。对于大多数 API 项目，把它设置为 <code>False</code> 会更直观一些。</p>
+<p>SQLAlchemy 的异步 ORM 使用 <code>AsyncSession</code>、<code>create_async_engine</code> 和 <code>async_sessionmaker</code> 来完成异步数据库访问，这也是 FastAPI 项目里比较常见的组合方式。 <a target="_blank" rel="noopener" href="http://docs.sqlalchemy.org/en/latest/_modules/examples/asyncio/async_orm.html">SQLAlchemy</a></p>
+<hr>
+<h2 id="六、定义-ORM-基类"><a href="#六、定义-ORM-基类" class="headerlink" title="六、定义 ORM 基类"></a><strong>六、定义 ORM 基类</strong></h2><p>创建 <code>app/db/base.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy.orm <span class="keyword">import</span> DeclarativeBase</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span>(<span class="title class_ inherited__">DeclarativeBase</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+<p>所有 ORM 模型都会继承这个 <code>Base</code>。Alembic 后面也会通过这个 <code>Base.metadata</code> 来识别当前项目里的表结构。</p>
+<hr>
+<h2 id="七、创建-User-模型"><a href="#七、创建-User-模型" class="headerlink" title="七、创建 User 模型"></a><strong>七、创建 User 模型</strong></h2><p>创建 <code>app/models/user.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> Boolean, DateTime, String, func</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.orm <span class="keyword">import</span> Mapped, mapped_column</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app.db.base <span class="keyword">import</span> Base</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">User</span>(<span class="title class_ inherited__">Base</span>):</span><br><span class="line">    __tablename__ = <span class="string">&quot;users&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">id</span>: Mapped[<span class="built_in">int</span>] = mapped_column(primary_key=<span class="literal">True</span>, index=<span class="literal">True</span>)</span><br><span class="line">    email: Mapped[<span class="built_in">str</span>] = mapped_column(String(<span class="number">255</span>), unique=<span class="literal">True</span>, index=<span class="literal">True</span>, nullable=<span class="literal">False</span>)</span><br><span class="line">    username: Mapped[<span class="built_in">str</span>] = mapped_column(String(<span class="number">50</span>), unique=<span class="literal">True</span>, index=<span class="literal">True</span>, nullable=<span class="literal">False</span>)</span><br><span class="line">    hashed_password: Mapped[<span class="built_in">str</span>] = mapped_column(String(<span class="number">255</span>), nullable=<span class="literal">False</span>)</span><br><span class="line">    is_active: Mapped[<span class="built_in">bool</span>] = mapped_column(Boolean, default=<span class="literal">True</span>, nullable=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">    created_at: Mapped[datetime] = mapped_column(</span><br><span class="line">        DateTime(timezone=<span class="literal">True</span>),</span><br><span class="line">        server_default=func.now(),</span><br><span class="line">        nullable=<span class="literal">False</span>,</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+
+<p>这里使用的是 SQLAlchemy 2.x 推荐的类型写法：<code>Mapped</code> + <code>mapped_column</code>。</p>
+<p>相比老版本写法，这种方式类型提示更友好，也更适合现代 Python 项目。比如编辑器可以更好地推断字段类型，后续写查询逻辑时体验会更好。</p>
+<hr>
+<h2 id="八、创建-Pydantic-Schema"><a href="#八、创建-Pydantic-Schema" class="headerlink" title="八、创建 Pydantic Schema"></a><strong>八、创建 Pydantic Schema</strong></h2><p>数据库模型不建议直接作为接口响应返回。通常我们会单独定义 Pydantic Schema，用来描述请求体和响应体。</p>
+<p>创建 <code>app/schemas/user.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pydantic <span class="keyword">import</span> BaseModel, EmailStr</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UserCreate</span>(<span class="title class_ inherited__">BaseModel</span>):</span><br><span class="line">    email: EmailStr</span><br><span class="line">    username: <span class="built_in">str</span></span><br><span class="line">    password: <span class="built_in">str</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UserRead</span>(<span class="title class_ inherited__">BaseModel</span>):</span><br><span class="line">    <span class="built_in">id</span>: <span class="built_in">int</span></span><br><span class="line">    email: EmailStr</span><br><span class="line">    username: <span class="built_in">str</span></span><br><span class="line">    is_active: <span class="built_in">bool</span></span><br><span class="line">    created_at: datetime</span><br><span class="line"></span><br><span class="line">    model_config = &#123;</span><br><span class="line">        <span class="string">&quot;from_attributes&quot;</span>: <span class="literal">True</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>UserCreate</code> 用于创建用户时接收请求参数。</p>
+<p><code>UserRead</code> 用于返回用户信息。这里没有返回 <code>hashed_password</code>，因为密码哈希不应该暴露给前端。</p>
+<p><code>from_attributes=True</code> 是 Pydantic v2 中从 ORM 对象读取数据时常用的配置。</p>
+<hr>
+<h2 id="九、编写-Service-层"><a href="#九、编写-Service-层" class="headerlink" title="九、编写 Service 层"></a><strong>九、编写 Service 层</strong></h2><p>创建 <code>app/services/user.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> select</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.ext.asyncio <span class="keyword">import</span> AsyncSession</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app.models.user <span class="keyword">import</span> User</span><br><span class="line"><span class="keyword">from</span> app.schemas.user <span class="keyword">import</span> UserCreate</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">get_user_by_email</span>(<span class="params">db: AsyncSession, email: <span class="built_in">str</span></span>) -&gt; User | <span class="literal">None</span>:</span><br><span class="line">    stmt = select(User).where(User.email == email)</span><br><span class="line">    result = <span class="keyword">await</span> db.execute(stmt)</span><br><span class="line">    <span class="keyword">return</span> result.scalar_one_or_none()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">create_user</span>(<span class="params">db: AsyncSession, user_in: UserCreate</span>) -&gt; User:</span><br><span class="line">    fake_hashed_password = <span class="string">f&quot;hashed_<span class="subst">&#123;user_in.password&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">    user = User(</span><br><span class="line">        email=user_in.email,</span><br><span class="line">        username=user_in.username,</span><br><span class="line">        hashed_password=fake_hashed_password,</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    db.add(user)</span><br><span class="line">    <span class="keyword">await</span> db.commit()</span><br><span class="line">    <span class="keyword">await</span> db.refresh(user)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> user</span><br></pre></td></tr></table></figure>
+
+<p>这里我把数据库操作放到了 <code>services</code> 层，而不是直接写在路由函数里。</p>
+<p>这样做的好处是，路由层会更薄，只处理 HTTP 相关逻辑；业务逻辑和数据库逻辑放在 service 层，后面也更容易写测试。</p>
+<p>需要注意的是，异步 SQLAlchemy 查询时要使用：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">result = <span class="keyword">await</span> db.execute(stmt)</span><br></pre></td></tr></table></figure>
+
+<p>然后再通过：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">result.scalar_one_or_none()</span><br></pre></td></tr></table></figure>
+
+<p>拿到 ORM 对象。</p>
+<hr>
+<h2 id="十、编写-API-路由"><a href="#十、编写-API-路由" class="headerlink" title="十、编写 API 路由"></a><strong>十、编写 API 路由</strong></h2><p>创建 <code>app/api/user.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> APIRouter, Depends, HTTPException, status</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.ext.asyncio <span class="keyword">import</span> AsyncSession</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app.db.session <span class="keyword">import</span> get_db</span><br><span class="line"><span class="keyword">from</span> app.schemas.user <span class="keyword">import</span> UserCreate, UserRead</span><br><span class="line"><span class="keyword">from</span> app.services.user <span class="keyword">import</span> create_user, get_user_by_email</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">router = APIRouter(prefix=<span class="string">&quot;/users&quot;</span>, tags=[<span class="string">&quot;users&quot;</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@router.post(<span class="params"><span class="string">&quot;&quot;</span>, response_model=UserRead, status_code=status.HTTP_201_CREATED</span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">create_user_api</span>(<span class="params"></span></span><br><span class="line"><span class="params">    user_in: UserCreate,</span></span><br><span class="line"><span class="params">    db: AsyncSession = Depends(<span class="params">get_db</span>),</span></span><br><span class="line"><span class="params"></span>):</span><br><span class="line">    existing_user = <span class="keyword">await</span> get_user_by_email(db, user_in.email)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> existing_user:</span><br><span class="line">        <span class="keyword">raise</span> HTTPException(</span><br><span class="line">            status_code=status.HTTP_400_BAD_REQUEST,</span><br><span class="line">            detail=<span class="string">&quot;Email already registered&quot;</span>,</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> create_user(db, user_in)</span><br></pre></td></tr></table></figure>
+
+<p>然后在 <code>app/main.py</code> 中注册路由：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app.api.user <span class="keyword">import</span> router <span class="keyword">as</span> user_router</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app = FastAPI(</span><br><span class="line">    title=<span class="string">&quot;FastAPI Demo&quot;</span>,</span><br><span class="line">    version=<span class="string">&quot;0.1.0&quot;</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app.include_router(user_router)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/health&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">health_check</span>():</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;status&quot;</span>: <span class="string">&quot;ok&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>启动项目：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">uvicorn app.main:app --reload</span><br></pre></td></tr></table></figure>
+
+<p>打开浏览器访问：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">http://127.0.0.1:8000/docs</span><br></pre></td></tr></table></figure>
+
+<p>就可以看到 FastAPI 自动生成的 Swagger 文档。</p>
+<p>这也是 FastAPI 开发体验很好的地方：只要写好类型提示、请求模型和响应模型，接口文档基本可以自动生成。</p>
+<hr>
+<h2 id="十一、配置-Alembic-数据库迁移"><a href="#十一、配置-Alembic-数据库迁移" class="headerlink" title="十一、配置 Alembic 数据库迁移"></a><strong>十一、配置 Alembic 数据库迁移</strong></h2><p>在项目根目录初始化 Alembic：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">alembic init alembic</span><br></pre></td></tr></table></figure>
+
+<p>执行后会生成：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">alembic/</span><br><span class="line">├── versions/</span><br><span class="line">└── env.py</span><br><span class="line"></span><br><span class="line">alembic.ini</span><br></pre></td></tr></table></figure>
+
+<p>接下来要做两件事：</p>
+<p>第一，把 Alembic 的数据库地址配置成项目里的数据库地址。</p>
+<p>第二，让 Alembic 能识别 SQLAlchemy 的模型元数据。</p>
+<hr>
+<h2 id="十二、修改-alembic-ini"><a href="#十二、修改-alembic-ini" class="headerlink" title="十二、修改 alembic.ini"></a><strong>十二、修改 alembic.ini</strong></h2><p>打开 <code>alembic.ini</code>，找到：</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">sqlalchemy.url</span> = driver://user:pass@localhost/dbname</span><br></pre></td></tr></table></figure>
+
+<p>这里可以先留空，或者写一个占位值：</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line">sqlalchemy.url =</span><br></pre></td></tr></table></figure>
+
+<p>因为我们会在 <code>env.py</code> 里从项目配置中读取真实数据库地址。</p>
+<hr>
+<h2 id="十三、修改-Alembic-env-py-支持异步迁移"><a href="#十三、修改-Alembic-env-py-支持异步迁移" class="headerlink" title="十三、修改 Alembic env.py 支持异步迁移"></a><strong>十三、修改 Alembic env.py 支持异步迁移</strong></h2><p>重点来了。</p>
+<p>如果项目使用的是：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">postgresql+asyncpg://</span><br></pre></td></tr></table></figure>
+
+<p>那么 Alembic 的迁移配置也需要适配异步数据库连接。</p>
+<p>修改 <code>alembic/env.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">from</span> logging.config <span class="keyword">import</span> fileConfig</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> pool</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.engine <span class="keyword">import</span> Connection</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.ext.asyncio <span class="keyword">import</span> async_engine_from_config</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> alembic <span class="keyword">import</span> context</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app.core.config <span class="keyword">import</span> settings</span><br><span class="line"><span class="keyword">from</span> app.db.base <span class="keyword">import</span> Base</span><br><span class="line"><span class="keyword">from</span> app.models <span class="keyword">import</span> user  <span class="comment"># 确保模型被导入，否则 Alembic 可能识别不到</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">config = context.config</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> config.config_file_name <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">    fileConfig(config.config_file_name)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">config.set_main_option(<span class="string">&quot;sqlalchemy.url&quot;</span>, settings.DATABASE_URL)</span><br><span class="line"></span><br><span class="line">target_metadata = Base.metadata</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run_migrations_offline</span>() -&gt; <span class="literal">None</span>:</span><br><span class="line">    url = config.get_main_option(<span class="string">&quot;sqlalchemy.url&quot;</span>)</span><br><span class="line"></span><br><span class="line">    context.configure(</span><br><span class="line">        url=url,</span><br><span class="line">        target_metadata=target_metadata,</span><br><span class="line">        literal_binds=<span class="literal">True</span>,</span><br><span class="line">        dialect_opts=&#123;<span class="string">&quot;paramstyle&quot;</span>: <span class="string">&quot;named&quot;</span>&#125;,</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> context.begin_transaction():</span><br><span class="line">        context.run_migrations()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">do_run_migrations</span>(<span class="params">connection: Connection</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">    context.configure(</span><br><span class="line">        connection=connection,</span><br><span class="line">        target_metadata=target_metadata,</span><br><span class="line">        compare_type=<span class="literal">True</span>,</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> context.begin_transaction():</span><br><span class="line">        context.run_migrations()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">run_async_migrations</span>() -&gt; <span class="literal">None</span>:</span><br><span class="line">    connectable = async_engine_from_config(</span><br><span class="line">        config.get_section(config.config_ini_section, &#123;&#125;),</span><br><span class="line">        prefix=<span class="string">&quot;sqlalchemy.&quot;</span>,</span><br><span class="line">        poolclass=pool.NullPool,</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> connectable.connect() <span class="keyword">as</span> connection:</span><br><span class="line">        <span class="keyword">await</span> connection.run_sync(do_run_migrations)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">await</span> connectable.dispose()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run_migrations_online</span>() -&gt; <span class="literal">None</span>:</span><br><span class="line">    asyncio.run(run_async_migrations())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> context.is_offline_mode():</span><br><span class="line">    run_migrations_offline()</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    run_migrations_online()</span><br></pre></td></tr></table></figure>
+
+<p>这里最关键的地方是：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">await</span> connection.run_sync(do_run_migrations)</span><br></pre></td></tr></table></figure>
+
+<p>Alembic 的迁移上下文本身仍然是同步风格的，但是数据库连接是异步的，所以需要通过 <code>run_sync</code> 把同步迁移逻辑挂到异步连接上执行。</p>
+<p>Alembic 官方提供了异步模板，核心思路就是在 <code>env.py</code> 中使用异步 engine，并通过 <code>connection.run_sync()</code> 执行迁移逻辑。Alembic 本身是 SQLAlchemy 生态里的数据库迁移工具，通常用来管理表结构的版本变更。 <a target="_blank" rel="noopener" href="https://alembic.sqlalchemy.org/">Alembic</a> <a target="_blank" rel="noopener" href="https://github.com/sqlalchemy/alembic/blob/master/alembic/templates/async/env.py">GitHub</a></p>
+<hr>
+<h2 id="十四、让-Alembic-能识别所有模型"><a href="#十四、让-Alembic-能识别所有模型" class="headerlink" title="十四、让 Alembic 能识别所有模型"></a><strong>十四、让 Alembic 能识别所有模型</strong></h2><p>上面的 <code>env.py</code> 里有一行：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> app.models <span class="keyword">import</span> user</span><br></pre></td></tr></table></figure>
+
+<p>这行看起来好像没有被直接使用，但它很重要。</p>
+<p>Alembic 自动生成迁移文件时，会读取：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">target_metadata = Base.metadata</span><br></pre></td></tr></table></figure>
+
+<p>但是只有模型类被 Python 导入之后，它们才会注册到 <code>Base.metadata</code> 上。</p>
+<p>所以，如果忘记导入模型，执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">alembic revision --autogenerate -m <span class="string">&quot;create users table&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>可能会发现生成的迁移文件是空的。</p>
+<p>更好的做法是，在 <code>app/models/__init__.py</code> 中统一导入所有模型：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> app.models.user <span class="keyword">import</span> User</span><br></pre></td></tr></table></figure>
+
+<p>然后在 <code>alembic/env.py</code> 中写：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> app.models</span><br></pre></td></tr></table></figure>
+
+<p>这样后面模型越来越多时，不需要在 <code>env.py</code> 里一个个导入。</p>
+<hr>
+<h2 id="十五、生成并执行迁移"><a href="#十五、生成并执行迁移" class="headerlink" title="十五、生成并执行迁移"></a><strong>十五、生成并执行迁移</strong></h2><p>生成迁移文件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">alembic revision --autogenerate -m <span class="string">&quot;create users table&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果配置正确，Alembic 会在 <code>alembic/versions/</code> 目录下生成一个迁移文件，里面大概会有类似这样的内容：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">upgrade</span>() -&gt; <span class="literal">None</span>:</span><br><span class="line">    op.create_table(</span><br><span class="line">        <span class="string">&quot;users&quot;</span>,</span><br><span class="line">        sa.Column(<span class="string">&quot;id&quot;</span>, sa.Integer(), nullable=<span class="literal">False</span>),</span><br><span class="line">        sa.Column(<span class="string">&quot;email&quot;</span>, sa.String(length=<span class="number">255</span>), nullable=<span class="literal">False</span>),</span><br><span class="line">        sa.Column(<span class="string">&quot;username&quot;</span>, sa.String(length=<span class="number">50</span>), nullable=<span class="literal">False</span>),</span><br><span class="line">        sa.Column(<span class="string">&quot;hashed_password&quot;</span>, sa.String(length=<span class="number">255</span>), nullable=<span class="literal">False</span>),</span><br><span class="line">        sa.Column(<span class="string">&quot;is_active&quot;</span>, sa.Boolean(), nullable=<span class="literal">False</span>),</span><br><span class="line">        sa.Column(<span class="string">&quot;created_at&quot;</span>, sa.DateTime(timezone=<span class="literal">True</span>), server_default=sa.text(<span class="string">&quot;now()&quot;</span>), nullable=<span class="literal">False</span>),</span><br><span class="line">        sa.PrimaryKeyConstraint(<span class="string">&quot;id&quot;</span>),</span><br><span class="line">    )</span><br><span class="line">    op.create_index(op.f(<span class="string">&quot;ix_users_id&quot;</span>), <span class="string">&quot;users&quot;</span>, [<span class="string">&quot;id&quot;</span>], unique=<span class="literal">False</span>)</span><br><span class="line">    op.create_index(op.f(<span class="string">&quot;ix_users_email&quot;</span>), <span class="string">&quot;users&quot;</span>, [<span class="string">&quot;email&quot;</span>], unique=<span class="literal">True</span>)</span><br><span class="line">    op.create_index(op.f(<span class="string">&quot;ix_users_username&quot;</span>), <span class="string">&quot;users&quot;</span>, [<span class="string">&quot;username&quot;</span>], unique=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">downgrade</span>() -&gt; <span class="literal">None</span>:</span><br><span class="line">    op.drop_index(op.f(<span class="string">&quot;ix_users_username&quot;</span>), table_name=<span class="string">&quot;users&quot;</span>)</span><br><span class="line">    op.drop_index(op.f(<span class="string">&quot;ix_users_email&quot;</span>), table_name=<span class="string">&quot;users&quot;</span>)</span><br><span class="line">    op.drop_index(op.f(<span class="string">&quot;ix_users_id&quot;</span>), table_name=<span class="string">&quot;users&quot;</span>)</span><br><span class="line">    op.drop_table(<span class="string">&quot;users&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>执行迁移：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">alembic upgrade <span class="built_in">head</span></span><br></pre></td></tr></table></figure>
+
+<p>查看当前迁移版本：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">alembic current</span><br></pre></td></tr></table></figure>
+
+<p>回滚一个版本：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">alembic downgrade -1</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="十六、测试创建用户接口"><a href="#十六、测试创建用户接口" class="headerlink" title="十六、测试创建用户接口"></a><strong>十六、测试创建用户接口</strong></h2><p>启动服务：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">uvicorn app.main:app --reload</span><br></pre></td></tr></table></figure>
+
+<p>访问：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">http://127.0.0.1:8000/docs</span><br></pre></td></tr></table></figure>
+
+<p>调用：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">POST /users</span><br></pre></td></tr></table></figure>
+
+<p>请求体：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;email&quot;</span><span class="punctuation">:</span> <span class="string">&quot;test@example.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;username&quot;</span><span class="punctuation">:</span> <span class="string">&quot;testuser&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;password&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123456&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>返回结果类似：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;email&quot;</span><span class="punctuation">:</span> <span class="string">&quot;test@example.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;username&quot;</span><span class="punctuation">:</span> <span class="string">&quot;testuser&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;is_active&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;created_at&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2026-06-20T08:00:00Z&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>这说明 FastAPI、PostgreSQL、SQLAlchemy 异步 Session 和 Alembic 迁移已经基本跑通了。</p>
+<hr>
+<h2 id="十七、开发过程中踩到的坑"><a href="#十七、开发过程中踩到的坑" class="headerlink" title="十七、开发过程中踩到的坑"></a><strong>十七、开发过程中踩到的坑</strong></h2><h3 id="1-Alembic-不是-ORM"><a href="#1-Alembic-不是-ORM" class="headerlink" title="1. Alembic 不是 ORM"></a><strong>1. Alembic 不是 ORM</strong></h3><p>一开始我也容易把 Alembic 和 ORM 混在一起理解。</p>
+<p>后来才理清楚：</p>
+<p>SQLAlchemy 是 ORM，负责把 Python 类映射成数据库表，并提供查询能力。</p>
+<p>Alembic 是迁移工具，负责记录数据库表结构的变化，比如创建表、添加字段、删除索引等。</p>
+<p>两者经常一起使用，但职责完全不同。</p>
+<hr>
+<h3 id="2-PostgreSQL-异步连接要使用-asyncpg"><a href="#2-PostgreSQL-异步连接要使用-asyncpg" class="headerlink" title="2. PostgreSQL 异步连接要使用 asyncpg"></a><strong>2. PostgreSQL 异步连接要使用 asyncpg</strong></h3><p>如果项目是异步数据库操作，数据库地址需要写成：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">postgresql+asyncpg://user:password@host:port/dbname</span><br></pre></td></tr></table></figure>
+
+<p>如果写成普通的：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">postgresql://user:password@host:port/dbname</span><br></pre></td></tr></table></figure>
+
+<p>可能会导致异步 engine 无法正常工作。</p>
+<hr>
+<h3 id="3-忘记导入模型会导致迁移文件为空"><a href="#3-忘记导入模型会导致迁移文件为空" class="headerlink" title="3. 忘记导入模型会导致迁移文件为空"></a><strong>3. 忘记导入模型会导致迁移文件为空</strong></h3><p>Alembic 的 <code>--autogenerate</code> 依赖 <code>Base.metadata</code>。</p>
+<p>如果模型没有被导入，<code>Base.metadata</code> 里面就没有对应的表信息，迁移文件自然可能是空的。</p>
+<p>所以一定要保证在 <code>alembic/env.py</code> 中导入所有模型。</p>
+<hr>
+<h3 id="4-async-函数里不要忘记-await"><a href="#4-async-函数里不要忘记-await" class="headerlink" title="4. async 函数里不要忘记 await"></a><strong>4. async 函数里不要忘记 await</strong></h3><p>使用异步 SQLAlchemy 时，很多操作都需要 <code>await</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">result = <span class="keyword">await</span> db.execute(stmt)</span><br><span class="line"><span class="keyword">await</span> db.commit()</span><br><span class="line"><span class="keyword">await</span> db.refresh(user)</span><br></pre></td></tr></table></figure>
+
+<p>如果忘记 <code>await</code>，可能不会立刻报出特别直观的错误，但程序行为会不符合预期。</p>
+<hr>
+<h3 id="5-不要在路由里堆太多业务逻辑"><a href="#5-不要在路由里堆太多业务逻辑" class="headerlink" title="5. 不要在路由里堆太多业务逻辑"></a><strong>5. 不要在路由里堆太多业务逻辑</strong></h3><p>刚开始写 FastAPI，很容易把查询、校验、创建、异常处理都写在一个路由函数里。</p>
+<p>短期看起来很快，但后面接口一多就会变乱。</p>
+<p>我现在更倾向于：</p>
+<p>路由层负责 HTTP。</p>
+<p>Service 层负责业务逻辑。</p>
+<p>Model 层负责数据库结构。</p>
+<p>Schema 层负责输入输出数据结构。</p>
+<p>这样项目会更清晰，也更方便测试。</p>
+<hr>
+<h2 id="十八、一个完整请求的执行流程"><a href="#十八、一个完整请求的执行流程" class="headerlink" title="十八、一个完整请求的执行流程"></a><strong>十八、一个完整请求的执行流程</strong></h2><p>以创建用户接口为例，请求流程大概是这样的：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant Client as Client</span><br><span class="line">    participant API as FastAPI Router</span><br><span class="line">    participant Service as User Service</span><br><span class="line">    participant DBSession as AsyncSession</span><br><span class="line">    participant PostgreSQL as PostgreSQL</span><br><span class="line"></span><br><span class="line">    Client-&gt;&gt;API: POST /users</span><br><span class="line">    API-&gt;&gt;API: 校验 UserCreate</span><br><span class="line">    API-&gt;&gt;DBSession: Depends(get_db)</span><br><span class="line">    API-&gt;&gt;Service: get_user_by_email()</span><br><span class="line">    Service-&gt;&gt;PostgreSQL: SELECT users WHERE email = ?</span><br><span class="line">    PostgreSQL--&gt;&gt;Service: 查询结果</span><br><span class="line">    Service--&gt;&gt;API: 用户不存在</span><br><span class="line">    API-&gt;&gt;Service: create_user()</span><br><span class="line">    Service-&gt;&gt;DBSession: db.add(user)</span><br><span class="line">    Service-&gt;&gt;PostgreSQL: INSERT INTO users</span><br><span class="line">    Service-&gt;&gt;DBSession: commit + refresh</span><br><span class="line">    Service--&gt;&gt;API: 返回 User 对象</span><br><span class="line">    API--&gt;&gt;Client: 返回 UserRead</span><br></pre></td></tr></table></figure>
+
+<p>这个流程也是我理解 FastAPI 依赖注入和异步数据库操作的关键。</p>
+<p>FastAPI 的 <code>Depends(get_db)</code> 会在请求进入路由时创建数据库 Session，请求结束后自动退出上下文。Service 层拿到这个 Session 之后，就可以执行数据库查询和写入。</p>
+<hr>
+<h2 id="十九、我的项目实践建议"><a href="#十九、我的项目实践建议" class="headerlink" title="十九、我的项目实践建议"></a><strong>十九、我的项目实践建议</strong></h2><p>如果是第一次用 FastAPI，我建议不要一上来就引入太多复杂封装。</p>
+<p>可以先把核心链路跑通：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">FastAPI 路由</span><br><span class="line">↓</span><br><span class="line">Pydantic Schema</span><br><span class="line">↓</span><br><span class="line">SQLAlchemy Model</span><br><span class="line">↓</span><br><span class="line">AsyncSession</span><br><span class="line">↓</span><br><span class="line">PostgreSQL</span><br><span class="line">↓</span><br><span class="line">Alembic Migration</span><br></pre></td></tr></table></figure>
+
+<p>等这个流程跑通之后，再考虑加入认证、权限、缓存、日志、测试、Docker、CI&#x2F;CD 等内容。</p>
+<p>我这次最大的感受是，FastAPI 本身并不难，真正需要花时间理解的是它和数据库层的组合方式。尤其是异步 SQLAlchemy 和 Alembic 的配置，刚开始看起来会有点绕，但只要理解了 <code>AsyncSession</code>、<code>Base.metadata</code> 和 <code>env.py</code> 的关系，后面就会清晰很多。</p>
+<hr>
+<h2 id="二十、后续可以继续优化的方向"><a href="#二十、后续可以继续优化的方向" class="headerlink" title="二十、后续可以继续优化的方向"></a><strong>二十、后续可以继续优化的方向</strong></h2><p>目前这个项目只是完成了基础架构，后续还可以继续优化：</p>
+<ol>
+<li>使用真实的密码哈希，比如 <code>passlib[bcrypt]</code>。</li>
+<li>加入 JWT 登录认证。</li>
+<li>使用 Docker Compose 管理 PostgreSQL。</li>
+<li>增加 pytest 异步测试。</li>
+<li>增加统一异常处理。</li>
+<li>增加日志中间件。</li>
+<li>把配置分成开发环境、测试环境和生产环境。</li>
+<li>增加数据库连接池参数配置。</li>
+<li>对 Service 层做更细的业务拆分。</li>
+<li>在 CI&#x2F;CD 中自动执行测试和迁移检查。</li>
+</ol>
+<p>FastAPI 的优势在于开发效率高、类型提示友好、自动文档完善，再配合 PostgreSQL、SQLAlchemy 和 Alembic，已经可以支撑一个比较规范的后端 API 项目。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/FastAPI/" rel="tag"><i class="fa fa-tag"></i> -FastAPI</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/31c3b15b.html" rel="prev" title="用 Python 自动化监控 MySQL 主从复制状态：从部署到告警全流程指南">
+      <i class="fa fa-chevron-left"></i> 用 Python 自动化监控 MySQL 主从复制状态：从部署到告警全流程指南
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E9%A1%B9%E7%9B%AE%E6%8A%80%E6%9C%AF%E6%A0%88"><span class="nav-number">1.</span> <span class="nav-text">一、项目技术栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%B9%E7%9B%AE"><span class="nav-number">2.</span> <span class="nav-text">二、初始化项目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%8E%A8%E8%8D%90%E7%9A%84%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.</span> <span class="nav-text">三、推荐的项目结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">4.</span> <span class="nav-text">四、配置环境变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%88%9B%E5%BB%BA%E5%BC%82%E6%AD%A5%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5"><span class="nav-number">5.</span> <span class="nav-text">五、创建异步数据库连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%AE%9A%E4%B9%89-ORM-%E5%9F%BA%E7%B1%BB"><span class="nav-number">6.</span> <span class="nav-text">六、定义 ORM 基类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E5%88%9B%E5%BB%BA-User-%E6%A8%A1%E5%9E%8B"><span class="nav-number">7.</span> <span class="nav-text">七、创建 User 模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E5%88%9B%E5%BB%BA-Pydantic-Schema"><span class="nav-number">8.</span> <span class="nav-text">八、创建 Pydantic Schema</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E7%BC%96%E5%86%99-Service-%E5%B1%82"><span class="nav-number">9.</span> <span class="nav-text">九、编写 Service 层</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E3%80%81%E7%BC%96%E5%86%99-API-%E8%B7%AF%E7%94%B1"><span class="nav-number">10.</span> <span class="nav-text">十、编写 API 路由</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E9%85%8D%E7%BD%AE-Alembic-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%81%E7%A7%BB"><span class="nav-number">11.</span> <span class="nav-text">十一、配置 Alembic 数据库迁移</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%8C%E3%80%81%E4%BF%AE%E6%94%B9-alembic-ini"><span class="nav-number">12.</span> <span class="nav-text">十二、修改 alembic.ini</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%89%E3%80%81%E4%BF%AE%E6%94%B9-Alembic-env-py-%E6%94%AF%E6%8C%81%E5%BC%82%E6%AD%A5%E8%BF%81%E7%A7%BB"><span class="nav-number">13.</span> <span class="nav-text">十三、修改 Alembic env.py 支持异步迁移</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%9B%9B%E3%80%81%E8%AE%A9-Alembic-%E8%83%BD%E8%AF%86%E5%88%AB%E6%89%80%E6%9C%89%E6%A8%A1%E5%9E%8B"><span class="nav-number">14.</span> <span class="nav-text">十四、让 Alembic 能识别所有模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%94%E3%80%81%E7%94%9F%E6%88%90%E5%B9%B6%E6%89%A7%E8%A1%8C%E8%BF%81%E7%A7%BB"><span class="nav-number">15.</span> <span class="nav-text">十五、生成并执行迁移</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%85%AD%E3%80%81%E6%B5%8B%E8%AF%95%E5%88%9B%E5%BB%BA%E7%94%A8%E6%88%B7%E6%8E%A5%E5%8F%A3"><span class="nav-number">16.</span> <span class="nav-text">十六、测试创建用户接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%83%E3%80%81%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B%E4%B8%AD%E8%B8%A9%E5%88%B0%E7%9A%84%E5%9D%91"><span class="nav-number">17.</span> <span class="nav-text">十七、开发过程中踩到的坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Alembic-%E4%B8%8D%E6%98%AF-ORM"><span class="nav-number">17.1.</span> <span class="nav-text">1. Alembic 不是 ORM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-PostgreSQL-%E5%BC%82%E6%AD%A5%E8%BF%9E%E6%8E%A5%E8%A6%81%E4%BD%BF%E7%94%A8-asyncpg"><span class="nav-number">17.2.</span> <span class="nav-text">2. PostgreSQL 异步连接要使用 asyncpg</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%BF%98%E8%AE%B0%E5%AF%BC%E5%85%A5%E6%A8%A1%E5%9E%8B%E4%BC%9A%E5%AF%BC%E8%87%B4%E8%BF%81%E7%A7%BB%E6%96%87%E4%BB%B6%E4%B8%BA%E7%A9%BA"><span class="nav-number">17.3.</span> <span class="nav-text">3. 忘记导入模型会导致迁移文件为空</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-async-%E5%87%BD%E6%95%B0%E9%87%8C%E4%B8%8D%E8%A6%81%E5%BF%98%E8%AE%B0-await"><span class="nav-number">17.4.</span> <span class="nav-text">4. async 函数里不要忘记 await</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E4%B8%8D%E8%A6%81%E5%9C%A8%E8%B7%AF%E7%94%B1%E9%87%8C%E5%A0%86%E5%A4%AA%E5%A4%9A%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91"><span class="nav-number">17.5.</span> <span class="nav-text">5. 不要在路由里堆太多业务逻辑</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%85%AB%E3%80%81%E4%B8%80%E4%B8%AA%E5%AE%8C%E6%95%B4%E8%AF%B7%E6%B1%82%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="nav-number">18.</span> <span class="nav-text">十八、一个完整请求的执行流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B9%9D%E3%80%81%E6%88%91%E7%9A%84%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE"><span class="nav-number">19.</span> <span class="nav-text">十九、我的项目实践建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E3%80%81%E5%90%8E%E7%BB%AD%E5%8F%AF%E4%BB%A5%E7%BB%A7%E7%BB%AD%E4%BC%98%E5%8C%96%E7%9A%84%E6%96%B9%E5%90%91"><span class="nav-number">20.</span> <span class="nav-text">二十、后续可以继续优化的方向</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description">不积跬步，无以至千里；不积小流，无以成江海。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
